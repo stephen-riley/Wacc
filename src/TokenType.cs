@@ -1,0 +1,16 @@
+namespace Wacc;
+
+public enum TokenType
+{
+    Identifier,
+    Constant,
+    IntKw,
+    VoidKw,
+    ReturnKw,
+    OpenParen,
+    CloseParen,
+    OpenBrace,
+    CloseBrace,
+    Semicolon,
+    WHITESPACE,
+}
