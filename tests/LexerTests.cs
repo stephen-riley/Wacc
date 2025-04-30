@@ -21,6 +21,7 @@ public class LexerTests
 
     [TestMethod]
     [DataRow("123abc", "Cannot tokenize '123abc'")]
+    [DataRow("int main(void) { return 123abc; }", "Cannot tokenize '123abc; }'")]
     public void LexerExections(string text, string expectedMessage)
     {
         var lexer = new Lexer(DummyRts);
