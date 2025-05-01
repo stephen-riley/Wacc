@@ -1,16 +1,28 @@
 ﻿using CommandLine;
 using Wacc;
 
-Console.Error.WriteLine("Wacc 1.0");
+// Console.Error.WriteLine("Wacc 1.0");
 
 CommandLine.Parser.Default.ParseArguments<RuntimeState>(args)
-    .WithParsed(opts =>
+    .WithParsed(rts =>
     {
-        opts.Text = File.ReadAllText(opts.InputFile);
-
-        new Lexer(opts).Execute();
-        new Wacc.Parser(opts).Execute();
-        new CodeGenerator(opts).Execute();
-        new CodeEmitter(opts).Execute();
+        rts.Text = File.ReadAllText(rts.InputFile);
+        Entrypoint(rts);
     });
 // .WithNotParsed(HandleParseError);
+
+void Entrypoint(RuntimeState rts)
+{
+    try
+    {
+        new Lexer(rts).Execute();
+        new Wacc.Parser(rts).Execute();
+        new CodeGenerator(rts).Execute();
+        new CodeEmitter(rts).Execute();
+    }
+    catch (Exception e)
+    {
+        Console.Error.WriteLine($"ERROR: {e.Message}");
+        Environment.Exit(-1);
+    }
+}

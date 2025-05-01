@@ -6,10 +6,14 @@ namespace Wacc;
 
 public class Lexer(RuntimeState opts)
 {
-    public RuntimeState Options = opts;
+    public RuntimeState RuntimeState = opts;
+
+    private HashSet<TokenType> ignoredTokens = [WHITESPACE, COMMENT_SINGLE_LINE];
 
     public OrderedDictionary<TokenType, Regex> Patterns { get; set; } = new()
     {
+        { COMMENT_SINGLE_LINE, new Regex(@"\G//.*$",RegexOptions.Multiline)},
+        { COMMENT_MULTI_LINE, new Regex(@"\G/\*.*?\*/",RegexOptions.Singleline)},
         { WHITESPACE, new Regex(@"\G\s+") },
         { IntKw, new Regex(@"\Gint\b") },
         { VoidKw, new Regex(@"\Gvoid\b") },
@@ -25,17 +29,20 @@ public class Lexer(RuntimeState opts)
 
     public bool Execute()
     {
-        Options.TokenStream = Lex(Options.Text);
+        RuntimeState.TokenStream = Lex(RuntimeState.Text);
 
-        foreach (var t in Options.TokenStream)
+        if (RuntimeState.Verbose)
         {
-            Console.WriteLine(t);
+            foreach (var t in RuntimeState.TokenStream)
+            {
+                Console.WriteLine(t);
+            }
         }
 
         return true;
     }
 
-    public List<Token> Lex(string text)
+    public List<Token> Lex(string text, bool includeIgnored = false)
     {
         var tokens = new List<Token>();
 
@@ -49,9 +56,13 @@ public class Lexer(RuntimeState opts)
                 var match = re.Match(text, startat: index);
                 if (match.Success)
                 {
-                    if (tok != WHITESPACE)
+                    if (includeIgnored || !ignoredTokens.Contains(tok))
                     {
                         var s = match.Value;
+                        if (string.IsNullOrWhiteSpace(s))
+                        {
+                            s = $"'{s.Replace('\n', '␤')}'";
+                        }
                         int.TryParse(s, out var i);
                         var t = new Token(tok, index, s, i);
                         tokens.Add(t);
@@ -61,7 +72,7 @@ public class Lexer(RuntimeState opts)
                 }
             }
 
-            throw new LexerException($"Cannot tokenize '{text[index..].Replace('\n', ' ')}'");
+            throw new LexerException($"Cannot tokenize '{text[index..].Replace('\n', '␤')}'");
         }
 
         return tokens;
