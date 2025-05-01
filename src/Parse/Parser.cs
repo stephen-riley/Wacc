@@ -1,4 +1,4 @@
-namespace Wacc;
+namespace Wacc.Parse;
 
 public class Parser(RuntimeState opts)
 {

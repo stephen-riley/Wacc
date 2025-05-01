@@ -1,4 +1,4 @@
-namespace Wacc;
+namespace Wacc.Emit;
 
 public class CodeEmitter(RuntimeState opts)
 {

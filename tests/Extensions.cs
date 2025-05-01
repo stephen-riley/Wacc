@@ -1,4 +1,4 @@
-using Wacc;
+using Wacc.Tokens;
 
 namespace Wacc.Tests;
 

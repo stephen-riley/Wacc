@@ -1,4 +1,4 @@
-namespace Wacc;
+namespace Wacc.Tokens;
 
 public record Token(TokenType TokenType, int Index, string? Str, int Int)
 {

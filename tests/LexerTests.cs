@@ -1,4 +1,5 @@
 ﻿using Wacc.Exceptions;
+using Wacc.Lex;
 
 namespace Wacc.Tests;
 

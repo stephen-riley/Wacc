@@ -1,4 +1,4 @@
-namespace Wacc;
+namespace Wacc.CodeGen;
 
 public class CodeGenerator(RuntimeState opts)
 {

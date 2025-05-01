@@ -1,8 +1,9 @@
 using System.Text.RegularExpressions;
 using Wacc.Exceptions;
-using static Wacc.TokenType;
+using Wacc.Tokens;
+using static Wacc.Tokens.TokenType;
 
-namespace Wacc;
+namespace Wacc.Lex;
 
 public class Lexer(RuntimeState opts)
 {

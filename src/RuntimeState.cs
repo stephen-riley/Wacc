@@ -1,4 +1,5 @@
 using CommandLine;
+using Wacc.Tokens;
 
 namespace Wacc;
 

@@ -1,4 +1,4 @@
-namespace Wacc;
+namespace Wacc.Tokens;
 
 public enum TokenType
 {

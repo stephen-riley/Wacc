@@ -1,5 +1,8 @@
 ﻿using CommandLine;
 using Wacc;
+using Wacc.CodeGen;
+using Wacc.Emit;
+using Wacc.Lex;
 
 // Console.Error.WriteLine("Wacc 1.0");
 
@@ -16,7 +19,7 @@ void Entrypoint(RuntimeState rts)
     try
     {
         new Lexer(rts).Execute();
-        new Wacc.Parser(rts).Execute();
+        new Wacc.Parse.Parser(rts).Execute();
         new CodeGenerator(rts).Execute();
         new CodeEmitter(rts).Execute();
     }
