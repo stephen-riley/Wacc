@@ -1,4 +1,5 @@
 using CommandLine;
+using Wacc.Ast;
 using Wacc.Tokens;
 
 namespace Wacc;
@@ -28,4 +29,6 @@ public class RuntimeState
     public string Text { get; set; } = "";
 
     public List<Token> TokenStream { get; set; } = [];
+
+    public IAstNode Ast { get; set; } = null!;
 }

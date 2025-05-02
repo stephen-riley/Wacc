@@ -50,9 +50,21 @@ public class LexerTests
     [DataRow("multiline_comments.c")]
     public void LexComments(string filename)
     {
-        var text = File.ReadAllText($"{fixturesPath}/{filename}");
+        var text = File.ReadAllText($"{fixturesPath}/valid/{filename}");
         var lexer = new Lexer(DummyRts);
         lexer.Lex(text);
         // Test passes if no exception
+    }
+
+    [TestMethod]
+    [DataRow("at_sign.c")]
+    public void LexExpectFailure(string filename)
+    {
+        var text = File.ReadAllText($"{fixturesPath}/invalid/{filename}");
+        var lexer = new Lexer(DummyRts);
+        Assert.ThrowsException<LexerError>(() =>
+        {
+            lexer.Lex(text);
+        });
     }
 }

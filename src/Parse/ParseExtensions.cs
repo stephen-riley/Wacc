@@ -9,12 +9,12 @@ public static class ParseExtentions
     public static Token Expect(this Queue<Token> tokenStream, TokenType[] tokenTypes)
         => tokenStream.TryExpect(tokenTypes, out var topToken)
             ? topToken
-            : throw new ParseError($"Expected {string.Join('/', tokenTypes)}, saw <{topToken?.TokenType}>");
+            : throw new ParseError($"Expected {string.Join('/', tokenTypes)}, saw {topToken?.TokenType}<{topToken?.Str}>");
 
     public static Token Expect(this Queue<Token> tokenStream, TokenType tokenType)
         => tokenStream.TryExpect([tokenType], out var topToken)
             ? topToken
-            : throw new ParseError($"Expected {tokenType}, saw <{topToken?.TokenType}>");
+            : throw new ParseError($"Expected {tokenType}, saw {topToken?.TokenType}<{topToken?.Str}>");
 
     public static bool TryExpect(this Queue<Token> tokenStream, TokenType[] tokenTypes, [NotNullWhen(true)] out Token? topToken)
     {

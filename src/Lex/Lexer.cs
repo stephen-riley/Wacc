@@ -26,7 +26,7 @@ public class Lexer(RuntimeState opts)
         { OpenBrace, new Regex(@"\G{") },
         { CloseBrace, new Regex(@"\G}") },
         { Semicolon, new Regex(@"\G;") },
-        { EOF, new Regex(@"$", RegexOptions.Multiline) },
+        { EOF, new Regex(@"\G$", RegexOptions.Multiline) },
     };
 
     public bool Execute()
@@ -77,7 +77,7 @@ public class Lexer(RuntimeState opts)
             throw new LexerError($"Cannot tokenize '{text[index..].Replace('\n', '␤')}'");
         }
 
-        tokens.Add(new Token(EOF, index + 1, "", 0));
+        RuntimeState.TokenStream = tokens;
         return tokens;
     }
 }

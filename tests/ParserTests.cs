@@ -1,4 +1,5 @@
 using Wacc.Lex;
+using Wacc.Parse;
 using Wacc.Tokens;
 
 namespace Wacc.Tests;
@@ -10,11 +11,13 @@ public class ParserTests
     private const string fixturesPath = "../../../../fixtures";
 
     [TestMethod]
-    public void SimpleParse()
+    [DataRow("return_2.c")]
+    public void SimpleParse(string filename)
     {
-        var text = File.ReadAllText($"{fixturesPath}/return_2.c");
+        var text = File.ReadAllText($"{fixturesPath}/valid/{filename}");
         var lexer = new Lexer(DummyRts);
         var tokens = lexer.Lex(text);
-        var program = Wacc.Ast.Program.Parse(new Queue<Token>(tokens));
+        var parser = new Parser(DummyRts);
+        parser.Parse();
     }
 }

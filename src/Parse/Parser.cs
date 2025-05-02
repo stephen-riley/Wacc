@@ -11,6 +11,7 @@ public class Parser(RuntimeState opts)
     public bool Parse()
     {
         var toks = new Queue<Token>(Options.TokenStream);
+        toks.Enqueue(new Token(TokenType.EOF, Options.Text.Length + 1, "", 0));
         var program = Ast.Program.Parse(toks);
         return true;
     }
