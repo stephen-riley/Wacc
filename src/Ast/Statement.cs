@@ -3,12 +3,14 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Statement : AstNode
+public class Statement : IAstNode
 {
-    public new static Statement Parse(Queue<Token> tokenStream)
+    public static Statement Parse(Queue<Token> tokenStream)
     {
-        var r = Return.Parse(tokenStream);
-        Expect(Semicolon, tokenStream);
-        return r;
+        return tokenStream.Peek().TokenType switch
+        {
+            ReturnKw => Return.Parse(tokenStream),
+            _ => throw new NotImplementedException()
+        };
     }
 }

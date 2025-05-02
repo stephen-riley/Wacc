@@ -1,23 +1,20 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
 using Wacc.Exceptions;
 using Wacc.Tokens;
 
-namespace Wacc.Ast;
+namespace Wacc.Parse;
 
-public abstract record AstNode
+public static class ParseExtentions
 {
-    public static AstNode Parse(Queue<Token> tokenStream) => throw new ParseException();
-
-    public static Token Expect(TokenType[] tokenTypes, Queue<Token> tokenStream)
+    public static Token Expect(this Queue<Token> tokenStream, TokenType[] tokenTypes)
         => TryExpect(tokenTypes, tokenStream, out var topToken)
             ? topToken
-            : throw new ParseException($"Expected {string.Join('/', tokenTypes)}, saw {topToken?.TokenType}");
+            : throw new ParseError($"Expected {string.Join('/', tokenTypes)}, saw <{topToken?.TokenType}>");
 
-    public static Token Expect(TokenType tokenType, Queue<Token> tokenStream)
+    public static Token Expect(this Queue<Token> tokenStream, TokenType tokenType)
         => TryExpect([tokenType], tokenStream, out var topToken)
             ? topToken
-            : throw new ParseException($"Expected {tokenType}, saw {topToken?.TokenType}");
+            : throw new ParseError($"Expected {tokenType}, saw <{topToken?.TokenType}>");
 
     public static bool TryExpect(TokenType[] tokenTypes, Queue<Token> tokenStream, [NotNullWhen(true)] out Token? topToken)
     {
@@ -32,7 +29,7 @@ public abstract record AstNode
             }
         }
 
-        topToken = null;
+        topToken = tok;
         return false;
     }
 }

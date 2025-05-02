@@ -1,13 +1,14 @@
+using Wacc.Parse;
 using Wacc.Tokens;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Expression(int Int) : AstNode
+public record Expression(int Int) : IAstNode
 {
-    public new static Expression Parse(Queue<Token> tokenStream)
+    public static Expression Parse(Queue<Token> tokenStream)
     {
-        var tok = Expect(Constant, tokenStream);
+        var tok = tokenStream.Expect(Constant);
         return new Expression(tok.Int);
     }
 }

@@ -9,7 +9,7 @@ public class Lexer(RuntimeState opts)
 {
     public RuntimeState RuntimeState = opts;
 
-    private HashSet<TokenType> ignoredTokens = [WHITESPACE, COMMENT_SINGLE_LINE];
+    private HashSet<TokenType> ignoredTokens = [WHITESPACE, COMMENT_SINGLE_LINE, COMMENT_MULTI_LINE];
 
     public OrderedDictionary<TokenType, Regex> Patterns { get; set; } = new()
     {
@@ -73,7 +73,7 @@ public class Lexer(RuntimeState opts)
                 }
             }
 
-            throw new LexerException($"Cannot tokenize '{text[index..].Replace('\n', '␤')}'");
+            throw new LexerError($"Cannot tokenize '{text[index..].Replace('\n', '␤')}'");
         }
 
         return tokens;

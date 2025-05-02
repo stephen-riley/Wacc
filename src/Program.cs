@@ -22,10 +22,11 @@ void Entrypoint(RuntimeState rts)
         new Wacc.Parse.Parser(rts).Execute();
         new CodeGenerator(rts).Execute();
         new CodeEmitter(rts).Execute();
+        Environment.Exit(0);
     }
     catch (Exception e)
     {
         Console.Error.WriteLine($"ERROR: {e.Message}");
-        Environment.Exit(-1);
+        Environment.Exit(1);
     }
 }

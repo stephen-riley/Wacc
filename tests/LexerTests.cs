@@ -38,7 +38,7 @@ public class LexerTests
     public void LexerExecptions(string text, string expectedMessage)
     {
         var lexer = new Lexer(DummyRts);
-        var ex = Assert.ThrowsException<LexerException>(() =>
+        var ex = Assert.ThrowsException<LexerError>(() =>
         {
             var toks = lexer.Lex(text);
         });
