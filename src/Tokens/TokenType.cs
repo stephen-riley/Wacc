@@ -15,4 +15,5 @@ public enum TokenType
     WHITESPACE,
     COMMENT_SINGLE_LINE,
     COMMENT_MULTI_LINE,
+    EOF
 }
