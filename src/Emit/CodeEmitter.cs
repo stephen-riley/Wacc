@@ -6,6 +6,7 @@ public class CodeEmitter(RuntimeState opts)
 
     public bool Execute()
     {
+        Console.WriteLine();
         foreach (var i in Options.AbstractInstructions)
         {
             i.Emit(Console.Out);

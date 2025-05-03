@@ -25,4 +25,17 @@ public class RuntimeStateTests
         Assert.AreEqual(doCodeGen, rts.DoCodeGen);
         Assert.AreEqual(doCodeEmit, rts.DoCodeEmission);
     }
+
+    [TestMethod]
+    [DataRow("/tmp/in.c", null, "/tmp/in")]
+    [DataRow(null, "/tmp/out.S", "/tmp/out")]
+    [DataRow("/tmp/in.c", "/tmp/out.S", "/tmp/out")]
+    [DataRow("/tmp/fun.in.c", "/tmp/fun.out.S", "/tmp/fun.out")]
+    public void BaseFilename(string? inputFile, string? outputFile, string expected)
+    {
+#nullable disable
+        var rts = new RuntimeState() { InputFile = inputFile, OutputFile = outputFile };
+#nullable restore
+        Assert.AreEqual(expected, rts.BaseFilename);
+    }
 }

@@ -22,31 +22,35 @@ static void Entrypoint(RuntimeState rts)
     {
         if (rts.DoLexer || rts.DoAll)
         {
-            Console.Error.WriteLine("* Lexer");
+            Console.Error.Write("lex ");
             new Lexer(rts).Execute();
         }
 
         if (rts.DoParser || rts.DoAll)
         {
-            Console.Error.WriteLine("* Parser");
+            Console.Error.Write("parse ");
             new Wacc.Parse.Parser(rts).Execute();
         }
 
         if (rts.DoCodeGen || rts.DoAll)
         {
-            Console.Error.WriteLine("* CodeGen");
+            Console.Error.Write("gen ");
             new CodeGenerator(rts).Execute();
         }
 
         if (rts.DoCodeEmission || rts.DoAll)
         {
-            Console.Error.WriteLine("* CodeEmit");
+            Console.Error.Write("emit ");
             new CodeEmitter(rts).Execute();
         }
+
+        // TODO: -S should stop here
+
+        Console.Error.WriteLine();
     }
     catch (Exception e)
     {
-        Console.Error.WriteLine($"ERROR: {e.Message}");
+        Console.Error.WriteLine($"\nERROR: {e.Message}");
         Environment.Exit(1);
     }
 }

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using CommandLine;
 using Wacc.Ast;
 using Wacc.CodeGen.AbstractAsm;
@@ -22,6 +23,12 @@ public class RuntimeState
     [Option('v', "verbose", HelpText = "Verbose output on STDERR")]
     public bool Verbose { get; set; }
 
+    [Option('S', HelpText = "Stop after assembly")]
+    public bool StopAfterAssembly { get; set; }
+
+    [Option('o', "output", HelpText = "Output filename")]
+    public string? OutputFile { get; set; }
+
     public bool DoLexer { get; } = true;
     public bool DoParser => !OnlyThroughLexer;
     public bool DoCodeGen => !OnlyThroughLexer && !OnlyThroughParser;
@@ -30,6 +37,8 @@ public class RuntimeState
 
     [Value(0, MetaName = "input file", HelpText = ".c file to compile", Required = true)]
     public required string InputFile { get; set; }
+
+    public string BaseFilename => Regex.Replace(OutputFile ?? InputFile, @"\.\w+$", "");
 
     public string Text { get; set; } = "";
 
