@@ -17,7 +17,7 @@ public class RuntimeState
     [Option('c', "codegen", HelpText = "Perform lexing, parsing, and assembly generation, but stop before code emission")]
     public bool OnlyThroughCodeGen { get; set; } = false;
 
-    [Option('e', "codegen", HelpText = "Perform lexing, parsing, assembly generation, and code emission")]
+    [Option('e', "emit", HelpText = "Perform lexing, parsing, assembly generation, and code emission")]
     public bool OnlyThroughCodeEmit { get; set; } = false;
 
     [Option('v', "verbose", HelpText = "Verbose output on STDERR")]

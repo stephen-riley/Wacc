@@ -22,7 +22,7 @@ public class CodeGenerator(RuntimeState opts)
         switch (node)
         {
             case Ast.Program p:
-                // FUTURE: any headers needed
+                instructions.Add(new ProgramGen());
                 foreach (var f in p.Statements)
                 {
                     instructions.AddRange(Walk(f));
@@ -38,7 +38,7 @@ public class CodeGenerator(RuntimeState opts)
                 var expr = Walk(r.Expr);
                 // TODO: that MoveGen will get fixed in the future
                 return [
-                    new MovGen(expr.ToArray()[0], new OperandRegGen(Register.EAX)),
+                    new MovGen(new OperandRegGen(Register.W0),expr.ToArray()[0]),
                     new RetGen()
                 ];
 

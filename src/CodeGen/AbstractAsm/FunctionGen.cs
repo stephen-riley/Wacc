@@ -10,12 +10,14 @@ public record FunctionGen(string Name, IEnumerable<IAbstractAsm> Body) : IAbstra
     public string EmitString()
     {
         var sb = new StringBuilder();
-        sb.Append($"    .globl _{Name}\n");
-        sb.Append($"_{Name}:\n");
+        sb.AppendLine($"    .globl _{Name}");
+        sb.AppendLine($"_{Name}:");
+        sb.AppendLine("    .cfi_startproc");
         foreach (var a in Body)
         {
-            sb.Append("    ").Append(a.EmitString()).Append('\n');
+            sb.Append("    ").AppendLine(a.EmitString());
         }
+        sb.AppendLine("    .cfi_endproc");
         return sb.ToString();
     }
 }
