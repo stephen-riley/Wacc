@@ -2,6 +2,7 @@
 using Wacc;
 using Wacc.CodeGen;
 using Wacc.Emit;
+using Wacc.Exe;
 using Wacc.Lex;
 
 Console.Error.WriteLine("Wacc 1.0");
@@ -45,6 +46,12 @@ static void Entrypoint(RuntimeState rts)
         }
 
         // TODO: -S should stop here
+
+        if (rts.DoAll)
+        {
+            Console.Error.Write("assemble ");
+            new GenExecutable(rts).Execute();
+        }
 
         Console.Error.WriteLine();
     }

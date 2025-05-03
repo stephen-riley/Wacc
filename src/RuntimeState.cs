@@ -26,7 +26,7 @@ public class RuntimeState
     [Option('S', HelpText = "Stop after assembly")]
     public bool StopAfterAssembly { get; set; }
 
-    [Option('o', "output", HelpText = "Output filename")]
+    [Option('o', "output", HelpText = "Output exe filename")]
     public string? OutputFile { get; set; }
 
     public bool DoLexer { get; } = true;
@@ -47,4 +47,6 @@ public class RuntimeState
     public IAstNode Ast { get; set; } = null!;
 
     public IEnumerable<IAbstractAsm> AbstractInstructions { get; set; } = null!;
+
+    public string Assembly { get; set; } = null!;
 }
