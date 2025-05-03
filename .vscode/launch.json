@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "fixtures/return_2.c",
+            "args": "fixtures/valid/return_2.c",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

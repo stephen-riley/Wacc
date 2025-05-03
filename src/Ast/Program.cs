@@ -1,10 +1,12 @@
+using System.Text;
+using Wacc.Extensions;
 using Wacc.Parse;
 using Wacc.Tokens;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Program(IEnumerable<Function> Function) : IAstNode
+public record Program(IEnumerable<Function> Statements) : IAstNode
 {
     public static IAstNode Parse(Queue<Token> tokenStream)
     {
@@ -12,9 +14,22 @@ public record Program(IEnumerable<Function> Function) : IAstNode
 
         while (!tokenStream.PeekFor(EOF))
         {
-            stats.Add(Ast.Function.Parse(tokenStream));
+            stats.Add(Function.Parse(tokenStream));
         }
 
         return new Program(stats);
+    }
+
+    public string ToPrettyString(int indent = 0)
+    {
+        var sb = new StringBuilder();
+        sb.Append("Program(\n");
+        foreach (var stat in Statements)
+        {
+            sb.Append(IAstNode.IndentStr(indent + 1));
+            sb.Append(stat.ToPrettyString(indent + 1)).Append('\n');
+        }
+        sb.Append(IAstNode.INDENT.X(indent)).Append(')');
+        return sb.ToString();
     }
 }

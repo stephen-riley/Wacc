@@ -1,10 +1,11 @@
+using System.Text;
 using Wacc.Parse;
 using Wacc.Tokens;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Function(string Type, string Name, Statement Body) : IAstNode
+public record Function(string Type, string Name, IAstNode Body) : IAstNode
 {
     public static Function Parse(Queue<Token> tokenStream)
     {
@@ -18,5 +19,15 @@ public record Function(string Type, string Name, Statement Body) : IAstNode
         tokenStream.Expect(CloseBrace);
 
         return new Function("int", ident.Str ?? "", stat);
+    }
+
+    public string ToPrettyString(int indent = 0)
+    {
+        var sb = new StringBuilder();
+        sb.Append("Function(\n");
+        sb.Append(IAstNode.IndentStr(indent + 1)).Append($"name={Name},\n");
+        sb.Append(IAstNode.IndentStr(indent + 1)).Append($"Body={Body.ToPrettyString(indent + 1)}\n");
+        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        return sb.ToString();
     }
 }

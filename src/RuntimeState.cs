@@ -1,5 +1,6 @@
 using CommandLine;
 using Wacc.Ast;
+using Wacc.CodeGen.AbstractAsm;
 using Wacc.Tokens;
 
 namespace Wacc;
@@ -15,13 +16,17 @@ public class RuntimeState
     [Option('c', "codegen", HelpText = "Perform lexing, parsing, and assembly generation, but stop before code emission")]
     public bool OnlyThroughCodeGen { get; set; } = false;
 
+    [Option('e', "codegen", HelpText = "Perform lexing, parsing, assembly generation, and code emission")]
+    public bool OnlyThroughCodeEmit { get; set; } = false;
+
     [Option('v', "verbose", HelpText = "Verbose output on STDERR")]
     public bool Verbose { get; set; }
 
     public bool DoLexer { get; } = true;
-    public bool DoParser => !OnlyThroughParser;
+    public bool DoParser => !OnlyThroughLexer;
     public bool DoCodeGen => !OnlyThroughLexer && !OnlyThroughParser;
     public bool DoCodeEmission => !OnlyThroughLexer && !OnlyThroughParser && !OnlyThroughCodeGen;
+    public bool DoAll => !(OnlyThroughLexer || OnlyThroughParser || OnlyThroughCodeGen || OnlyThroughCodeEmit);
 
     [Value(0, MetaName = "input file", HelpText = ".c file to compile", Required = true)]
     public required string InputFile { get; set; }
@@ -31,4 +36,6 @@ public class RuntimeState
     public List<Token> TokenStream { get; set; } = [];
 
     public IAstNode Ast { get; set; } = null!;
+
+    public IEnumerable<IAbstractAsm> AbstractInstructions { get; set; } = null!;
 }

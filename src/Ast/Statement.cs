@@ -5,7 +5,7 @@ namespace Wacc.Ast;
 
 public class Statement : IAstNode
 {
-    public static Statement Parse(Queue<Token> tokenStream)
+    public static IAstNode Parse(Queue<Token> tokenStream)
     {
         return tokenStream.Peek().TokenType switch
         {
@@ -13,4 +13,7 @@ public class Statement : IAstNode
             _ => throw new NotImplementedException()
         };
     }
+
+    public string ToPrettyString(int indent = 0)
+        => throw new NotImplementedException($"{nameof(Statement)}.{nameof(ToPrettyString)}");
 }

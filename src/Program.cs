@@ -4,9 +4,9 @@ using Wacc.CodeGen;
 using Wacc.Emit;
 using Wacc.Lex;
 
-// Console.Error.WriteLine("Wacc 1.0");
+Console.Error.WriteLine("Wacc 1.0");
 
-CommandLine.Parser.Default.ParseArguments<RuntimeState>(args)
+Parser.Default.ParseArguments<RuntimeState>(args)
     .WithParsed(rts =>
     {
         rts.Text = File.ReadAllText(rts.InputFile);
@@ -14,15 +14,35 @@ CommandLine.Parser.Default.ParseArguments<RuntimeState>(args)
     });
 // .WithNotParsed(HandleParseError);
 
-void Entrypoint(RuntimeState rts)
+static void Entrypoint(RuntimeState rts)
 {
+    Console.Error.WriteLine("CLI: " + Parser.Default.FormatCommandLine(rts));
+
     try
     {
-        new Lexer(rts).Execute();
-        new Wacc.Parse.Parser(rts).Execute();
-        new CodeGenerator(rts).Execute();
-        new CodeEmitter(rts).Execute();
-        Environment.Exit(0);
+        if (rts.DoLexer || rts.DoAll)
+        {
+            Console.Error.WriteLine("* Lexer");
+            new Lexer(rts).Execute();
+        }
+
+        if (rts.DoParser || rts.DoAll)
+        {
+            Console.Error.WriteLine("* Parser");
+            new Wacc.Parse.Parser(rts).Execute();
+        }
+
+        if (rts.DoCodeGen || rts.DoAll)
+        {
+            Console.Error.WriteLine("* CodeGen");
+            new CodeGenerator(rts).Execute();
+        }
+
+        if (rts.DoCodeEmission || rts.DoAll)
+        {
+            Console.Error.WriteLine("* CodeEmit");
+            new CodeEmitter(rts).Execute();
+        }
     }
     catch (Exception e)
     {

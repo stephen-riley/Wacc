@@ -13,6 +13,13 @@ public class Parser(RuntimeState opts)
         var toks = new Queue<Token>(Options.TokenStream);
         toks.Enqueue(new Token(TokenType.EOF, Options.Text.Length + 1, "", 0));
         var program = Ast.Program.Parse(toks);
+        Options.Ast = program;
+
+        if (Options.Verbose)
+        {
+            Console.Error.WriteLine(program.ToPrettyString());
+        }
+
         return true;
     }
 }

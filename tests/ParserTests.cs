@@ -1,13 +1,12 @@
 using Wacc.Lex;
 using Wacc.Parse;
-using Wacc.Tokens;
 
 namespace Wacc.Tests;
 
 [TestClass]
 public class ParserTests
 {
-    private static readonly RuntimeState DummyRts = new() { InputFile = "" };
+    private static readonly RuntimeState DummyRts = new() { InputFile = "", Verbose = true };
     private const string fixturesPath = "../../../../fixtures";
 
     [TestMethod]

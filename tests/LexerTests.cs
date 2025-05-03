@@ -58,6 +58,7 @@ public class LexerTests
 
     [TestMethod]
     [DataRow("at_sign.c")]
+    [DataRow("invalid_identifier_2.c")]
     public void LexExpectFailure(string filename)
     {
         var text = File.ReadAllText($"{fixturesPath}/invalid/{filename}");
