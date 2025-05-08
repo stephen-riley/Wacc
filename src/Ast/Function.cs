@@ -24,9 +24,9 @@ public record Function(string Type, string Name, IAstNode Body) : IAstNode
     public string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.Append("Function(\n");
-        sb.Append(IAstNode.IndentStr(indent + 1)).Append($"name={Name},\n");
-        sb.Append(IAstNode.IndentStr(indent + 1)).Append($"Body={Body.ToPrettyString(indent + 1)}\n");
+        sb.AppendLine("Function(");
+        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"name={Name}");
+        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"Body={Body.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }

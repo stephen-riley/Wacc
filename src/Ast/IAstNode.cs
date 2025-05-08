@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Wacc.Exceptions;
 using Wacc.Extensions;
 using Wacc.Tokens;
@@ -8,9 +6,11 @@ namespace Wacc.Ast;
 
 public interface IAstNode
 {
-    const string INDENT = "    ";
+    const string INDENT = "  ";
 
     public static string IndentStr(int indent = 0) => INDENT.X(indent);
+
+    public static bool CanParse(Queue<Token> tokenStream) => throw new NotImplementedException();
 
     public static IAstNode Parse(Queue<Token> tokenStream) => throw new ParseError();
 

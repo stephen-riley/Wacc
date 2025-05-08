@@ -9,7 +9,7 @@ public class Lexer(RuntimeState opts)
 {
     public RuntimeState RuntimeState = opts;
 
-    private HashSet<TokenType> ignoredTokens = [WHITESPACE, COMMENT_SINGLE_LINE, COMMENT_MULTI_LINE];
+    private HashSet<TokenType> IgnoredTokens = [WHITESPACE, COMMENT_SINGLE_LINE, COMMENT_MULTI_LINE];
 
     public OrderedDictionary<TokenType, Regex> Patterns { get; set; } = new()
     {
@@ -20,12 +20,15 @@ public class Lexer(RuntimeState opts)
         { VoidKw, new Regex(@"\Gvoid\b") },
         { ReturnKw, new Regex(@"\Greturn\b") },
         { Identifier, new Regex(@"\G[a-zA-Z_]\w*\b") },
-        { Constant, new Regex(@"\G[0-9]+\b") },
+        { Decrement, new Regex(@"\G--")},
+        { Constant, new Regex(@"\G-?[0-9]+\b") },
         { OpenParen, new Regex(@"\G\(") },
         { CloseParen, new Regex(@"\G\)") },
         { OpenBrace, new Regex(@"\G{") },
         { CloseBrace, new Regex(@"\G}") },
         { Semicolon, new Regex(@"\G;") },
+        { Complement, new Regex(@"\G~")},
+        { Negate, new Regex(@"\G-")},
         { EOF, new Regex(@"\G$", RegexOptions.Multiline) },
     };
 
@@ -58,7 +61,7 @@ public class Lexer(RuntimeState opts)
                 var match = re.Match(text, startat: index);
                 if (match.Success)
                 {
-                    if (includeIgnored || !ignoredTokens.Contains(tok))
+                    if (includeIgnored || !IgnoredTokens.Contains(tok))
                     {
                         var s = match.Value;
                         if (string.IsNullOrWhiteSpace(s))

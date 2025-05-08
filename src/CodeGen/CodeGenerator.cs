@@ -1,5 +1,6 @@
 using Wacc.Ast;
 using Wacc.CodeGen.AbstractAsm;
+using Wacc.Exceptions;
 
 namespace Wacc.CodeGen;
 
@@ -36,19 +37,25 @@ public class CodeGenerator(RuntimeState opts)
 
             case Return r:
                 var expr = Walk(r.Expr);
-                // TODO: that MoveGen will get fixed in the future
-                return [
-                    new MovGen(new OperandRegGen(Register.W0),expr.ToArray()[0]),
+                // TO DO: that MoveGen will get fixed in the future
+                return [.. expr,
+                    new MovGen(new OperandRegGen(Register.W0), new OperandRegGen(Register.W10)),
                     new RetGen()
                 ];
 
             case Constant c:
                 return [new ImmGen(c.Int)];
 
+            case UnaryOp u:
+                return u.Op switch
+                {
+                    "-" => [new NegGen(new OperandRegGen(Register.W10), new OperandRegGen(Register.W10))],
+                    "~" => [new MvnGen(new OperandRegGen(Register.W10), new OperandRegGen(Register.W10))],
+                    _ => throw new CodeGenError($"invalid UnaryOp '{u.Op}'"),
+                };
+
             default:
                 throw new NotImplementedException($"{nameof(CodeGenerator)}.{nameof(Walk)} can't handle {node.GetType()} yet");
         }
     }
-
-    internal static T Do<T>(Func<T> f) => f();
 }

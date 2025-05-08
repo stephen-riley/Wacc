@@ -1,19 +1,42 @@
+using System.Text;
+using Wacc.Extensions;
 using Wacc.Parse;
 using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record Expression : IAstNode
+public record Expression(IAstNode SubExpr) : IAstNode
 {
+    public static bool CanParse(Queue<Token> tokenStream)
+        => tokenStream.PeekFor([TokenType.Constant, TokenType.OpenParen])
+            || UnaryOp.CanParse(tokenStream);
+
     public static IAstNode Parse(Queue<Token> tokenStream)
     {
-        return tokenStream.Peek().TokenType switch
+        var tok = tokenStream.Peek();
+
+        return tok.TokenType switch
         {
             TokenType.Constant => Constant.Parse(tokenStream),
-            _ => throw new NotImplementedException($"")
+            TokenType.OpenParen => Ext.Do(() =>
+            {
+                tokenStream.Expect(TokenType.OpenParen);
+                var expr = Parse(tokenStream);
+                tokenStream.Expect(TokenType.CloseParen);
+                return new Expression(expr);
+            }),
+            _ => UnaryOp.Parse(tokenStream)
         };
     }
 
     public string ToPrettyString(int indent = 0)
-        => throw new NotImplementedException($"{nameof(Expression)}.{nameof(ToPrettyString)}");
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("Expression(");
+        sb.Append(IAstNode.IndentStr(indent + 1));
+        sb.AppendLine(SubExpr.ToPrettyString(indent + 1));
+        sb.Append(IAstNode.IndentStr(indent));
+        sb.Append(')');
+        return sb.ToString();
+    }
 }
