@@ -23,7 +23,7 @@ public record Expression(IAstNode SubExpr) : IAstNode
                 tokenStream.Expect(TokenType.OpenParen);
                 var expr = Parse(tokenStream);
                 tokenStream.Expect(TokenType.CloseParen);
-                return new Expression(expr);
+                return expr;
             }),
             _ => UnaryOp.Parse(tokenStream)
         };
