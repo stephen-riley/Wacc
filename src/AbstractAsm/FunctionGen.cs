@@ -1,7 +1,6 @@
-using System.Reflection;
 using System.Text;
 
-namespace Wacc.CodeGen.AbstractAsm;
+namespace Wacc.AbstractAsm;
 
 public record FunctionGen(string Name, IEnumerable<IAbstractAsm> Body) : IAbstractAsm
 {

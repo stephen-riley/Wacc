@@ -1,5 +1,5 @@
 
-namespace Wacc.CodeGen.AbstractAsm;
+namespace Wacc.AbstractAsm;
 
 public record RetGen : IAbstractAsm
 {

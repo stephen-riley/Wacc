@@ -1,4 +1,6 @@
-namespace Wacc.CodeGen.AbstractAsm;
+using Wacc.CodeGen;
+
+namespace Wacc.AbstractAsm;
 
 public record OperandRegGen(Register Reg) : IAbstractAsm
 {

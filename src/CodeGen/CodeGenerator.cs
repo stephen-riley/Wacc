@@ -1,6 +1,6 @@
 using Wacc.Ast;
-using Wacc.CodeGen.AbstractAsm;
 using Wacc.Exceptions;
+using Wacc.Tacky.Instruction;
 
 namespace Wacc.CodeGen;
 
@@ -8,7 +8,7 @@ public class CodeGenerator(RuntimeState opts)
 {
     public RuntimeState Options = opts;
 
-    internal List<IAbstractAsm> instructions = [];
+    internal List<ITackyInstr> instructions = [];
 
     public bool Execute()
     {
@@ -18,12 +18,12 @@ public class CodeGenerator(RuntimeState opts)
         return true;
     }
 
-    internal List<IAbstractAsm> Walk(IAstNode node)
+    internal List<ITackyInstr> Walk(IAstNode node)
     {
         switch (node)
         {
             case Ast.Program p:
-                instructions.Add(new ProgramGen());
+                instructions.Add(new TacProgram());
                 foreach (var f in p.Statements)
                 {
                     instructions.AddRange(Walk(f));

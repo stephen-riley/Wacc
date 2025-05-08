@@ -1,6 +1,6 @@
-namespace Wacc.CodeGen.AbstractAsm;
+namespace Wacc.AbstractAsm;
 
-public record MvnGen(OperandRegGen Dest, OperandRegGen Src) : IAbstractAsm
+public record NegGen(OperandRegGen Dest, OperandRegGen Src) : IAbstractAsm
 {
     public void Emit(TextWriter stream) => Console.Write(EmitString());
 

@@ -1,4 +1,4 @@
-namespace Wacc.CodeGen.AbstractAsm;
+namespace Wacc.AbstractAsm;
 
 public interface IAbstractAsm
 {

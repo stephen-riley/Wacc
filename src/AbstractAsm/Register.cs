@@ -1,8 +1,7 @@
-namespace Wacc.CodeGen;
+namespace Wacc.AbstractAsm;
 
 public enum Register
 {
-    EAX,
     W0,
     W10,
     SP,

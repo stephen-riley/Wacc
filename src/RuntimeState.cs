@@ -1,7 +1,8 @@
 using System.Text.RegularExpressions;
 using CommandLine;
+using Wacc.AbstractAsm;
 using Wacc.Ast;
-using Wacc.CodeGen.AbstractAsm;
+using Wacc.Tacky.Instruction;
 using Wacc.Tokens;
 
 namespace Wacc;
@@ -45,6 +46,8 @@ public class RuntimeState
     public List<Token> TokenStream { get; set; } = [];
 
     public IAstNode Ast { get; set; } = null!;
+
+    public TacProgram Tacky { get; set; } = null!;
 
     public IEnumerable<IAbstractAsm> AbstractInstructions { get; set; } = null!;
 
