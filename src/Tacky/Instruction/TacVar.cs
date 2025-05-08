@@ -1,4 +1,4 @@
-namespace Wacc.Tacky.Instruction
+namespace Wacc.Tacky.Instruction;
 
 public record TacVar(string Name) : TacVal
 {
