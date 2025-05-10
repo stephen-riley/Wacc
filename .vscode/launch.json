@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "--verbose --emit fixtures/valid/listing2-1.c -o /tmp/return_2",
+            "args": "--verbose --tacky fixtures/valid/multi_digit.c -o /tmp/multi_digit",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

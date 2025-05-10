@@ -15,9 +15,16 @@ public class Parser(RuntimeState opts)
         var program = Ast.Program.Parse(toks);
         Options.Ast = program;
 
-        if (Options.Verbose)
+        if (Options.Verbose || Options.OnlyThroughParser)
         {
-            Console.Error.WriteLine(program.ToPrettyString());
+            if (Options.Verbose)
+            {
+                Console.Error.WriteLine();
+                Console.Error.WriteLine("AST:");
+            }
+
+            var stream = Options.Verbose ? Console.Error : Console.Out;
+            stream.WriteLine(program.ToPrettyString());
         }
 
         return true;

@@ -15,6 +15,9 @@ public class RuntimeState
     [Option('p', "parse", HelpText = "Run the lexer and parser, but stop before assembly generation")]
     public bool OnlyThroughParser { get; set; } = false;
 
+    [Option('t', "tacky", HelpText = "Perform lexing, parsing, and assembly generation, but stop before code emission")]
+    public bool OnlyThroughTacky { get; set; } = false;
+
     [Option('c', "codegen", HelpText = "Perform lexing, parsing, and assembly generation, but stop before code emission")]
     public bool OnlyThroughCodeGen { get; set; } = false;
 
@@ -32,9 +35,10 @@ public class RuntimeState
 
     public bool DoLexer { get; } = true;
     public bool DoParser => !OnlyThroughLexer;
-    public bool DoCodeGen => !OnlyThroughLexer && !OnlyThroughParser;
-    public bool DoCodeEmission => !OnlyThroughLexer && !OnlyThroughParser && !OnlyThroughCodeGen;
-    public bool DoAll => !(OnlyThroughLexer || OnlyThroughParser || OnlyThroughCodeGen || OnlyThroughCodeEmit);
+    public bool DoTacky => !OnlyThroughLexer && !OnlyThroughParser;
+    public bool DoCodeGen => !OnlyThroughLexer && !OnlyThroughParser && !OnlyThroughTacky;
+    public bool DoCodeEmission => !OnlyThroughLexer && !OnlyThroughParser && !OnlyThroughTacky && !OnlyThroughCodeGen;
+    public bool DoAll => !(OnlyThroughLexer || OnlyThroughParser || OnlyThroughTacky || OnlyThroughCodeGen || OnlyThroughCodeEmit);
 
     [Value(0, MetaName = "input file", HelpText = ".c file to compile", Required = true)]
     public required string InputFile { get; set; }

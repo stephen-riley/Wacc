@@ -1,6 +1,5 @@
 ﻿using CommandLine;
 using Wacc;
-using Wacc.CodeGen;
 using Wacc.Emit;
 using Wacc.Exe;
 using Wacc.Lex;
@@ -33,10 +32,16 @@ static void Entrypoint(RuntimeState rts)
             new Wacc.Parse.Parser(rts).Execute();
         }
 
+        if (rts.DoTacky || rts.DoAll)
+        {
+            Console.Error.Write("tacky ");
+            new Wacc.TackyGen.TackyGenerator(rts).Execute();
+        }
+
         if (rts.DoCodeGen || rts.DoAll)
         {
             Console.Error.Write("gen ");
-            new CodeGenerator(rts).Execute();
+            throw new NotImplementedException();
         }
 
         if (rts.DoCodeEmission || rts.DoAll)
@@ -57,7 +62,12 @@ static void Entrypoint(RuntimeState rts)
     }
     catch (Exception e)
     {
-        Console.Error.WriteLine($"\nERROR: {e.Message}");
+        var eName = e.GetType().Name;
+        Console.Error.WriteLine($"\n{eName}: {e.Message}");
+        if (!eName.EndsWith("Error"))
+        {
+            Console.Error.WriteLine(e.StackTrace);
+        }
         Environment.Exit(1);
     }
 }

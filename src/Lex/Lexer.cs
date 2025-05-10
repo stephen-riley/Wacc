@@ -7,7 +7,7 @@ namespace Wacc.Lex;
 
 public class Lexer(RuntimeState opts)
 {
-    public RuntimeState RuntimeState = opts;
+    public RuntimeState Options = opts;
 
     private HashSet<TokenType> IgnoredTokens = [WHITESPACE, COMMENT_SINGLE_LINE, COMMENT_MULTI_LINE];
 
@@ -34,13 +34,21 @@ public class Lexer(RuntimeState opts)
 
     public bool Execute()
     {
-        RuntimeState.TokenStream = Lex(RuntimeState.Text);
+        Options.TokenStream = Lex(Options.Text);
 
-        if (RuntimeState.Verbose)
+        if (Options.Verbose || Options.OnlyThroughLexer)
         {
-            foreach (var t in RuntimeState.TokenStream)
+            if (Options.Verbose)
             {
-                Console.WriteLine(t);
+                Console.Error.WriteLine();
+                Console.Error.WriteLine("TOKENS:");
+            }
+
+            var stream = Options.Verbose ? Console.Error : Console.Out;
+
+            foreach (var t in Options.TokenStream)
+            {
+                stream.WriteLine(t);
             }
         }
 
@@ -80,7 +88,7 @@ public class Lexer(RuntimeState opts)
             throw new LexerError($"Cannot tokenize '{text[index..].Replace('\n', '␤')}'");
         }
 
-        RuntimeState.TokenStream = tokens;
+        Options.TokenStream = tokens;
         return tokens;
     }
 }
