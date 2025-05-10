@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "--verbose --codegen fixtures/valid/multi_digit.c -o /tmp/multi_digit",
+            "args": "--verbose --codegen fixtures/valid/listing2-1.c -o /tmp/a.out",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

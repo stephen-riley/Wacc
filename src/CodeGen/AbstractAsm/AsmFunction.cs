@@ -3,12 +3,12 @@ using Wacc.Tacky.Instruction;
 
 namespace Wacc.CodeGen.AbstractAsm;
 
-public record AsmFunction(string Name, IEnumerable<ITackyInstr> Body) : IAbstractAsm
+public record AsmFunction(string Name) : IAbstractAsm
 {
-    public void Emit(TextWriter stream) => stream.WriteLine(EmitString());
     public string EmitString()
     {
         var sb = new StringBuilder();
+        sb.AppendLine();
         sb.AppendLine($"    .globl _{Name}");
         sb.AppendLine($"_{Name}:");
         sb.AppendLine("    .cfi_startproc");

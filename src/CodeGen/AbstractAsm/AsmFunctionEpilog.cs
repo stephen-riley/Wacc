@@ -2,7 +2,8 @@ namespace Wacc.CodeGen.AbstractAsm;
 
 public record AsmFunctionEpilog(string Name) : IAbstractAsm
 {
-    public void Emit(TextWriter stream) => stream.WriteLine(EmitString());
-
-    public string EmitString() => "    .cfi_endproc\n";
+    public string EmitString() =>
+        "\n" +
+        "    .cfi_endproc\n" +
+        $"    ; end function {Name}";
 }

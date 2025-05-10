@@ -1,6 +1,6 @@
 namespace Wacc.Tacky.Instruction;
 
-public record TacUnary(string Op, TacVal Src, TacVar Dest) : ITackyInstr
+public record TacUnary(string Op, TacVal Src, TacVar Dst) : ITackyInstr
 {
     public string OpName => Op switch
     {
@@ -9,7 +9,7 @@ public record TacUnary(string Op, TacVal Src, TacVar Dest) : ITackyInstr
         _ => throw new InvalidOperationException($"no unary operator '{Op}'")
     };
 
-    public TacVar GetDst() => Dest;
+    public TacVar GetDst() => Dst;
 
-    public override string ToString() => $"Unary({OpName}, {Src}, {Dest})";
+    public override string ToString() => $"Unary({OpName}, {Src}, {Dst})";
 }

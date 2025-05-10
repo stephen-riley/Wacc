@@ -1,11 +1,11 @@
 
 namespace Wacc.CodeGen.AbstractAsm;
 
-public record AsmProgram() : IAbstractAsm
+public record AsmProgram(string Filename) : IAbstractAsm
 {
-    public void Emit(TextWriter stream) => stream.WriteLine(EmitString());
-
     public string EmitString() =>
+        $"    ; compiled from {Filename}\n" +
+        "\n" +
         "    .section __TEXT,__text,regular,pure_instructions\n" +
         "    .align 2";
 

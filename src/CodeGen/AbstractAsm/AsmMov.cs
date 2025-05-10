@@ -1,8 +1,6 @@
 namespace Wacc.CodeGen.AbstractAsm;
 
-public record AsmMov(AsmOperandReg Reg, IAbstractAsm Exp) : IAbstractAsm
+public record AsmMov(AsmOperand Src, AsmPseudoOperand Dst) : IAbstractAsm
 {
-    public void Emit(TextWriter stream) => Console.Write(EmitString());
-
-    public string EmitString() => $"mov {Reg.EmitString()}, {Exp.EmitString()}";
+    public string EmitString() => $"    Mov({Src.EmitString()}, {Dst.EmitString()})";
 }
