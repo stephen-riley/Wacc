@@ -35,13 +35,13 @@ static void Entrypoint(RuntimeState rts)
         if (rts.DoTacky || rts.DoAll)
         {
             Console.Error.Write("tacky ");
-            new Wacc.TackyGen.TackyGenerator(rts).Execute();
+            new Wacc.Tacky.TackyGenerator(rts).Execute();
         }
 
         if (rts.DoCodeGen || rts.DoAll)
         {
             Console.Error.Write("gen ");
-            throw new NotImplementedException();
+            new Wacc.CodeGen.CodeGenerator(rts).Execute();
         }
 
         if (rts.DoCodeEmission || rts.DoAll)

@@ -2,7 +2,7 @@ using Wacc.Ast;
 using Wacc.Exceptions;
 using Wacc.Tacky.Instruction;
 
-namespace Wacc.TackyGen;
+namespace Wacc.Tacky;
 
 public class TackyGenerator(RuntimeState opts)
 {
