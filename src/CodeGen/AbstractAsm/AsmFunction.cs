@@ -1,9 +1,9 @@
 using System.Text;
 using Wacc.Tacky.Instruction;
 
-namespace Wacc.AbstractAsm;
+namespace Wacc.CodeGen.AbstractAsm;
 
-public record FunctionGen(string Name, IEnumerable<ITackyInstr> Body) : IAbstractAsm
+public record AsmFunction(string Name, IEnumerable<ITackyInstr> Body) : IAbstractAsm
 {
     public void Emit(TextWriter stream) => stream.WriteLine(EmitString());
     public string EmitString()

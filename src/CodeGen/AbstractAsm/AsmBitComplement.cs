@@ -1,6 +1,6 @@
-namespace Wacc.AbstractAsm;
+namespace Wacc.CodeGen.AbstractAsm;
 
-public record NegGen(OperandRegGen Dest, OperandRegGen Src) : IAbstractAsm
+public record AsmBitComplement(AsmOperandReg Dest, AsmOperandReg Src) : IAbstractAsm
 {
     public void Emit(TextWriter stream) => Console.Write(EmitString());
 

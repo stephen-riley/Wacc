@@ -1,6 +1,6 @@
-namespace Wacc.AbstractAsm;
+namespace Wacc.CodeGen.AbstractAsm;
 
-public record OperandImmGen(int Imm) : IAbstractAsm
+public record AsmOperandImm(int Imm) : IAbstractAsm
 {
     public void Emit(TextWriter stream) => Console.Write(EmitString());
 

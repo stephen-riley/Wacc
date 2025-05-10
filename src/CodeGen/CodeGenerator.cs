@@ -1,4 +1,4 @@
-using Wacc.AbstractAsm;
+using Wacc.CodeGen.AbstractAsm;
 using Wacc.Exceptions;
 using Wacc.Tacky.Instruction;
 
@@ -42,10 +42,10 @@ public class CodeGenerator(RuntimeState opts)
         switch (instr)
         {
             case TacProgram p:
-                return [new ProgramGen()];
+                return [new AsmProgram()];
 
             case TacFunction f:
-                return [new FunctionGen(f.Name, f.Instructions)];
+                return [new AsmFunction(f.Name, f.Instructions)];
 
             default:
                 throw new CodeGenError($"{nameof(CodeGenerator)}.{nameof(Translate)} can't handle type {instr.GetType().Name} yet");

@@ -1,7 +1,7 @@
 
-namespace Wacc.AbstractAsm;
+namespace Wacc.CodeGen.AbstractAsm;
 
-public record ProgramEpilogGen() : IAbstractAsm
+public record AsmProgramEpilog() : IAbstractAsm
 {
     public void Emit(TextWriter stream) => stream.WriteLine(EmitString());
 

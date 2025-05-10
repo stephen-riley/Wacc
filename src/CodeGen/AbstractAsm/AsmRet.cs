@@ -1,7 +1,7 @@
 
-namespace Wacc.AbstractAsm;
+namespace Wacc.CodeGen.AbstractAsm;
 
-public record RetGen : IAbstractAsm
+public record AsmRet : IAbstractAsm
 {
     public void Emit(TextWriter stream) => stream.Write(EmitString());
 

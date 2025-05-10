@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 using CommandLine;
-using Wacc.AbstractAsm;
+using Wacc.CodeGen.AbstractAsm;
 using Wacc.Ast;
 using Wacc.Tacky.Instruction;
 using Wacc.Tokens;

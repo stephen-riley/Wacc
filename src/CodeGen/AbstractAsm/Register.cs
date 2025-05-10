@@ -1,4 +1,4 @@
-namespace Wacc.AbstractAsm;
+namespace Wacc.CodeGen.AbstractAsm;
 
 public enum Register
 {
