@@ -14,6 +14,7 @@ public class CodeGenerator(RuntimeState opts)
     public bool Execute()
     {
         TranslateProgram(Options.Tacky);
+        Options.AbstractAsm = Asm;
 
         if (Options.Verbose)
         {
@@ -73,7 +74,7 @@ public class CodeGenerator(RuntimeState opts)
                 break;
 
             case TacReturn r:
-                Asm.Add(new AsmMov(TranslateVal(r.Val), new AsmPseudoOperand(Register.RETURN.ToString())));
+                Asm.Add(new AsmMov(TranslateVal(r.Val), new AsmPseudoOperand(Register.RET.ToString())));
                 Asm.Add(new AsmRet());
                 break;
 

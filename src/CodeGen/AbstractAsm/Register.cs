@@ -28,6 +28,6 @@ public enum Register
     W15,
 
     // special definitions
-    RETURN = W0,
+    RET = W0,
     LAST_REGISTER = W15,
 }

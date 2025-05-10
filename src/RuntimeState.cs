@@ -53,7 +53,7 @@ public class RuntimeState
 
     public TacProgram Tacky { get; set; } = null!;
 
-    public IEnumerable<IAbstractAsm> AbstractInstructions { get; set; } = null!;
+    public IEnumerable<IAbstractAsm> AbstractAsm { get; set; } = null!;
 
     public string Assembly { get; set; } = null!;
 }
