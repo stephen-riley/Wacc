@@ -8,7 +8,7 @@ public record AsmFunction(string Name) : AsmInstruction
 
     internal int LocalsSize => (int)Math.Ceiling(StackOffsets.Count * 4 / 16.0f) * 16;
 
-    public override string EmitString()
+    public override string EmitIrString()
     {
         var sb = new StringBuilder();
         sb.AppendLine();

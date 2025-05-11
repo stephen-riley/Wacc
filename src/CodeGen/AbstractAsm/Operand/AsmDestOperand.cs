@@ -2,9 +2,9 @@ namespace Wacc.CodeGen.AbstractAsm.Operand;
 
 public abstract record AsmDestOperand() : AsmOperand
 {
-    public override void Emit(TextWriter stream)
+    public override void EmitIr(TextWriter stream)
         => throw new NotImplementedException();
 
-    public override string EmitString()
+    public override string EmitIrString()
         => throw new NotImplementedException();
 }

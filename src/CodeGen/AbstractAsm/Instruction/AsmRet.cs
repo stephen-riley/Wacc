@@ -2,5 +2,5 @@ namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
 public record AsmRet() : AsmInstruction
 {
-    public override string EmitString() => "        Ret";
+    public override string EmitIrString() => "        Ret";
 }

@@ -5,5 +5,5 @@ public record AsmPseudoOperand(string Name) : AsmDestOperand
 {
     public AsmPseudoOperand(TacVar v) : this(v.Name) { }
 
-    public override string EmitString() => $"Pseudo(\"{Name}\")";
+    public override string EmitIrString() => $"Pseudo(\"{Name}\")";
 }

@@ -4,5 +4,5 @@ namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
 public record AsmStoreStack(AsmOperand Src, AsmStackOperand Dst) : AsmInstruction
 {
-    public override string EmitString() => $"        StoreStack({Src.EmitString()}, {Dst.EmitString()})";
+    public override string EmitIrString() => $"        StoreStack({Src.EmitIrString()}, {Dst.EmitIrString()})";
 }

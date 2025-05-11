@@ -43,7 +43,7 @@ public class CodeGenerator(RuntimeState opts)
 
             foreach (var a in Asm)
             {
-                a?.Emit(stream);
+                a?.EmitIr(stream);
             }
         }
     }

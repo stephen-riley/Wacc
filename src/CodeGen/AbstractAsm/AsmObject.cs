@@ -2,6 +2,6 @@ namespace Wacc.CodeGen.AbstractAsm;
 
 public abstract record AsmObject
 {
-    public abstract string EmitString();
-    public virtual void Emit(TextWriter stream) => stream.WriteLine(EmitString());
+    public abstract string EmitIrString();
+    public virtual void EmitIr(TextWriter stream) => stream.WriteLine(EmitIrString());
 }

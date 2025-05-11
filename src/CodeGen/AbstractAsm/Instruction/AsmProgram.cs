@@ -2,7 +2,7 @@ namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
 public record AsmProgram(string Filename) : AsmInstruction
 {
-    public override string EmitString() =>
+    public override string EmitIrString() =>
         $"        ; compiled from {Filename}\n" +
         "\n" +
         "        .section __TEXT,__text,regular,pure_instructions\n" +
