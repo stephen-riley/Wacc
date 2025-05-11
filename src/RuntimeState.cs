@@ -4,6 +4,7 @@ using Wacc.CodeGen.AbstractAsm;
 using Wacc.Ast;
 using Wacc.Tacky.Instruction;
 using Wacc.Tokens;
+using Wacc.CodeGen.AbstractAsm.Instruction;
 
 namespace Wacc;
 
@@ -33,6 +34,9 @@ public class RuntimeState
     [Option('o', "output", HelpText = "Output exe filename")]
     public string? OutputFile { get; set; }
 
+    [Option('O', "optimize", HelpText = "Optimization level (0=none)")]
+    public int Optimize { get; set; } = 0;
+
     public bool DoLexer { get; } = true;
     public bool DoParser => !OnlyThroughLexer;
     public bool DoTacky => !OnlyThroughLexer && !OnlyThroughParser;
@@ -53,7 +57,7 @@ public class RuntimeState
 
     public TacProgram Tacky { get; set; } = null!;
 
-    public IEnumerable<IAbstractAsm> AbstractAsm { get; set; } = null!;
+    public IEnumerable<AsmInstruction> AbstractAsm { get; set; } = null!;
 
     public string Assembly { get; set; } = null!;
 }

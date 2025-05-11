@@ -2,7 +2,7 @@ namespace Wacc.Tacky.Instruction;
 
 public record TacFunction(string Name, IEnumerable<ITackyInstr> Instructions) : ITackyInstr
 {
-    public TacVar? Dst() => null;
+    public List<TacVar> Locals { get; } = [];
 
     public override string ToString() => $"; function {Name}";
 }

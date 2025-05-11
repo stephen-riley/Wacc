@@ -1,4 +1,4 @@
-namespace Wacc.CodeGen.AbstractAsm;
+namespace Wacc.CodeGen.AbstractAsm.Operand;
 
 public record AsmImmOperand(int Imm) : AsmOperand
 {

@@ -1,8 +1,7 @@
+namespace Wacc.CodeGen.AbstractAsm.Operand;
 using Wacc.Tacky.Instruction;
 
-namespace Wacc.CodeGen.AbstractAsm;
-
-public record AsmPseudoOperand(string Name) : AsmOperand
+public record AsmPseudoOperand(string Name) : AsmDestOperand
 {
     public AsmPseudoOperand(TacVar v) : this(v.Name) { }
 

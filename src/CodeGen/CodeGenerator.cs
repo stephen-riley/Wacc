@@ -1,6 +1,8 @@
-using Wacc.Ast;
 using Wacc.CodeGen.AbstractAsm;
+using Wacc.CodeGen.AbstractAsm.Instruction;
+using Wacc.CodeGen.AbstractAsm.Operand;
 using Wacc.Exceptions;
+using Wacc.Extensions;
 using Wacc.Tacky.Instruction;
 
 namespace Wacc.CodeGen;
@@ -9,17 +11,30 @@ public class CodeGenerator(RuntimeState opts)
 {
     public RuntimeState Options => opts;
 
-    internal List<IAbstractAsm> Asm = [];
+    internal List<AsmInstruction> Asm = [];
 
     public bool Execute()
     {
         TranslateProgram(Options.Tacky);
+        Dump("asm, pass 1");
+
+        Asm = ResolvePseudoRegisters();
+        Dump("asm, pass 2");
+
+        Asm = FixUpInstructions();
+        Dump("asm, pass 3");
+
         Options.AbstractAsm = Asm;
 
+        return true;
+    }
+
+    internal void Dump(string title)
+    {
         if (Options.Verbose)
         {
             Console.Error.WriteLine();
-            Console.Error.WriteLine("ABSTRACT ASM:");
+            Console.Error.WriteLine(title.ToUpper());
         }
 
         if (Options.Verbose || Options.OnlyThroughCodeGen)
@@ -31,51 +46,58 @@ public class CodeGenerator(RuntimeState opts)
                 a?.Emit(stream);
             }
         }
-
-        return true;
     }
 
     internal void TranslateProgram(TacProgram p)
     {
-        Asm.Add(new AsmProgram(Options.InputFile));
+        Asm.Add(AF.Program(Options.InputFile));
 
         foreach (var f in p.Functions)
         {
             TranslateFunction(f);
         }
 
-        Asm.Add(new AsmProgramEpilog());
+        Asm.Add(AF.ProgramEpilog());
     }
 
     internal void TranslateFunction(TacFunction f)
     {
-        Asm.Add(new AsmFunction(f.Name));
+        var af = AF.Function(f.Name);
+
+        int curOffset = 0;  // TODO: this isn't right--check on the calling convention in the AArch64 book
+        foreach (var l in f.Locals)
+        {
+            af.StackOffsets[l.Name] = curOffset;
+            curOffset -= 4;
+        }
+
+        Asm.Add(af);
         foreach (var i in f.Instructions)
         {
-            TranslateTacInstruction(i);
+            TranslateTacInstruction(i, af);
         }
-        Asm.Add(new AsmFunctionEpilog(f.Name));
+        Asm.Add(AF.FunctionEpilog(f.Name));
     }
 
-    internal void TranslateTacInstruction(ITackyInstr instr)
+    internal void TranslateTacInstruction(ITackyInstr instr, AsmFunction curFunc)
     {
-        var bundle = new List<IAbstractAsm>();
+        var bundle = new List<AsmInstruction>();
 
         switch (instr)
         {
             case TacUnary u when u.OpName == "Negate":
-                Asm.Add(new AsmMov(TranslateVal(u.Src), new AsmPseudoOperand(u.Dst)));
-                Asm.Add(new AsmNeg(new AsmPseudoOperand(u.Dst)));
+                Asm.Add(AF.Mov(TranslateVal(u.Src), AF.PseudoOperand(u.Dst)));
+                Asm.Add(AF.Neg(AF.PseudoOperand(u.Dst)));
                 break;
 
             case TacUnary u when u.OpName == "Complement":
-                Asm.Add(new AsmMov(TranslateVal(u.Src), new AsmPseudoOperand(u.Dst)));
-                Asm.Add(new AsmBitNot(new AsmPseudoOperand(u.Dst)));
+                Asm.Add(AF.Mov(TranslateVal(u.Src), AF.PseudoOperand(u.Dst)));
+                Asm.Add(AF.BitNot(AF.PseudoOperand(u.Dst)));
                 break;
 
             case TacReturn r:
-                Asm.Add(new AsmMov(TranslateVal(r.Val), new AsmPseudoOperand(Register.RET.ToString())));
-                Asm.Add(new AsmRet());
+                Asm.Add(AF.Mov(TranslateVal(r.Val), AF.RegOperand(Register.RETVAL)));
+                Asm.Add(AF.Ret());
                 break;
 
             default:
@@ -86,12 +108,12 @@ public class CodeGenerator(RuntimeState opts)
     internal AsmOperand TranslateVal(TacVal val)
         => val switch
         {
-            TacConstant c => new AsmImmOperand(c.Value),
-            TacVar v => new AsmPseudoOperand(v.Name),
+            TacConstant c => AF.ImmOperand(c.Value),
+            TacVar v => AF.PseudoOperand(v.Name),
             _ => throw new CodeGenError($"{nameof(TranslateVal)}: can't handle TacVal type {val.GetType().Name}")
         };
 
-    internal static Register AssignRegisterForTmp(string tmp, int baseRegister = 9)
+    internal static Register AssignRegisterForTmp(string tmp, int baseRegister = 10)
     {
         if (!tmp.StartsWith("tmp."))
         {
@@ -107,5 +129,56 @@ public class CodeGenerator(RuntimeState opts)
             _ when withOffset > Register.LAST_REGISTER => throw new CodeGenError($"{nameof(AssignRegisterForTmp)}: {tmp} is invalid"),
             _ => (Register)tmpIndex + baseRegister
         };
+    }
+
+    internal List<AsmInstruction> ResolvePseudoRegisters()
+    {
+        AsmFunction curFunc = null!;
+        var pass2 = new List<AsmInstruction>();
+
+        AsmOperand Src(AsmOperand o)
+            => o is AsmPseudoOperand po ? AF.StackOperand(curFunc.StackOffsets[po.Name]) : o;
+
+        AsmDestOperand Dst(AsmDestOperand d)
+            => d is AsmPseudoOperand po ? AF.StackOperand(curFunc.StackOffsets[po.Name]) : d;
+
+        foreach (var i in Asm)
+        {
+            pass2.Add(i switch
+            {
+                AsmBitNot bn => AF.BitNot(Src(bn.Src)),
+                AsmFunction f => Ext.Do(() => { curFunc = f; return f; }),
+                AsmMov m => AF.Mov(Src(m.Src), Dst(m.Dst)),
+                AsmNeg n => AF.Neg(Src(n.Src)),
+                _ => i
+            });
+        }
+
+        return pass2;
+    }
+
+    internal List<AsmInstruction> FixUpInstructions()
+    {
+        var pass3 = new List<AsmInstruction>();
+
+        foreach (var i in Asm)
+        {
+            if (i is AsmMov mov && mov.Src is AsmStackOperand && mov.Dst is AsmStackOperand)
+            {
+                // Replace Mov(Stack(x), Stack(y)) with
+                //   LoadStack(Stack(x), Reg(SCRATCH))
+                //   StoreStack(Reg(SCRATCH), Stack(y))
+                pass3.AddRange([
+                    AF.LoadStack((AsmStackOperand)mov.Src, AF.RegOperand(Register.SCRATCH)),
+                    AF.StoreStack(AF.RegOperand(Register.SCRATCH), (AsmStackOperand)mov.Dst)
+                ]);
+            }
+            else
+            {
+                pass3.Add(i);
+            }
+        }
+
+        return pass3;
     }
 }

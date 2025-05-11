@@ -28,6 +28,7 @@ public enum Register
     W15,
 
     // special definitions
-    RET = W0,
+    RETVAL = W0,
+    SCRATCH = W9,
     LAST_REGISTER = W15,
 }

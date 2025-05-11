@@ -12,7 +12,20 @@ public class TackyGenerator(RuntimeState opts)
     internal List<ITackyInstr> instructions = [];
 
     internal int TmpCounter = 0;
-    internal TacVar ReserveTmpVar() => new($"tmp.{TmpCounter++}");
+    internal TacVar ReserveTmpVar()
+    {
+        if (functions.Count > 0)
+        {
+            var tv = new TacVar($"tmp.{TmpCounter++}");
+            functions[^1].Locals.Add(tv);
+            return tv;
+        }
+        else
+        {
+            throw new TackyGenError("cannot allocate tmp var with no function declared");
+        }
+    }
+
     internal TacVar? GetLastTmpVar() => instructions[^1].GetDst();
 
     public bool Execute()
@@ -54,8 +67,9 @@ public class TackyGenerator(RuntimeState opts)
 
             case Function f:
                 instructions = [];
-                EmitTacky(f.Body);
                 functions.Add(new TacFunction(f.Name, instructions));
+                TmpCounter = 0;     // TODO: awkward here, shouldn't have to do this manually
+                EmitTacky(f.Body);
                 break;
 
             case Return r:

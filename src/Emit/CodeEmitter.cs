@@ -1,6 +1,6 @@
-using System.Text;
-using Wacc.Ast;
 using Wacc.CodeGen.AbstractAsm;
+using Wacc.CodeGen.AbstractAsm.Instruction;
+using Wacc.CodeGen.AbstractAsm.Operand;
 
 namespace Wacc.Emit;
 
@@ -26,7 +26,7 @@ public class CodeEmitter(RuntimeState opts)
         return true;
     }
 
-    internal static void Emit(IEnumerable<IAbstractAsm> asm, TextWriter stream)
+    internal static void Emit(IEnumerable<AsmObject> asm, TextWriter stream)
     {
         foreach (var i in asm)
         {
@@ -34,12 +34,12 @@ public class CodeEmitter(RuntimeState opts)
         }
     }
 
-    internal static string Render(IAbstractAsm asm) => asm switch
+    internal static string Render(AsmObject asm) => asm switch
     {
-        AsmBitNot abn => $"    mvn  {Render(abn.Src)}, {Render(abn.Src)}",
-        AsmNeg an => $"    neg  {Render(an.Src)}, {Render(an.Src)}",
-        AsmMov am => $"    mov  {Render(am.Dst)}, {Render(am.Src)}",
-        AsmRet => "    ret",
+        AsmBitNot abn => $"        mvn  {Render(abn.Src)}, {Render(abn.Src)}",
+        AsmNeg an => $"        neg  {Render(an.Src)}, {Render(an.Src)}",
+        AsmMov am => $"        mov  {Render(am.Dst)}, {Render(am.Src)}",
+        AsmRet => "        ret",
         AsmImmOperand aio => $"#{aio.Imm}",
         AsmPseudoOperand apo => $"*{{{apo.Name}}}",
         _ => asm.EmitString()
