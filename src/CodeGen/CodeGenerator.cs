@@ -18,10 +18,10 @@ public class CodeGenerator(RuntimeState opts)
         TranslateProgram(Options.Tacky);
         Dump("asm IR, pass 1");
 
-        Asm = ResolvePseudoRegisters();
+        Asm = ResolvePseudoRegistersP2.Execute(Asm);
         Dump("asm IR, pass 2");
 
-        Asm = FixUpInstructions();
+        Asm = Pass3FixupInstructionsP3.Execute(Asm);
         Dump("asm IR, pass 3");
 
         Options.AbstractAsm = Asm;
@@ -131,56 +131,5 @@ public class CodeGenerator(RuntimeState opts)
             _ when withOffset > Register.LAST_REGISTER => throw new CodeGenError($"{nameof(AssignRegisterForTmp)}: {tmp} is invalid"),
             _ => (Register)tmpIndex + baseRegister
         };
-    }
-
-    internal List<AsmInstruction> ResolvePseudoRegisters()
-    {
-        AsmFunction curFunc = null!;
-        var pass2 = new List<AsmInstruction>();
-
-        AsmOperand Src(AsmOperand o)
-            => o is AsmPseudoOperand po ? AF.StackOperand(curFunc.StackOffsets[po.Name]) : o;
-
-        AsmDestOperand Dst(AsmDestOperand d)
-            => d is AsmPseudoOperand po ? AF.StackOperand(curFunc.StackOffsets[po.Name]) : d;
-
-        foreach (var i in Asm)
-        {
-            pass2.Add(i switch
-            {
-                AsmBitNot bn => AF.BitNot(Src(bn.Src)),
-                AsmFunction f => Ext.Do(() => { curFunc = f; return f; }),
-                AsmMov m => AF.Mov(Src(m.Src), Dst(m.Dst)),
-                AsmNeg n => AF.Neg(Src(n.Src)),
-                _ => i
-            });
-        }
-
-        return pass2;
-    }
-
-    internal List<AsmInstruction> FixUpInstructions()
-    {
-        var pass3 = new List<AsmInstruction>();
-
-        foreach (var i in Asm)
-        {
-            if (i is AsmMov mov && mov.Src is AsmStackOperand && mov.Dst is AsmStackOperand)
-            {
-                // Replace Mov(Stack(x), Stack(y)) with
-                //   LoadStack(Stack(x), Reg(SCRATCH))
-                //   StoreStack(Reg(SCRATCH), Stack(y))
-                pass3.AddRange([
-                    AF.LoadStack((AsmStackOperand)mov.Src, AF.RegOperand(Register.SCRATCH)),
-                    AF.StoreStack(AF.RegOperand(Register.SCRATCH), (AsmStackOperand)mov.Dst)
-                ]);
-            }
-            else
-            {
-                pass3.Add(i);
-            }
-        }
-
-        return pass3;
     }
 }
