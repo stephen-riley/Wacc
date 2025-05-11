@@ -5,6 +5,7 @@ public enum Register
     // system registers
     SP = 1000,
     FP,
+    LR,
     PSTATE,
 
     // calling convention registers

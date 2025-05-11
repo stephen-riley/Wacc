@@ -42,6 +42,7 @@ public class Lexer(RuntimeState opts)
             {
                 Console.Error.WriteLine();
                 Console.Error.WriteLine("TOKENS:");
+                Console.Error.WriteLine("========");
             }
 
             var stream = Options.Verbose ? Console.Error : Console.Out;

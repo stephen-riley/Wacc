@@ -21,6 +21,7 @@ public class Parser(RuntimeState opts)
             {
                 Console.Error.WriteLine();
                 Console.Error.WriteLine("AST:");
+                Console.Error.WriteLine("=====");
             }
 
             var stream = Options.Verbose ? Console.Error : Console.Out;

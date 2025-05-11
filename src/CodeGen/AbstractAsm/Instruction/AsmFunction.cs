@@ -8,7 +8,9 @@ public record AsmFunction(string Name) : AsmInstruction
 
     internal int LocalsSize => (int)Math.Ceiling(StackOffsets.Count * 4 / 16.0f) * 16;
 
-    public override string EmitIrString()
+    public override string EmitIrString() => $"Function({Name})";
+
+    public override string EmitArmString()
     {
         var sb = new StringBuilder();
         sb.AppendLine();
@@ -17,8 +19,4 @@ public record AsmFunction(string Name) : AsmInstruction
         sb.AppendLine("        .cfi_startproc");
         return sb.ToString();
     }
-
-    public static void EmitEpilog(TextWriter stream) => stream.WriteLine(EmitEpilogString());
-
-    public static string EmitEpilogString() => "        .cfi_endproc\n";
 }

@@ -36,8 +36,10 @@ public class TackyGenerator(RuntimeState opts)
         if (Options.Verbose)
         {
             Console.Error.WriteLine();
-            Console.Error.WriteLine("TACKY:");
+            Console.Error.WriteLine("TAC IR:");
+            Console.Error.WriteLine("=======");
         }
+
         if (Options.Verbose || Options.OnlyThroughTacky)
         {
             var stream = Options.Verbose ? Console.Error : Console.Out;

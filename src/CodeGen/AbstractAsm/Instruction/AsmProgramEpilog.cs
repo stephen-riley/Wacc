@@ -2,6 +2,7 @@ namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
 public record AsmProgramEpilog() : AsmInstruction
 {
-    // TODO: might need this in the future
-    public override string EmitIrString() => "";
+    public override string EmitIrString() => "ProgramEpilog";
+
+    public override string EmitArmString() => "        ; program epilog here";
 }

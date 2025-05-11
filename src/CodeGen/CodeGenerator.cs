@@ -16,13 +16,13 @@ public class CodeGenerator(RuntimeState opts)
     public bool Execute()
     {
         TranslateProgram(Options.Tacky);
-        Dump("asm, pass 1");
+        Dump("asm IR, pass 1");
 
         Asm = ResolvePseudoRegisters();
-        Dump("asm, pass 2");
+        Dump("asm IR, pass 2");
 
         Asm = FixUpInstructions();
-        Dump("asm, pass 3");
+        Dump("asm IR, pass 3");
 
         Options.AbstractAsm = Asm;
 
@@ -34,7 +34,8 @@ public class CodeGenerator(RuntimeState opts)
         if (Options.Verbose)
         {
             Console.Error.WriteLine();
-            Console.Error.WriteLine(title.ToUpper());
+            Console.Error.WriteLine($"{title.ToUpper()}:");
+            Console.Error.WriteLine(new string('=', title.Length + 1));
         }
 
         if (Options.Verbose || Options.OnlyThroughCodeGen)
@@ -72,6 +73,7 @@ public class CodeGenerator(RuntimeState opts)
         }
 
         Asm.Add(af);
+        Asm.Add(AF.AllocateStack(af.LocalsSize));
         foreach (var i in f.Instructions)
         {
             TranslateTacInstruction(i, af);

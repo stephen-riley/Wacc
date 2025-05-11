@@ -1,6 +1,7 @@
 using Wacc.CodeGen.AbstractAsm;
 using Wacc.CodeGen.AbstractAsm.Instruction;
 using Wacc.CodeGen.AbstractAsm.Operand;
+using Wacc.Extensions;
 
 namespace Wacc.Emit;
 
@@ -10,46 +11,26 @@ public class CodeEmitter(RuntimeState opts)
 
     public bool Execute()
     {
+        using var sw = new StringWriter();
+        Emit(Options.AbstractAsm, sw);
+        Options.Assembly = sw.ToString();
+
         if (Options.Verbose)
         {
             Console.Error.WriteLine();
             Console.Error.WriteLine("EMIT ASM:");
+            Console.Error.WriteLine("==========");
         }
 
         if (Options.Verbose || Options.OnlyThroughCodeEmit)
         {
             var stream = Options.Verbose ? Console.Error : Console.Out;
-
-            Emit(Options.AbstractAsm, stream);
+            stream.Write(Options.Assembly);
         }
 
         return true;
     }
 
     internal static void Emit(IEnumerable<AsmObject> asm, TextWriter stream)
-    {
-        foreach (var i in asm)
-        {
-            stream.WriteLine(Render(i));
-        }
-    }
-
-    internal static string Render(AsmObject asm) => asm switch
-    {
-        AsmBitNot abn =>
-            $"        mvn  {Render(abn.Src)}, {Render(abn.Src)}",
-        AsmNeg an =>
-            $"        neg  {Render(an.Src)}, {Render(an.Src)}",
-        AsmMov am =>
-            $"        mov  {Render(am.Dst)}, {Render(am.Src)}",
-        AsmRet =>
-             "        ret",
-        AsmImmOperand aio =>
-            $"#{aio.Imm}",
-        AsmPseudoOperand apo =>
-            $"*{{{apo.Name}}}",
-        AsmRegOperand aro =>
-            aro.Reg.ToString().ToLower(),
-        _ => asm.EmitIrString()
-    };
+        => asm.ForEach(i => i.EmitArm(stream));
 }

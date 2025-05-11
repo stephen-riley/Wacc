@@ -28,21 +28,21 @@ public class RuntimeState
     [Option('v', "verbose", HelpText = "Verbose output on STDERR")]
     public bool Verbose { get; set; }
 
-    [Option('S', HelpText = "Stop after assembly")]
-    public bool StopAfterAssembly { get; set; }
-
     [Option('o', "output", HelpText = "Output exe filename")]
     public string? OutputFile { get; set; }
 
     [Option('O', "optimize", HelpText = "Optimization level (0=none)")]
     public int Optimize { get; set; } = 0;
 
+    [Option('S', "assemble", HelpText = "Output assembly file and stop")]
+    public bool Assemble { get; set; }
+
     public bool DoLexer { get; } = true;
     public bool DoParser => !OnlyThroughLexer;
     public bool DoTacky => !OnlyThroughLexer && !OnlyThroughParser;
     public bool DoCodeGen => !OnlyThroughLexer && !OnlyThroughParser && !OnlyThroughTacky;
     public bool DoCodeEmission => !OnlyThroughLexer && !OnlyThroughParser && !OnlyThroughTacky && !OnlyThroughCodeGen;
-    public bool DoAll => !(OnlyThroughLexer || OnlyThroughParser || OnlyThroughTacky || OnlyThroughCodeGen || OnlyThroughCodeEmit);
+    public bool DoAll => !(OnlyThroughLexer || OnlyThroughParser || OnlyThroughTacky || OnlyThroughCodeGen || OnlyThroughCodeEmit || Assemble);
 
     [Value(0, MetaName = "input file", HelpText = ".c file to compile", Required = true)]
     public required string InputFile { get; set; }
