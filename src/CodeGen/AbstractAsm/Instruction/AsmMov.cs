@@ -1,10 +1,21 @@
 using Wacc.CodeGen.AbstractAsm.Operand;
+using Wacc.Exceptions;
 
 namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
 public record AsmMov(AsmOperand Src, AsmDestOperand Dst) : AsmInstruction
 {
-    public override string EmitArmString() => $"        mov     {Src.EmitArmString()}, {Dst.EmitArmString()}";
+    public override int OperandCount => 2;
+
+    public override string EmitArmString() => $"        mov     {Dst.EmitArmString()}, {Src.EmitArmString()}";
 
     public override string EmitIrString() => $"Mov({Src.EmitIrString()}, {Dst.EmitIrString()})";
+
+    public override AsmOperand? Operand(int n)
+        => n switch
+        {
+            1 => Src,
+            2 => Dst,
+            _ => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands")
+        };
 }

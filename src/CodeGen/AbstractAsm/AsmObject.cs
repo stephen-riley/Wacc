@@ -7,4 +7,6 @@ public abstract record AsmObject
 
     public abstract string EmitArmString();
     public virtual void EmitArm(TextWriter stream) => stream.WriteLine(EmitArmString());
+
+    public sealed override string ToString() => EmitIrString();
 }

@@ -1,20 +1,23 @@
 using Wacc.CodeGen.AbstractAsm.Instruction;
 using Wacc.CodeGen.AbstractAsm.Operand;
+using Wacc.Exceptions;
 using Wacc.Tacky.Instruction;
 
 namespace Wacc.CodeGen.AbstractAsm;
 
 public static class AF
 {
+    public static AsmAdd Add(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmAllocateStack AllocateStack(int Size) => new(Size);
     public static AsmBitNot BitNot(AsmOperand Src) => new(Src);
+    public static AsmComment Comment(string Comment) => new(Comment);
     public static AsmFunction Function(string Name) => new(Name);
-    public static AsmFunctionEpilog FunctionEpilog(string Name) => new(Name);
+    public static AsmFunctionEpilogue FunctionEpilogue(string Name, AsmFunction Func) => new(Name, Func);
     public static AsmLoadStack LoadStack(AsmStackOperand Src, AsmDestOperand Dst) => new(Src, Dst);
     public static AsmMov Mov(AsmOperand Src, AsmDestOperand Dst) => new(Src, Dst);
     public static AsmNeg Neg(AsmOperand Src) => new(Src);
     public static AsmProgram Program(string Filename) => new(Filename);
-    public static AsmProgramEpilog ProgramEpilog() => new();
+    public static AsmProgramEpilogue ProgramEpilogue() => new();
     public static AsmRet Ret() => new();
     public static AsmStoreStack StoreStack(AsmOperand Src, AsmStackOperand Dst) => new(Src, Dst);
     public static AsmImmOperand ImmOperand(int Imm) => new(Imm);
@@ -22,4 +25,37 @@ public static class AF
     public static AsmPseudoOperand PseudoOperand(TacVar v) => new(v);
     public static AsmRegOperand RegOperand(Register Reg) => new(Reg);
     public static AsmStackOperand StackOperand(int Offset) => new(Offset);
+
+    public static AsmInstruction Create(Type type, AsmOperand src1, AsmOperand src2, AsmOperand dst)
+    {
+        var i = Activator.CreateInstance(type, src1, src2, dst) ?? throw new CodeGenError($"{nameof(AF)}.{nameof(Create)}: cannot create instance of type {type.Name}");
+        return (AsmInstruction)i;
+    }
+
+    public static AsmInstruction Create(Type type, AsmOperand src, AsmOperand dst)
+    {
+        var i = Activator.CreateInstance(type, src, dst) ?? throw new CodeGenError($"{nameof(AF)}.{nameof(Create)}: cannot create instance of type {type.Name}");
+        return (AsmInstruction)i;
+    }
+
+    public static AsmInstruction Create(Type type, AsmOperand src)
+    {
+        var i = Activator.CreateInstance(type, src) ?? throw new CodeGenError($"{nameof(AF)}.{nameof(Create)}: cannot create instance of type {type.Name}");
+        return (AsmInstruction)i;
+    }
+
+    public static AsmInstruction Create(Type type)
+    {
+        var i = Activator.CreateInstance(type) ?? throw new CodeGenError($"{nameof(AF)}.{nameof(Create)}: cannot create instance of type {type.Name}");
+        return (AsmInstruction)i;
+    }
+
+    public static AsmRegOperand FP => new(Register.FP);
+
+    public static AsmRegOperand SP => new(Register.SP);
+
+    public static AsmRegOperand SCRATCH => new(Register.SCRATCH);
+
+    public static AsmRegOperand RETVAL => new(Register.RETVAL);
 }
+

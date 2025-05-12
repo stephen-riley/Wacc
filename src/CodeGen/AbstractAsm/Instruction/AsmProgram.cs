@@ -1,3 +1,6 @@
+using Wacc.CodeGen.AbstractAsm.Operand;
+using Wacc.Exceptions;
+
 namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
 public record AsmProgram(string Filename) : AsmInstruction
@@ -19,4 +22,8 @@ public record AsmProgram(string Filename) : AsmInstruction
         "fp      .req w29",
         "lr      .req w30"
     );
+
+    public override int OperandCount => 0;
+
+    public override AsmOperand? Operand(int n) => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands");
 }

@@ -2,7 +2,6 @@ using Wacc.CodeGen.AbstractAsm;
 using Wacc.CodeGen.AbstractAsm.Instruction;
 using Wacc.CodeGen.AbstractAsm.Operand;
 using Wacc.Exceptions;
-using Wacc.Extensions;
 using Wacc.Tacky.Instruction;
 
 namespace Wacc.CodeGen;
@@ -58,7 +57,7 @@ public class CodeGenerator(RuntimeState opts)
             TranslateFunction(f);
         }
 
-        Asm.Add(AF.ProgramEpilog());
+        Asm.Add(AF.ProgramEpilogue());
     }
 
     internal void TranslateFunction(TacFunction f)
@@ -78,7 +77,7 @@ public class CodeGenerator(RuntimeState opts)
         {
             TranslateTacInstruction(i, af);
         }
-        Asm.Add(AF.FunctionEpilog(f.Name));
+        Asm.Add(AF.FunctionEpilogue(f.Name, af));
     }
 
     internal void TranslateTacInstruction(ITackyInstr instr, AsmFunction curFunc)
@@ -98,6 +97,7 @@ public class CodeGenerator(RuntimeState opts)
                 break;
 
             case TacReturn r:
+                Asm.Add(AF.Add(AF.SP, AF.ImmOperand(curFunc.LocalsSize), AF.SP));
                 Asm.Add(AF.Mov(TranslateVal(r.Val), AF.RegOperand(Register.RETVAL)));
                 Asm.Add(AF.Ret());
                 break;

@@ -1,4 +1,6 @@
 using System.Text;
+using Wacc.CodeGen.AbstractAsm.Operand;
+using Wacc.Exceptions;
 
 namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
@@ -19,4 +21,8 @@ public record AsmFunction(string Name) : AsmInstruction
         sb.AppendLine("        .cfi_startproc");
         return sb.ToString();
     }
+
+    public override int OperandCount => 0;
+
+    public override AsmOperand? Operand(int n) => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands");
 }
