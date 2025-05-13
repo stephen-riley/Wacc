@@ -75,15 +75,17 @@ public class TackyGenerator(RuntimeState opts)
                 break;
 
             case Return r:
-                if (r.Expr is Constant literal)
-                {
-                    instructions.Add(new TacReturn(new TacConstant(literal.Int)));
-                }
-                else
-                {
-                    EmitTacky(r.Expr);
-                    instructions.Add(new TacReturn(GetLastTmpVar() ?? throw new TackyGenError("need to know last temp var in Return, but none available")));
-                }
+                var retExpr = TacConstantOrExpression(r.Expr);
+                instructions.Add(new TacReturn(retExpr));
+                // if (r.Expr is Constant literal)
+                // {
+                //     instructions.Add(new TacReturn(new TacConstant(literal.Int)));
+                // }
+                // else
+                // {
+                //     EmitTacky(r.Expr);
+                //     instructions.Add(new TacReturn(GetLastTmpVar() ?? throw new TackyGenError("need to know last temp var in Return, but none available")));
+                // }
                 break;
 
             case Constant c:
@@ -91,22 +93,35 @@ public class TackyGenerator(RuntimeState opts)
                 break;
 
             case UnaryOp u:
-                var src = default(TacVal);
-                if (u.Expr is Constant uc)
-                {
-                    src = new TacConstant(uc.Int);
-                }
-                else
-                {
-                    EmitTacky(u.Expr);
-                    src = GetLastTmpVar() ?? throw new TackyGenError("need to know last temp var in UnaryOp, but none available");
-                }
+                var src = TacConstantOrExpression(u.Expr);
                 var dst = ReserveTmpVar();
                 instructions.Add(new TacUnary(u.Op, src, dst));
                 break;
 
+            case BinaryOp b:
+                var src1 = TacConstantOrExpression(b.LExpr);
+                var src2 = TacConstantOrExpression(b.RExpr);
+                dst = ReserveTmpVar();
+                instructions.Add(new TacBinary(b.Op, src1, src2, dst));
+                break;
+
             default:
                 throw new NotImplementedException($"{GetType().Name}.{nameof(EmitTacky)} can't handle {node.GetType().Name} yet");
+        }
+    }
+
+    internal TacVal TacConstantOrExpression(IAstNode n)
+    {
+        if (n is Constant c)
+        {
+            var tacConstant = new TacConstant(c.Int);
+            return tacConstant;
+        }
+        else
+        {
+            EmitTacky(n);
+            var pseudoVar = GetLastTmpVar() ?? throw new TackyGenError("need to know last temp var in UnaryOp, but none available");
+            return pseudoVar;
         }
     }
 }
