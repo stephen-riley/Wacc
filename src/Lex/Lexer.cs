@@ -28,7 +28,11 @@ public class Lexer(RuntimeState opts)
         { CloseBrace, new Regex(@"\G}") },
         { Semicolon, new Regex(@"\G;") },
         { Complement, new Regex(@"\G~")},
-        { Negate, new Regex(@"\G-")},
+        { PlusSign, new Regex(@"\G\+")},
+        { MinusSign, new Regex(@"\G-")},
+        { MulSign, new Regex(@"\G\*")},
+        { DivSign, new Regex(@"\G/")},
+        { ModSign, new Regex(@"\G%")},
         { EOF, new Regex(@"\G$", RegexOptions.Multiline) },
     };
 

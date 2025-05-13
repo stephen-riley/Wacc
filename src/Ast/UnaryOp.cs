@@ -10,11 +10,11 @@ public class UnaryOp(string op, IAstNode expr) : IAstNode
     public IAstNode Expr => expr;
     public string Op => op;
 
-    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.Peek().TokenType is TokenType.Complement or TokenType.Negate;
+    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.Peek().TokenType is TokenType.Complement or TokenType.MinusSign;
 
     public static IAstNode Parse(Queue<Token> tokenStream)
     {
-        var op = tokenStream.Expect([TokenType.Complement, TokenType.Negate]).Str;
+        var op = tokenStream.Expect([TokenType.Complement, TokenType.MinusSign]).Str;
         var expr = Expression.Parse(tokenStream);
         return new UnaryOp(op ?? throw new ParseError($"can't extract operator from {op}"), expr);
     }

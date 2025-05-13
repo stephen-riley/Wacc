@@ -13,6 +13,7 @@ public class LexerTests
     [DataRow("int", "[IntKw:int (0)]")]
     [DataRow("12", "[Constant:12 (0)]")]
     [DataRow("return 3;", "[ReturnKw:return (0)], [Constant:3 (7)], [Semicolon:; (8)]")]
+    [DataRow("+ - * / %", "[PlusSign:+ (0)], [MinusSign:- (2)], [MulSign:* (4)], [DivSign:/ (6)], [ModSign:% (8)]")]
     public void LexerHappyPath(string text, string expected)
     {
         var lexer = new Lexer(DummyRts);
