@@ -106,7 +106,7 @@ public class TackyGenerator(RuntimeState opts)
                 break;
 
             default:
-                throw new NotImplementedException($"{nameof(TackyGenerator)}.{nameof(EmitTacky)} can't handle {node.GetType()} yet");
+                throw new NotImplementedException($"{GetType().Name}.{nameof(EmitTacky)} can't handle {node.GetType().Name} yet");
         }
     }
 }

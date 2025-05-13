@@ -1,5 +1,4 @@
-using System.Text;
-using Wacc.Extensions;
+using Wacc.Exceptions;
 using Wacc.Parse;
 using Wacc.Tokens;
 
@@ -8,35 +7,26 @@ namespace Wacc.Ast;
 public record Expression(IAstNode SubExpr) : IAstNode
 {
     public static bool CanParse(Queue<Token> tokenStream)
-        => tokenStream.PeekFor([TokenType.Constant, TokenType.OpenParen])
-            || UnaryOp.CanParse(tokenStream);
+        => Factor.CanParse(tokenStream);
 
-    public static IAstNode Parse(Queue<Token> tokenStream)
+    public static IAstNode Parse(Queue<Token> tokenStream, int minPrecedence = 0)
     {
-        var tok = tokenStream.Peek();
+        var left = Factor.Parse(tokenStream);
 
-        return tok.TokenType switch
+        var nextToken = tokenStream.Peek();
+        while (nextToken.Is(BinaryOp.Operators) && BinaryOp.Precedence[nextToken.TokenType] >= minPrecedence)
         {
-            TokenType.Constant => Constant.Parse(tokenStream),
-            TokenType.OpenParen => Ext.Do(() =>
+            if (tokenStream.TryExpect(BinaryOp.Operators, out var opToken))
             {
-                tokenStream.Expect(TokenType.OpenParen);
-                var expr = Parse(tokenStream);
-                tokenStream.Expect(TokenType.CloseParen);
-                return expr;
-            }),
-            _ => UnaryOp.Parse(tokenStream)
-        };
+                var op = opToken.Str ?? throw new InvalidOperationException($"can't be {opToken}");
+                var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType] + 1);
+                left = new BinaryOp(op, left, right);
+                nextToken = tokenStream.Peek();
+            }
+        }
+
+        return left;
     }
 
-    public string ToPrettyString(int indent = 0)
-    {
-        var sb = new StringBuilder();
-        sb.AppendLine("Expression(");
-        sb.Append(IAstNode.IndentStr(indent + 1));
-        sb.AppendLine(SubExpr.ToPrettyString(indent + 1));
-        sb.Append(IAstNode.IndentStr(indent));
-        sb.Append(')');
-        return sb.ToString();
-    }
+    public string ToPrettyString(int indent = 0) => throw new ParseError($"{GetType().Name}.{nameof(ToPrettyString)} should not be called");
 }

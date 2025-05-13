@@ -11,11 +11,18 @@ public class ParserTests
 
     [TestMethod]
     [DataRow("return_2.c")]
+    [DataRow("comments.c")]
+    [DataRow("listing2-1.c")]
+    [DataRow("multi_digit.c")]
+    [DataRow("multiline_comments.c")]
+    [DataRow("return_2.c")]
+    [DataRow("two_plus_three.c")]
+    [DataRow("complex_binary_expr.c")]
     public void SimpleParse(string filename)
     {
         var text = File.ReadAllText($"{fixturesPath}/valid/{filename}");
         var lexer = new Lexer(DummyRts);
-        var tokens = lexer.Lex(text);
+        _ = lexer.Lex(text);
         var parser = new Parser(DummyRts);
         parser.Parse();
     }
