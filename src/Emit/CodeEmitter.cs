@@ -22,7 +22,7 @@ public class CodeEmitter(RuntimeState opts)
             Console.Error.WriteLine("==========");
         }
 
-        if (Options.Verbose || Options.OnlyThroughCodeEmit)
+        if (Options.Verbose || Options.OnlyThroughCodeEmit || Options.Assemble)
         {
             var stream = Options.Verbose ? Console.Error : Console.Out;
             stream.Write(Options.Assembly);

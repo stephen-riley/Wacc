@@ -8,14 +8,17 @@ public class GenExecutable(RuntimeState opts)
 
     public bool Execute()
     {
-        var tmpAsmFile = Path.GetTempFileName() + ".S";
+        var tmpFileBase = Path.GetTempFileName();
+
         if (Options.Verbose)
         {
-            Console.Error.WriteLine($"\nWriting to temp file {tmpAsmFile}");
+            Console.Error.WriteLine($"\nWriting to temp file {tmpFileBase}.S");
         }
-        File.WriteAllText(tmpAsmFile, Options.Assembly);
-        var ps = Process.Start("gcc", $"{tmpAsmFile} -o {Options.OutputFile ?? Options.BaseFilename}");
-        ps.WaitForExit();
-        return ps.ExitCode == 0;
+        File.WriteAllText($"{tmpFileBase}.S", Options.Assembly);
+        var assemble = Process.Start("gcc", $"-g -c -o {tmpFileBase}.o {tmpFileBase}.S");
+        assemble.WaitForExit();
+        var link = Process.Start("gcc", $"{tmpFileBase}.o -o {Options.OutputFile ?? Options.BaseFilename} -arch arm64");
+        link.WaitForExit();
+        return link.ExitCode == 0;
     }
 }

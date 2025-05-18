@@ -22,31 +22,31 @@ static void Entrypoint(RuntimeState rts)
     {
         if (rts.DoLexer || rts.DoAll)
         {
-            Console.Error.WriteLine("\nStage: Lex");
+            if (rts.Verbose) Console.Error.WriteLine("\nStage: Lex");
             new Lexer(rts).Execute();
         }
 
         if (rts.DoParser || rts.DoAll)
         {
-            Console.Error.WriteLine("\nStage: Parse");
+            if (rts.Verbose) Console.Error.WriteLine("\nStage: Parse");
             new Wacc.Parse.Parser(rts).Execute();
         }
 
         if (rts.DoTacky || rts.DoAll)
         {
-            Console.Error.WriteLine("\nStage: TAC IR gen");
+            if (rts.Verbose) Console.Error.WriteLine("\nStage: TAC IR gen");
             new Wacc.Tacky.TackyGenerator(rts).Execute();
         }
 
         if (rts.DoCodeGen || rts.DoAll)
         {
-            Console.Error.WriteLine("\nStage: Asm IR gen");
+            if (rts.Verbose) Console.Error.WriteLine("\nStage: Asm IR gen");
             new Wacc.CodeGen.CodeGenerator(rts).Execute();
         }
 
-        if (rts.DoCodeEmission || rts.DoAll)
+        if (rts.DoCodeEmission || rts.Assemble || rts.DoAll)
         {
-            Console.Error.WriteLine("\nStage: Asm emit");
+            if (rts.Verbose) Console.Error.WriteLine("\nStage: Asm emit");
             new CodeEmitter(rts).Execute();
         }
 
@@ -57,7 +57,7 @@ static void Entrypoint(RuntimeState rts)
 
         if (rts.DoAll)
         {
-            Console.Error.WriteLine("\nStage: assemble");
+            if (rts.Verbose) Console.Error.WriteLine("\nStage: assemble");
             new GenExecutable(rts).Execute();
         }
     }

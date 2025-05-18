@@ -7,7 +7,7 @@ public record AsmProgramEpilogue() : AsmInstruction
 {
     public override string EmitIrString() => "ProgramEpilog";
 
-    public override string EmitArmString() => "        ; program epilog here";
+    public override string EmitArmString() => "\n        ; program epilog here";
 
     public override int OperandCount => 0;
 

@@ -1,0 +1,3 @@
+target create ./a
+process launch --stop-at-entry
+b main

@@ -111,9 +111,8 @@ public class CodeGenerator(RuntimeState opts)
                 break;
 
             case TacReturn r:
-                Asm.Add(AF.Add(AF.SP, AF.ImmOperand(curFunc.LocalsSize), AF.SP));
                 Asm.Add(AF.Mov(TranslateVal(r.Val), AF.RegOperand(ArmReg.RETVAL)));
-                Asm.Add(AF.Ret());
+                Asm.Add(AF.Ret(curFunc.Name));
                 break;
 
             default:

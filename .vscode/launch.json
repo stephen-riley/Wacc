@@ -10,10 +10,19 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "--verbose -S fixtures/valid/mod.c -o /tmp/a.out",
+            "args": "--verbose -S fixtures/valid/unop_add.c -o /tmp/a.out",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
+        },
+        {
+            "name": "Debug /tmp/a.out",
+            "type": "lldb",
+            "request": "launch",
+            "cwd": "/tmp",
+            "program": "/tmp/a.out",
+            "args": [],
+            "stopOnEntry": true
         }
     ]
 }

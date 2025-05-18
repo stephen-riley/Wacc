@@ -9,8 +9,10 @@ public record AsmFunctionEpilogue(string Name, AsmFunction Func) : AsmInstructio
 
     public override string EmitArmString() => string.Join("\n",
         $"",
+        $"_X{Name}:",
         $"        ldp     fp, lr, [sp, #16]",
         $"        add     sp, sp, #{Func.LocalsSize}",
+        $"        ret",
         $"        .cfi_endproc",
         $"        ; end function _{Name}"
     );

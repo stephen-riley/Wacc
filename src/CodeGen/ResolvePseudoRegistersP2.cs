@@ -23,7 +23,7 @@ public static class ResolvePseudoRegistersP2
             if (i is AsmFunction f)
             {
                 curFunc = f;
-                continue;
+                // continue;
             }
 
             var newInstr = i;

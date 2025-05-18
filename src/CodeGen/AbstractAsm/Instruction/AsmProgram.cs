@@ -21,6 +21,7 @@ public record AsmProgram(string Filename) : AsmInstruction
         "        retval    .req w0",
         "        scratch1  .req w9",
         "        scratch2  .req w10",
+        "        scratch3  .req w11",
         "        fp        .req w29",
         "        lr        .req w30",
         ""

@@ -9,7 +9,7 @@ public record AsmMod(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) : Asm
 
     public override string EmitArmString()
         => $"        sdiv    scratch3, {Src1.EmitArmString()}, {Src2.EmitArmString()}" + "\n" +
-           $"        msub    {Dst.EmitArmString()}, {Src1.EmitArmString()}, scratch3, {Src2.EmitArmString()}";
+           $"        msub    {Dst.EmitArmString()}, scratch3, {Src2.EmitArmString()}, {Src1.EmitArmString()}";
 
     public override string EmitIrString() => $"Mod({Src1.EmitIrString()}, {Src2.EmitIrString()}, {Dst.EmitIrString()})";
 

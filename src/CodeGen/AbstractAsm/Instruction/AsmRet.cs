@@ -3,13 +3,13 @@ using Wacc.Exceptions;
 
 namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
-public record AsmRet() : AsmInstruction
+public record AsmRet(string FuncName) : AsmInstruction
 {
     public override int OperandCount => 0;
 
     public override string EmitIrString() => "Ret";
 
-    public override string EmitArmString() => $"        ret";
+    public override string EmitArmString() => $"        b       _X{FuncName}";
 
     public override AsmOperand? GetOperand(int n) => throw new CodeGenError("ret has no operands");
 
