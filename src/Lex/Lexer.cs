@@ -13,6 +13,7 @@ public class Lexer(RuntimeState opts)
 
     public OrderedDictionary<TokenType, Regex> Patterns { get; set; } = new()
     {
+        // DO NOT CHANGE ORDER
         { COMMENT_SINGLE_LINE, new Regex(@"\G//.*$",RegexOptions.Multiline)},
         { COMMENT_MULTI_LINE, new Regex(@"\G/\*.*?\*/",RegexOptions.Singleline)},
         { WHITESPACE, new Regex(@"\G\s+") },
@@ -20,19 +21,23 @@ public class Lexer(RuntimeState opts)
         { VoidKw, new Regex(@"\Gvoid\b") },
         { ReturnKw, new Regex(@"\Greturn\b") },
         { Identifier, new Regex(@"\G[a-zA-Z_]\w*\b") },
-        { Decrement, new Regex(@"\G--")},
+        { Decrement, new Regex(@"\G--") },
         { Constant, new Regex(@"\G-?[0-9]+\b") },
         { OpenParen, new Regex(@"\G\(") },
         { CloseParen, new Regex(@"\G\)") },
         { OpenBrace, new Regex(@"\G{") },
         { CloseBrace, new Regex(@"\G}") },
         { Semicolon, new Regex(@"\G;") },
-        { Complement, new Regex(@"\G~")},
-        { PlusSign, new Regex(@"\G\+")},
-        { MinusSign, new Regex(@"\G-")},
-        { MulSign, new Regex(@"\G\*")},
-        { DivSign, new Regex(@"\G/")},
-        { ModSign, new Regex(@"\G%")},
+        { Complement, new Regex(@"\G~") },
+        { PlusSign, new Regex(@"\G\+") },
+        { MinusSign, new Regex(@"\G-") },
+        { MulSign, new Regex(@"\G\*") },
+        { DivSign, new Regex(@"\G/") },
+        { ModSign, new Regex(@"\G%") },
+        { BitwiseAnd, new Regex(@"\G\&") },
+        { BitwiseLeft, new Regex(@"\G<<") },
+        { BitwiseOr, new Regex(@"\G\|") },
+        { BitwiseRight, new Regex(@"\G>>") },
         { EOF, new Regex(@"\G$", RegexOptions.Multiline) },
     };
 
@@ -81,7 +86,7 @@ public class Lexer(RuntimeState opts)
                         {
                             s = $"'{s.Replace('\n', '␤')}'";
                         }
-                        int.TryParse(s, out var i);
+                        _ = int.TryParse(s, out var i);
                         var t = new Token(tok, index, s, i);
                         tokens.Add(t);
                     }

@@ -9,6 +9,10 @@ public record TacBinary(string Op, TacVal Src1, TacVal Src2, TacVar Dst) : ITack
         "*" => "Multiply",
         "/" => "Divide",
         "%" => "Modulus",
+        "&" => "BitwiseAnd",
+        "|" => "BitwiseOr",
+        "<<" => "BitwiseLeft",
+        ">>" => "BitwiseRight",
         _ => throw new InvalidOperationException($"no binary operator '{Op}'")
     };
 

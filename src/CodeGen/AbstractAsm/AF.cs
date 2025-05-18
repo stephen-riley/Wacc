@@ -10,6 +10,10 @@ public static class AF
     public static AsmAdd Add(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmAllocateStack AllocateStack(int Size) => new(Size);
     public static AsmBitNot BitNot(AsmOperand Src) => new(Src);
+    public static AsmBitwiseAnd BitwiseAnd(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
+    public static AsmBitwiseLeft BitwiseLeft(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
+    public static AsmBitwiseOr BitwiseOr(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
+    public static AsmBitwiseRight BitwiseRight(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmComment Comment(string Comment = "") => new(Comment);
     public static AsmDiv Div(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmFunction Function(string Name) => new(Name);

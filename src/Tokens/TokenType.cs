@@ -2,6 +2,10 @@ namespace Wacc.Tokens;
 
 public enum TokenType
 {
+    BitwiseAnd,
+    BitwiseLeft,
+    BitwiseOr,
+    BitwiseRight,
     CloseBrace,
     CloseParen,
     Complement,

@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "fixtures/valid/unop_add.c -o /tmp/a.out",
+            "args": "fixtures/valid/shifting.c -o /tmp/a.out",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

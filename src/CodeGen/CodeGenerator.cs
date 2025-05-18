@@ -106,6 +106,10 @@ public class CodeGenerator(RuntimeState opts)
                     "*" => AF.Mul(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
                     "/" => AF.Div(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
                     "%" => AF.Mod(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                    "&" => AF.BitwiseAnd(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                    "<<" => AF.BitwiseLeft(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                    "|" => AF.BitwiseOr(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                    ">>" => AF.BitwiseRight(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
                     _ => throw new InvalidOperationException()
                 });
                 break;
