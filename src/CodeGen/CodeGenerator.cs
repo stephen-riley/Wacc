@@ -15,13 +15,13 @@ public class CodeGenerator(RuntimeState opts)
     public bool Execute()
     {
         TranslateProgram(Options.Tacky);
-        Dump("asm IR, pass 1");
+        Dump("asm IR, pass 1 (codegen)");
 
         Asm = ResolvePseudoRegistersP2.Execute(Asm);
-        Dump("asm IR, pass 2");
+        Dump("asm IR, pass 2 (resolve tmp vars)");
 
-        Asm = Pass3FixupInstructionsP3.Execute(Asm);
-        Dump("asm IR, pass 3");
+        Asm = new Pass3FixupInstructionsP3(Options).Execute(Asm);
+        Dump("asm IR, pass 3 (fix up addr modes)");
 
         Options.AbstractAsm = Asm;
 

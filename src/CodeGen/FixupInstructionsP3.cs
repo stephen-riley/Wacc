@@ -4,9 +4,11 @@ using Wacc.CodeGen.AbstractAsm.Operand;
 
 namespace Wacc.CodeGen;
 
-public static class Pass3FixupInstructionsP3
+public class Pass3FixupInstructionsP3(RuntimeState options)
 {
-    public static List<AsmInstruction> Execute(List<AsmInstruction> Asm)
+    internal RuntimeState Options => options;
+
+    public List<AsmInstruction> Execute(List<AsmInstruction> Asm)
     {
         var pass3 = new List<AsmInstruction>();
 
@@ -19,12 +21,20 @@ public static class Pass3FixupInstructionsP3
                 var newInstructions = rule(i);
                 if (newInstructions is not null)
                 {
-                    pass3.AddRange([
-                        AF.Newline(),
-                        AF.Comment($"Fixup on {i}"),
-                        ..newInstructions,
-                        AF.Comment(),
-                    ]);
+                    if (Options.Verbose)
+                    {
+                        pass3.AddRange([
+                            AF.Newline(),
+                            AF.Comment($"Fixup on {i}"),
+                            ..newInstructions,
+                            AF.Comment(),
+                        ]);
+                    }
+                    else
+                    {
+                        pass3.AddRange(newInstructions);
+                    }
+
                     processed = true;
                     goto CONT;
                 }

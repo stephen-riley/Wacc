@@ -15,7 +15,7 @@ public class UnaryOp(string op, IAstNode expr) : IAstNode
     public static IAstNode Parse(Queue<Token> tokenStream)
     {
         var op = tokenStream.Expect([TokenType.Complement, TokenType.MinusSign]).Str;
-        var expr = Expression.Parse(tokenStream);
+        var expr = Factor.Parse(tokenStream);
         return new UnaryOp(op ?? throw new ParseError($"can't extract operator from {op}"), expr);
     }
 
