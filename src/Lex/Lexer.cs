@@ -9,13 +9,14 @@ public class Lexer(RuntimeState opts)
 {
     public RuntimeState Options = opts;
 
-    private HashSet<TokenType> IgnoredTokens = [WHITESPACE, COMMENT_SINGLE_LINE, COMMENT_MULTI_LINE];
+    private readonly HashSet<TokenType> IgnoredTokens = [WHITESPACE, COMMENT_SINGLE_LINE, COMMENT_MULTI_LINE, PREPROCESSOR_DIRECTIVE];
 
     public OrderedDictionary<TokenType, Regex> Patterns { get; set; } = new()
     {
         // DO NOT CHANGE ORDER
-        { COMMENT_SINGLE_LINE, new Regex(@"\G//.*$",RegexOptions.Multiline)},
-        { COMMENT_MULTI_LINE, new Regex(@"\G/\*.*?\*/",RegexOptions.Singleline)},
+        { PREPROCESSOR_DIRECTIVE, new Regex(@"\G#.*$", RegexOptions.Multiline) },
+        { COMMENT_SINGLE_LINE, new Regex(@"\G//.*$", RegexOptions.Multiline) },
+        { COMMENT_MULTI_LINE, new Regex(@"\G/\*.*?\*/", RegexOptions.Singleline) },
         { WHITESPACE, new Regex(@"\G\s+") },
         { IntKw, new Regex(@"\Gint\b") },
         { VoidKw, new Regex(@"\Gvoid\b") },
@@ -38,6 +39,7 @@ public class Lexer(RuntimeState opts)
         { BitwiseLeft, new Regex(@"\G<<") },
         { BitwiseOr, new Regex(@"\G\|") },
         { BitwiseRight, new Regex(@"\G>>") },
+        { BitwiseXor, new Regex(@"\G\^") },
         { EOF, new Regex(@"\G$", RegexOptions.Multiline) },
     };
 

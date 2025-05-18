@@ -18,6 +18,8 @@ public class ParserTests
     [DataRow("return_2.c")]
     [DataRow("two_plus_three.c")]
     [DataRow("complex_binary_expr.c")]
+    [DataRow("ignore_preprocessor.c")]
+    [DataRow("shifting.c")]
     public void SimpleParse(string filename)
     {
         var text = File.ReadAllText($"{fixturesPath}/valid/{filename}");

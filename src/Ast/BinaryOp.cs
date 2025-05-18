@@ -20,10 +20,11 @@ public class BinaryOp(string op, IAstNode lExpr, IAstNode rExpr) : IAstNode
         { BitwiseLeft, 40 },
         { BitwiseRight, 40 },
         { BitwiseAnd, 35 },
-        { BitwiseOr, 34} ,
+        { BitwiseXor, 34 },
+        { BitwiseOr, 33} ,
     };
 
-    public static readonly HashSet<TokenType> Operators = [PlusSign, MinusSign, MulSign, DivSign, ModSign, BitwiseAnd, BitwiseLeft, BitwiseOr, BitwiseRight];
+    public static readonly HashSet<TokenType> Operators = [.. Precedence.Keys];
 
     public static bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
 

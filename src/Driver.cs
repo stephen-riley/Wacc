@@ -13,7 +13,11 @@ public class Driver(RuntimeState options)
 
     public void Entrypoint()
     {
-        Console.Error.WriteLine("CLI: " + Parser.Default.FormatCommandLine(Rts));
+        if (Rts.Verbose)
+        {
+            Console.Error.WriteLine("Wacc 1.0");
+            Console.Error.WriteLine("CLI: " + Parser.Default.FormatCommandLine(Rts));
+        }
 
         try
         {

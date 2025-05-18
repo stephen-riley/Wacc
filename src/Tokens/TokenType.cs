@@ -6,6 +6,7 @@ public enum TokenType
     BitwiseLeft,
     BitwiseOr,
     BitwiseRight,
+    BitwiseXor,
     CloseBrace,
     CloseParen,
     Complement,
@@ -26,5 +27,6 @@ public enum TokenType
     WHITESPACE,
     COMMENT_SINGLE_LINE,
     COMMENT_MULTI_LINE,
+    PREPROCESSOR_DIRECTIVE,
     EOF
 }

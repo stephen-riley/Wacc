@@ -110,7 +110,8 @@ public class CodeGenerator(RuntimeState opts)
                     "<<" => AF.BitwiseLeft(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
                     "|" => AF.BitwiseOr(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
                     ">>" => AF.BitwiseRight(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                    _ => throw new InvalidOperationException()
+                    "^" => AF.BitwiseXor(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                    _ => throw new NotImplementedException($"Operator \"{b.Op}\" not (yet) impelemented for TacBinary code generation")
                 });
                 break;
 

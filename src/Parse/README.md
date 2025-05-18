@@ -14,7 +14,7 @@
 <unop> ::= "-" | "~"
 
 // See BinOp.cs for precedence
-<binop> ::= "-" | "+" | "*" | "/" | "%" | "<<" | ">>" | "&" | "|"
+<binop> ::= "-" | "+" | "*" | "/" | "%" | "<<" | ">>" | "&" | "|" | "^"
 
 <identifier> ::= ? An identifier token ?
 

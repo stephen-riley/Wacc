@@ -13,6 +13,7 @@ public record TacBinary(string Op, TacVal Src1, TacVal Src2, TacVar Dst) : ITack
         "|" => "BitwiseOr",
         "<<" => "BitwiseLeft",
         ">>" => "BitwiseRight",
+        "^" => "BitwiseXor",
         _ => throw new InvalidOperationException($"no binary operator '{Op}'")
     };
 
