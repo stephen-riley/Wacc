@@ -42,7 +42,7 @@ for my $f ( @files ) {
 
     my( $name, $params ) = $cs =~ /public record Asm(\w+)\((.*?)\)/s;
     if( defined $params ) {
-        @params = map { substr( $_, index( $_, ' ')+1 ) } split( /, /, $params );
+        @params = map { s/ = .*//r } map { substr( $_, index( $_, ' ')+1 ) } split( /, /, $params );
         $param_names = join( ', ', @params );
     } else {
         $param_names = '';
@@ -86,13 +86,17 @@ say OUT << 'EPILOG';
         return (AsmInstruction)i;
     }
 
-    public static AsmRegOperand FP => new(Register.FP);
+    public static AsmRegOperand FP => new(ArmReg.FP);
 
-    public static AsmRegOperand SP => new(Register.SP);
+    public static AsmRegOperand SP => new(ArmReg.SP);
 
-    public static AsmRegOperand SCRATCH => new(Register.SCRATCH);
+    public static AsmRegOperand SCRATCH1 => new(ArmReg.SCRATCH1);
 
-    public static AsmRegOperand RETVAL => new(Register.RETVAL);
+    public static AsmRegOperand SCRATCH2 => new(ArmReg.SCRATCH2);
+
+    public static AsmRegOperand SCRATCH3 => new(ArmReg.SCRATCH3);
+
+    public static AsmRegOperand RETVAL => new(ArmReg.RETVAL);
 }
 EPILOG
 

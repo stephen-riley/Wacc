@@ -1,6 +1,6 @@
 namespace Wacc.CodeGen.AbstractAsm.Operand;
 
-public record AsmRegOperand(Register Reg) : AsmDestOperand
+public record AsmRegOperand(ArmReg Reg) : AsmDestOperand
 {
     public override string EmitArmString() => Reg.ToString().ToLower();
 

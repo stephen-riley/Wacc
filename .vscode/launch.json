@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "--verbose --tacky fixtures/valid/complex_binary_expr.c -o /tmp/a.out",
+            "args": "--verbose -S fixtures/valid/mod.c -o /tmp/a.out",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

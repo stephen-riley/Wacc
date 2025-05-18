@@ -20,14 +20,32 @@ public static class ResolvePseudoRegistersP2
 
         foreach (var i in Asm)
         {
-            pass2.Add(i switch
+            if (i is AsmFunction f)
             {
-                AsmBitNot bn => AF.BitNot(Src(bn.Src)),
-                AsmFunction f => Ext.Do(() => { curFunc = f; return f; }),
-                AsmMov m => AF.Mov(Src(m.Src), Dst(m.Dst)),
-                AsmNeg n => AF.Neg(Src(n.Src)),
-                _ => i
-            });
+                curFunc = f;
+                continue;
+            }
+
+            var newInstr = i;
+
+            for (var opIndex = 1; opIndex <= newInstr.OperandCount; opIndex++)
+            {
+                if (newInstr.TryGetOperand(opIndex, out var operand))
+                {
+                    var newOperand = operand is AsmDestOperand ado ? Dst(ado) : Src(operand);
+                    newInstr = newInstr.SetOperand(opIndex, newOperand);
+                }
+            }
+
+            pass2.Add(newInstr);
+            // pass2.Add(i switch
+            // {
+            //     AsmBitNot bn => AF.BitNot(Src(bn.Src)),
+            //     AsmFunction f => Ext.Do(() => { curFunc = f; return f; }),
+            //     AsmMov m => AF.Mov(Src(m.Src), Dst(m.Dst)),
+            //     AsmNeg n => AF.Neg(Src(n.Src)),
+            //     _ => i
+            // });
         }
 
         return pass2;

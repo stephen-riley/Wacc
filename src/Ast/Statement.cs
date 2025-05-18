@@ -10,10 +10,10 @@ public class Statement : IAstNode
         return tokenStream.Peek().TokenType switch
         {
             ReturnKw => Return.Parse(tokenStream),
-            _ => throw new NotImplementedException()
+            _ => throw new NotImplementedException($"{nameof(Statement)}.{nameof(Parse)}")
         };
     }
 
     public string ToPrettyString(int indent = 0)
-        => throw new NotImplementedException($"{nameof(Statement)}.{nameof(ToPrettyString)}");
+        => throw new NotImplementedException($"{GetType().Name}.{nameof(ToPrettyString)}");
 }

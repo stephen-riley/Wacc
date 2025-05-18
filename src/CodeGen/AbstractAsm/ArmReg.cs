@@ -1,6 +1,6 @@
 namespace Wacc.CodeGen.AbstractAsm;
 
-public enum Register
+public enum ArmReg
 {
     // system registers
     SP = 1000,
@@ -30,6 +30,8 @@ public enum Register
 
     // special definitions
     RETVAL = W0,
-    SCRATCH = W9,
+    SCRATCH1 = W9,
+    SCRATCH2 = W10,
+    SCRATCH3 = W11,
     LAST_REGISTER = W15,
 }

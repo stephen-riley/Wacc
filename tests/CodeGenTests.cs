@@ -9,15 +9,15 @@ namespace Wacc.Tests;
 public class CodeGenTests
 {
     [TestMethod]
-    [DataRow("tmp.0", Register.W0)]
-    [DataRow("tmp.15", Register.W15)]
-    public void TmpToRegisterZeroOffset(string tmp, Register r)
+    [DataRow("tmp.0", ArmReg.W0)]
+    [DataRow("tmp.15", ArmReg.W15)]
+    public void TmpToRegisterZeroOffset(string tmp, ArmReg r)
         => Assert.AreEqual(r, CodeGenerator.AssignRegisterForTmp(tmp, baseRegister: 0));
 
     [TestMethod]
-    [DataRow("tmp.0", Register.W10)]
-    [DataRow("tmp.5", Register.W15)]
-    public void TmpToRegisterDefaultOffset(string tmp, Register r)
+    [DataRow("tmp.0", ArmReg.W10)]
+    [DataRow("tmp.5", ArmReg.W15)]
+    public void TmpToRegisterDefaultOffset(string tmp, ArmReg r)
     => Assert.AreEqual(r, CodeGenerator.AssignRegisterForTmp(tmp));
 
     [TestMethod]

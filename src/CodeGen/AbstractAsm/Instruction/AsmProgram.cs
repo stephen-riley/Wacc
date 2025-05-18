@@ -17,13 +17,18 @@ public record AsmProgram(string Filename) : AsmInstruction
         "        .section __TEXT,__text,regular,pure_instructions",
         "        .align 2",
         "",
-        "retval  .req w0",
-        "scratch .req w9",
-        "fp      .req w29",
-        "lr      .req w30"
+        "        ; register aliases",
+        "        retval    .req w0",
+        "        scratch1  .req w9",
+        "        scratch2  .req w10",
+        "        fp        .req w29",
+        "        lr        .req w30",
+        ""
     );
 
     public override int OperandCount => 0;
 
-    public override AsmOperand? Operand(int n) => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands");
+    public override AsmOperand? GetOperand(int n) => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands");
+
+    public override AsmInstruction SetOperand(int n, AsmOperand o) => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands");
 }

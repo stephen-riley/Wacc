@@ -64,7 +64,7 @@ public class CodeGenerator(RuntimeState opts)
     {
         var af = AF.Function(f.Name);
 
-        int curOffset = 0;  // TODO: this isn't right--check on the calling convention in the AArch64 book
+        int curOffset = -8;  // TODO: this isn't right--check on the calling convention in the AArch64 book
         foreach (var l in f.Locals)
         {
             af.StackOffsets[l.Name] = curOffset;
@@ -96,9 +96,23 @@ public class CodeGenerator(RuntimeState opts)
                 Asm.Add(AF.BitNot(AF.PseudoOperand(u.Dst)));
                 break;
 
+            case TacBinary b:
+                Asm.Add(AF.Mov(TranslateVal(b.Src1), AF.SCRATCH2));
+                Asm.Add(AF.Mov(TranslateVal(b.Src2), AF.PseudoOperand(b.Dst)));
+                Asm.Add(b.Op switch
+                {
+                    "+" => AF.Add(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                    "-" => AF.Subtract(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                    "*" => AF.Mul(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                    "/" => AF.Div(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                    "%" => AF.Mod(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                    _ => throw new InvalidOperationException()
+                });
+                break;
+
             case TacReturn r:
                 Asm.Add(AF.Add(AF.SP, AF.ImmOperand(curFunc.LocalsSize), AF.SP));
-                Asm.Add(AF.Mov(TranslateVal(r.Val), AF.RegOperand(Register.RETVAL)));
+                Asm.Add(AF.Mov(TranslateVal(r.Val), AF.RegOperand(ArmReg.RETVAL)));
                 Asm.Add(AF.Ret());
                 break;
 
@@ -115,7 +129,7 @@ public class CodeGenerator(RuntimeState opts)
             _ => throw new CodeGenError($"{nameof(TranslateVal)}: can't handle TacVal type {val.GetType().Name}")
         };
 
-    internal static Register AssignRegisterForTmp(string tmp, int baseRegister = 10)
+    internal static ArmReg AssignRegisterForTmp(string tmp, int baseRegister = 10)
     {
         if (!tmp.StartsWith("tmp."))
         {
@@ -123,13 +137,13 @@ public class CodeGenerator(RuntimeState opts)
         }
 
         var tmpIndex = int.Parse(tmp[4..]);
-        var withOffset = (Register)tmpIndex + baseRegister;
+        var withOffset = (ArmReg)tmpIndex + baseRegister;
 
         return tmpIndex switch
         {
             < 0 => throw new CodeGenError($"{nameof(AssignRegisterForTmp)}: {tmp} is invalid"),
-            _ when withOffset > Register.LAST_REGISTER => throw new CodeGenError($"{nameof(AssignRegisterForTmp)}: {tmp} is invalid"),
-            _ => (Register)tmpIndex + baseRegister
+            _ when withOffset > ArmReg.LAST_REGISTER => throw new CodeGenError($"{nameof(AssignRegisterForTmp)}: {tmp} is invalid"),
+            _ => (ArmReg)tmpIndex + baseRegister
         };
     }
 }

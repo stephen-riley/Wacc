@@ -1,7 +1,6 @@
 using Wacc.CodeGen.AbstractAsm;
 using Wacc.CodeGen.AbstractAsm.Instruction;
 using Wacc.CodeGen.AbstractAsm.Operand;
-using static Wacc.CodeGen.AbstractAsm.Register;
 
 namespace Wacc.CodeGen;
 
@@ -20,7 +19,12 @@ public static class Pass3FixupInstructionsP3
                 var newInstructions = rule(i);
                 if (newInstructions is not null)
                 {
-                    pass3.AddRange(newInstructions);
+                    pass3.AddRange([
+                        AF.Newline(),
+                        AF.Comment($"Fixup on {i}"),
+                        ..newInstructions,
+                        AF.Comment(),
+                    ]);
                     processed = true;
                     goto CONT;
                 }
@@ -40,34 +44,44 @@ public static class Pass3FixupInstructionsP3
         // Mov(Stack(x), Stack(y)) => LoadStack(Stack(x), SCRATCH), StoreStack(SCRATCH, Stack(y))
         i => i is AsmMov mov && mov.Src is AsmStackOperand stackX && mov.Dst is AsmStackOperand stackY
                 ? [
-                    AF.Comment($"Fixup on {mov}"),
-                    AF.LoadStack(stackX, AF.RegOperand(SCRATCH)),
-                    AF.StoreStack(AF.RegOperand(SCRATCH), stackY)
+                    AF.LoadStack(stackX, AF.SCRATCH1),
+                    AF.StoreStack(AF.SCRATCH1, stackY),
                   ] : null,
 
         // Mov(Constant, Stack(x)) => Mov(Constant, SCRATCH), StoreStack(SCRATCH, Stack(x))
         i => i is AsmMov mov && mov.Src is AsmImmOperand imm && mov.Dst is AsmStackOperand stackY
                 ? [
-                    AF.Comment($"Fixup on {mov}"),
-                    AF.Mov(imm,AF.RegOperand(SCRATCH)),
-                    AF.StoreStack(AF.RegOperand(SCRATCH), stackY)
+                    AF.Mov(imm,AF.SCRATCH1),
+                    AF.StoreStack(AF.SCRATCH1, stackY),
                 ] : null,
 
         // Mov(Stack(x), Reg(y)) => LoadStack(Stack(x), Reg(y))
         i => i is AsmMov mov && mov.Src is AsmStackOperand stackX && mov.Dst is AsmRegOperand regY
                 ? [
-                    AF.Comment($"Fixup on {mov}"),
-                    AF.LoadStack(stackX, regY)
+                    AF.LoadStack(stackX, regY),
                 ] : null,
 
         // other Src-only instructions (eg. Unary):
         // op(Stack(x)) => LoadStack(Stack(x), SCRATCH), op(SCRATCH), StoreStack(SCRATCH, Stack(x))
-        i => i.OperandCount == 1 && i.Operand(1) is AsmStackOperand stackX
+        i => i.OperandCount == 1 && i.GetOperand(1) is AsmStackOperand stackX
                 ? [
-                    AF.Comment($"Fixup on {i}"),
-                    AF.LoadStack(stackX, AF.RegOperand(SCRATCH)),
-                    AF.Create(i.GetType(), AF.RegOperand(SCRATCH)),
-                    AF.StoreStack(AF.RegOperand(SCRATCH), stackX)
-                ] : null
+                    AF.LoadStack(stackX, AF.SCRATCH1),
+                    AF.Create(i.GetType(), AF.SCRATCH1),
+                    AF.StoreStack(AF.SCRATCH1, stackX),
+                ] : null,
+        
+        // three-address instructions
+        i => {
+                if(i.OperandCount == 3 && i.Operands.OfType<AsmStackOperand>().Any()) {
+                    var stackOp = i.Operands.OfType<AsmStackOperand>().First();
+                    return  [
+                        AF.LoadStack(stackOp, AF.SCRATCH1),
+                        AF.Create(i.GetType(), AF.SCRATCH2, AF.SCRATCH1, AF.SCRATCH1),
+                        AF.StoreStack(AF.SCRATCH1, stackOp),
+                    ];
+                } else {
+                    return null;
+                }
+            }
     ];
 }

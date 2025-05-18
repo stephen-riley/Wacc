@@ -10,20 +10,25 @@ public static class AF
     public static AsmAdd Add(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmAllocateStack AllocateStack(int Size) => new(Size);
     public static AsmBitNot BitNot(AsmOperand Src) => new(Src);
-    public static AsmComment Comment(string Comment) => new(Comment);
+    public static AsmComment Comment(string Comment = "") => new(Comment);
+    public static AsmDiv Div(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmFunction Function(string Name) => new(Name);
     public static AsmFunctionEpilogue FunctionEpilogue(string Name, AsmFunction Func) => new(Name, Func);
     public static AsmLoadStack LoadStack(AsmStackOperand Src, AsmDestOperand Dst) => new(Src, Dst);
+    public static AsmMod Mod(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmMov Mov(AsmOperand Src, AsmDestOperand Dst) => new(Src, Dst);
+    public static AsmMul Mul(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmNeg Neg(AsmOperand Src) => new(Src);
+    public static AsmNewline Newline() => new();
     public static AsmProgram Program(string Filename) => new(Filename);
     public static AsmProgramEpilogue ProgramEpilogue() => new();
     public static AsmRet Ret() => new();
     public static AsmStoreStack StoreStack(AsmOperand Src, AsmStackOperand Dst) => new(Src, Dst);
+    public static AsmSubtract Subtract(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmImmOperand ImmOperand(int Imm) => new(Imm);
     public static AsmPseudoOperand PseudoOperand(string Name) => new(Name);
     public static AsmPseudoOperand PseudoOperand(TacVar v) => new(v);
-    public static AsmRegOperand RegOperand(Register Reg) => new(Reg);
+    public static AsmRegOperand RegOperand(ArmReg Reg) => new(Reg);
     public static AsmStackOperand StackOperand(int Offset) => new(Offset);
 
     public static AsmInstruction Create(Type type, AsmOperand src1, AsmOperand src2, AsmOperand dst)
@@ -50,12 +55,16 @@ public static class AF
         return (AsmInstruction)i;
     }
 
-    public static AsmRegOperand FP => new(Register.FP);
+    public static AsmRegOperand FP => new(ArmReg.FP);
 
-    public static AsmRegOperand SP => new(Register.SP);
+    public static AsmRegOperand SP => new(ArmReg.SP);
 
-    public static AsmRegOperand SCRATCH => new(Register.SCRATCH);
+    public static AsmRegOperand SCRATCH1 => new(ArmReg.SCRATCH1);
 
-    public static AsmRegOperand RETVAL => new(Register.RETVAL);
+    public static AsmRegOperand SCRATCH2 => new(ArmReg.SCRATCH2);
+
+    public static AsmRegOperand SCRATCH3 => new(ArmReg.SCRATCH3);
+
+    public static AsmRegOperand RETVAL => new(ArmReg.RETVAL);
 }
 

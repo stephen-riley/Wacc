@@ -11,11 +11,17 @@ public record AsmBitNot(AsmOperand Src) : AsmInstruction
 
     public override string EmitArmString() => $"        mvn     {Src.EmitArmString()}, {Src.EmitArmString()}";
 
-    public override AsmOperand? Operand(int n)
-    => n switch
-    {
-        1 => Src,
-        _ => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands")
-    };
+    public override AsmOperand? GetOperand(int n)
+        => n switch
+        {
+            1 => Src,
+            _ => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands")
+        };
 
+    public override AsmInstruction SetOperand(int n, AsmOperand o)
+        => n switch
+        {
+            1 => this with { Src = o },
+            _ => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands")
+        };
 }

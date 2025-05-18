@@ -11,11 +11,19 @@ public record AsmMov(AsmOperand Src, AsmDestOperand Dst) : AsmInstruction
 
     public override string EmitIrString() => $"Mov({Src.EmitIrString()}, {Dst.EmitIrString()})";
 
-    public override AsmOperand? Operand(int n)
+    public override AsmOperand? GetOperand(int n)
         => n switch
         {
             1 => Src,
             2 => Dst,
+            _ => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands")
+        };
+
+    public override AsmInstruction SetOperand(int n, AsmOperand o)
+        => n switch
+        {
+            1 => this with { Src = o },
+            2 => this with { Dst = (AsmDestOperand)o },
             _ => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands")
         };
 }

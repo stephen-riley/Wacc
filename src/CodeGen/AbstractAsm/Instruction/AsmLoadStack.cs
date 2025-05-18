@@ -11,7 +11,7 @@ public record AsmLoadStack(AsmStackOperand Src, AsmDestOperand Dst) : AsmInstruc
 
     public override string EmitArmString() => $"        ldr     {Dst.EmitArmString()}, {Src.EmitArmString()}";
 
-    public override AsmOperand? Operand(int n)
+    public override AsmOperand? GetOperand(int n)
     => n switch
     {
         1 => Src,
@@ -19,4 +19,11 @@ public record AsmLoadStack(AsmStackOperand Src, AsmDestOperand Dst) : AsmInstruc
         _ => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands")
     };
 
+    public override AsmInstruction SetOperand(int n, AsmOperand o)
+        => n switch
+        {
+            1 => this with { Src = (AsmStackOperand)o },
+            2 => this with { Dst = (AsmDestOperand)o },
+            _ => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands")
+        };
 }

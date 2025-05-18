@@ -3,15 +3,15 @@ using Wacc.Exceptions;
 
 namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
-public record AsmRet() : AsmInstruction
+public record AsmNewline() : AsmInstruction
 {
     public override int OperandCount => 0;
 
-    public override string EmitIrString() => "Ret";
+    public override string EmitArmString() => "";
 
-    public override string EmitArmString() => $"        ret";
+    public override string EmitIrString() => "";
 
-    public override AsmOperand? GetOperand(int n) => throw new CodeGenError("ret has no operands");
+    public override AsmOperand? GetOperand(int n) => throw new CodeGenError("newlines have no operands");
 
     public override AsmInstruction SetOperand(int n, AsmOperand o) => throw new CodeGenError($"{GetType().Name} only has {OperandCount} operands");
 }

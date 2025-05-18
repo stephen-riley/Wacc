@@ -3,13 +3,15 @@ using Wacc.Exceptions;
 
 namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
-public record AsmAdd(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) : AsmInstruction
+public record AsmMod(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) : AsmInstruction
 {
     public override int OperandCount => 3;
 
-    public override string EmitArmString() => $"        add     {Dst.EmitArmString()}, {Src1.EmitArmString()}, {Src2.EmitArmString()}";
+    public override string EmitArmString()
+        => $"        sdiv    scratch3, {Src1.EmitArmString()}, {Src2.EmitArmString()}" + "\n" +
+           $"        msub    {Dst.EmitArmString()}, {Src1.EmitArmString()}, scratch3, {Src2.EmitArmString()}";
 
-    public override string EmitIrString() => $"Add({Src1.EmitIrString()}, {Src2.EmitIrString()}, {Dst.EmitIrString()})";
+    public override string EmitIrString() => $"Mod({Src1.EmitIrString()}, {Src2.EmitIrString()}, {Dst.EmitIrString()})";
 
     public override AsmOperand? GetOperand(int n)
         => n switch
