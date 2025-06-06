@@ -20,8 +20,16 @@ public class BinaryOp(string op, IAstNode lExpr, IAstNode rExpr) : IAstNode
         { BitwiseLeft, 40 },
         { BitwiseRight, 40 },
         { BitwiseAnd, 35 },
+        { LessThan,35 },
+        { LessThanEqual, 35 },
+        { GreaterThan, 35 },
+        { GreaterThanEqual, 35 },
         { BitwiseXor, 34 },
         { BitwiseOr, 33} ,
+        { EqualTo, 30 },
+        { NotEqualTo, 30 },
+        { LogicalAnd, 10 },
+        { LogicalOr, 5 },
     };
 
     public static readonly HashSet<TokenType> Operators = [.. Precedence.Keys];
