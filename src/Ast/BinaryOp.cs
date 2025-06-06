@@ -10,6 +10,10 @@ public class BinaryOp(string op, IAstNode lExpr, IAstNode rExpr) : IAstNode
     public IAstNode LExpr => lExpr;
     public IAstNode RExpr => rExpr;
 
+    public static readonly HashSet<string> ShortCircuitOps = ["&&", "||"];
+
+    public static readonly HashSet<string> RelationalOps = ["==", "!=", ">", ">=", "<", "<="];
+
     // Reference: https://en.cppreference.com/w/c/language/operator_precedence
     public static readonly Dictionary<TokenType, int> Precedence = new() {
         { MulSign, 50 },
@@ -21,9 +25,9 @@ public class BinaryOp(string op, IAstNode lExpr, IAstNode rExpr) : IAstNode
         { BitwiseRight, 40 },
         { BitwiseAnd, 35 },
         { LessThan,35 },
-        { LessThanEqual, 35 },
+        { LessOrEqual, 35 },
         { GreaterThan, 35 },
-        { GreaterThanEqual, 35 },
+        { GreaterOrEqual, 35 },
         { BitwiseXor, 34 },
         { BitwiseOr, 33} ,
         { EqualTo, 30 },

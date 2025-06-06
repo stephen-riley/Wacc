@@ -6,6 +6,7 @@ public record TacUnary(string Op, TacVal Src, TacVar Dst) : ITackyInstr
     {
         "-" => "Negate",
         "~" => "Complement",
+        "!" => "Not",
         _ => throw new InvalidOperationException($"no unary operator '{Op}'")
     };
 

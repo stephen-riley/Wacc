@@ -14,6 +14,12 @@ public record TacBinary(string Op, TacVal Src1, TacVal Src2, TacVar Dst) : ITack
         "<<" => "BitwiseLeft",
         ">>" => "BitwiseRight",
         "^" => "BitwiseXor",
+        "==" => "Equal",
+        "!=" => "NotEqual",
+        "<" => "LessThan",
+        "<=" => "LessOrEqual",
+        ">" => "GreaterThan",
+        ">=" => "GreaterOrEqual",
         _ => throw new InvalidOperationException($"no binary operator '{Op}'")
     };
 

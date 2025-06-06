@@ -45,9 +45,9 @@ public class Lexer(RuntimeState opts)
         { EqualTo, new Regex(@"\G==") },
         { NotEqualTo, new Regex(@"\G!=") },
         { LogicalNot, new Regex(@"\G!") },
-        { LessThanEqual, new Regex(@"\G<=") },
+        { LessOrEqual, new Regex(@"\G<=") },
         { LessThan, new Regex(@"\G<") },
-        { GreaterThanEqual, new Regex(@"\G>=") },
+        { GreaterOrEqual, new Regex(@"\G>=") },
         { GreaterThan, new Regex(@"\G>") },
         { EOF, new Regex(@"\G$", RegexOptions.Multiline) },
     };

@@ -11,12 +11,14 @@ public class TackyGenerator(RuntimeState opts)
     internal List<TacFunction> functions = [];
     internal List<ITackyInstr> instructions = [];
 
-    internal int TmpCounter = 0;
+    internal TacVar? LastTmpVar;
+    internal int TmpVarCounter = 0;
     internal TacVar ReserveTmpVar()
     {
         if (functions.Count > 0)
         {
-            var tv = new TacVar($"tmp.{TmpCounter++}");
+            var tv = new TacVar($"tmp.{TmpVarCounter++}");
+            LastTmpVar = tv;
             functions[^1].Locals.Add(tv);
             return tv;
         }
@@ -26,7 +28,17 @@ public class TackyGenerator(RuntimeState opts)
         }
     }
 
-    internal TacVar? GetLastTmpVar() => instructions[^1].GetDst();
+    internal TacVar? GetLastTmpVar() => LastTmpVar;
+    internal TacVar GetLastTmpVarOrFail() => GetLastTmpVar() ?? throw new TackyGenError("need to know last temp var in UnaryOp, but none available");
+
+    internal int TmpLabelCounter = 0;
+    internal string ReserveTmpLabel(string prefix = "_tmp_") => $"{prefix}{TmpLabelCounter++}";
+
+    private void Emit(ITackyInstr instr)
+    {
+        instructions.Add(instr);
+        Console.Error.WriteLine($"> {instr}");
+    }
 
     public bool Execute()
     {
@@ -70,39 +82,38 @@ public class TackyGenerator(RuntimeState opts)
             case Function f:
                 instructions = [];
                 functions.Add(new TacFunction(f.Name, instructions));
-                TmpCounter = 0;     // TODO: awkward here, shouldn't have to do this manually
+                TmpVarCounter = 0;     // TODO: awkward here, shouldn't have to do this manually
                 EmitTacky(f.Body);
                 break;
 
             case Return r:
                 var retExpr = TacConstantOrExpression(r.Expr);
-                instructions.Add(new TacReturn(retExpr));
-                // if (r.Expr is Constant literal)
-                // {
-                //     instructions.Add(new TacReturn(new TacConstant(literal.Int)));
-                // }
-                // else
-                // {
-                //     EmitTacky(r.Expr);
-                //     instructions.Add(new TacReturn(GetLastTmpVar() ?? throw new TackyGenError("need to know last temp var in Return, but none available")));
-                // }
+                Emit(new TacReturn(retExpr));
                 break;
 
             case Constant c:
-                instructions.Add(new TacConstant(c.Int));
+                Emit(new TacConstant(c.Int));
                 break;
 
             case UnaryOp u:
                 var src = TacConstantOrExpression(u.Expr);
                 var dst = ReserveTmpVar();
-                instructions.Add(new TacUnary(u.Op, src, dst));
+                Emit(new TacUnary(u.Op, src, dst));
+                break;
+
+            case BinaryOp b when b.Op == "&&":
+                EmitLogicalAnd(b);
+                break;
+
+            case BinaryOp b when b.Op == "||":
+                EmitLogicalOr(b);
                 break;
 
             case BinaryOp b:
                 var src1 = TacConstantOrExpression(b.LExpr);
                 var src2 = TacConstantOrExpression(b.RExpr);
                 dst = ReserveTmpVar();
-                instructions.Add(new TacBinary(b.Op, src1, src2, dst));
+                Emit(new TacBinary(b.Op, src1, src2, dst));
                 break;
 
             default:
@@ -120,8 +131,64 @@ public class TackyGenerator(RuntimeState opts)
         else
         {
             EmitTacky(n);
-            var pseudoVar = GetLastTmpVar() ?? throw new TackyGenError("need to know last temp var in UnaryOp, but none available");
+            var pseudoVar = GetLastTmpVarOrFail();
             return pseudoVar;
         }
+    }
+
+    internal void EmitLogicalAnd(BinaryOp b)
+    {
+        var falseLabel = ReserveTmpLabel();
+        var endLabel = ReserveTmpLabel();
+        var v1 = ReserveTmpVar();
+        var v2 = ReserveTmpVar();
+        var result = ReserveTmpVar();
+
+        // evaluate lexpr.  If false, jump to `falseLabel`; otherwise, fall through.
+        var lexpr = TacConstantOrExpression(b.LExpr);
+        Emit(new TacCopy(lexpr, v1));
+        Emit(new TacJumpIfZero(v1, falseLabel));
+
+        // evaluate rexpr.  If false, jump to `falseLabel`; otherwise, fall through.
+        var rexpr = TacConstantOrExpression(b.RExpr);
+        Emit(new TacCopy(rexpr, v2));
+        Emit(new TacJumpIfZero(v2, falseLabel));
+
+        // set result to 1 and jump to `endLabel`
+        Emit(new TacCopy(new TacConstant(1), result));
+        Emit(new TacJump(endLabel));
+
+        // set result to 0 and fall through to end
+        Emit(new TacLabel(falseLabel));
+        Emit(new TacCopy(new TacConstant(0), result));
+        Emit(new TacLabel(endLabel));
+    }
+
+    internal void EmitLogicalOr(BinaryOp b)
+    {
+        var trueLabel = ReserveTmpLabel();
+        var endLabel = ReserveTmpLabel();
+        var v1 = ReserveTmpVar();
+        var v2 = ReserveTmpVar();
+        var result = ReserveTmpVar();
+
+        // Evaluate lexpr.  If true, jump to `trueLabel`; therwise, fall through.
+        TacConstantOrExpression(b.LExpr);
+        Emit(new TacCopy(GetLastTmpVarOrFail(), v1));
+        Emit(new TacJumpIfNotZero(v1, trueLabel));
+
+        // Evaluate rexpr.  If true, jump to `trueLabel`; otherwise, fall through.
+        TacConstantOrExpression(b.RExpr);
+        Emit(new TacCopy(GetLastTmpVarOrFail(), v2));
+        Emit(new TacJumpIfNotZero(v2, trueLabel));
+
+        // set result to 0 and jump to `endLabel`
+        Emit(new TacCopy(new TacConstant(0), result));
+        Emit(new TacJump(endLabel));
+
+        // set result to 1 and fall through to end
+        Emit(new TacLabel(trueLabel));
+        Emit(new TacCopy(new TacConstant(1), result));
+        Emit(new TacLabel(endLabel));
     }
 }
