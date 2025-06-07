@@ -12,7 +12,7 @@ public record AsmProgram(string Filename) : AsmInstruction
     public override string EmitIrString() => $"Program(\"{Filename}\")";
 
     public override string EmitArmString() => string.Join("\n",
-        $"        ; compiled from {Filename}",
+       $"        ; compiled from {Filename}",
         "",
         "        .section __TEXT,__text,regular,pure_instructions",
         "        .align 2",

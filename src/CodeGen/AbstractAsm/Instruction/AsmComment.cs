@@ -9,7 +9,6 @@ public record AsmComment(string Comment = "") : AsmInstruction
 
     public override string EmitArmString() => $"        ; {Comment}";
 
-    // public override string EmitIrString() => $"Comment(\"{Comment}\")";
     public override string EmitIrString() => $"; {Comment}";
 
     public override AsmOperand? GetOperand(int n) => throw new CodeGenError("comments have no operands");
