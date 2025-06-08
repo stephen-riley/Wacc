@@ -32,7 +32,7 @@ public class TackyGenerator(RuntimeState opts)
     internal TacVar GetLastTmpVarOrFail() => GetLastTmpVar() ?? throw new TackyGenError("need to know last temp var in UnaryOp, but none available");
 
     internal int TmpLabelCounter = 0;
-    internal string ReserveTmpLabel(string prefix = "_tmp_") => $"{prefix}{TmpLabelCounter++}";
+    internal string ReserveTmpLabel(string prefix = "_l") => $"{prefix}{TmpLabelCounter++}";
 
     private void Emit(ITackyInstr instr)
     {

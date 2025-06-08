@@ -118,7 +118,7 @@ public class CodeGenerator(RuntimeState opts)
             case TacUnary u when u.OpName == "Not":
                 Asm.AddRange([
                     AF.Cmp(AF.ImmOperand(0), TranslateVal(u.Src)),
-                    AF.Mov(AF.ImmOperand(0), AF.PseudoOperand(u.Dst)),
+                    // AF.Mov(AF.ImmOperand(0), AF.PseudoOperand(u.Dst)),
                     AF.SetCC(AsmCmp.CondCode.EQ, AF.PseudoOperand(u.Dst))
                 ]);
                 break;
@@ -126,7 +126,7 @@ public class CodeGenerator(RuntimeState opts)
             case TacBinary b when BinaryOp.RelationalOps.Contains(b.Op):
                 Asm.AddRange([
                     AF.Cmp(TranslateVal(b.Src2), TranslateVal(b.Src1)),
-                    AF.Mov(AF.ImmOperand(0), AF.PseudoOperand(b.Dst)),
+                    // AF.Mov(AF.ImmOperand(0), AF.PseudoOperand(b.Dst)),
                     AF.SetCC(TacBinary.CondCode[b.Op], AF.PseudoOperand(b.Dst))
                 ]);
                 break;

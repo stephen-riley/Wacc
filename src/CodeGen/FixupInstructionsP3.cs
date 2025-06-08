@@ -61,7 +61,7 @@ public class Pass3FixupInstructionsP3(RuntimeState options)
         // Mov(Constant, Stack(x)) => Mov(Constant, SCRATCH), StoreStack(SCRATCH, Stack(x))
         i => i is AsmMov mov && mov.Src is AsmImmOperand imm && mov.Dst is AsmStackOperand stackY
                 ? [
-                    AF.Mov(imm,AF.SCRATCH1),
+                    AF.Mov(imm, AF.SCRATCH1),
                     AF.StoreStack(AF.SCRATCH1, stackY),
                 ] : null,
 
@@ -69,6 +69,13 @@ public class Pass3FixupInstructionsP3(RuntimeState options)
         i => i is AsmMov mov && mov.Src is AsmStackOperand stackX && mov.Dst is AsmRegOperand regY
                 ? [
                     AF.LoadStack(stackX, regY),
+                ] : null,
+
+        // Cmp(imm1, imm2) => Mov(imm1, SCRATCH), Cmp(SCRATCH, imm2)
+        i => i is AsmCmp cmp && cmp.Src1 is AsmImmOperand imm1 && cmp.Src2 is AsmImmOperand imm2
+                ? [
+                    AF.Mov(imm1, AF.SCRATCH1),
+                    AF.Cmp(AF.SCRATCH1, imm2),
                 ] : null,
 
         // other Src-only instructions (eg. Unary):
