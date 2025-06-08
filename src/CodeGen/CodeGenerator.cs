@@ -1,3 +1,4 @@
+using Wacc.Ast;
 using Wacc.CodeGen.AbstractAsm;
 using Wacc.CodeGen.AbstractAsm.Instruction;
 using Wacc.CodeGen.AbstractAsm.Operand;
@@ -86,6 +87,24 @@ public class CodeGenerator(RuntimeState opts)
 
         switch (instr)
         {
+            case TacJump j:
+                Asm.Add(AF.Jmp(j.Identifier));
+                break;
+
+            case TacJumpIfZero jz:
+                Asm.AddRange([
+                    AF.Cmp(AF.ImmOperand(0), TranslateVal(jz.Src)),
+                    AF.JmpCC(AsmCmp.CondCode.EQ, jz.Identifier)
+                ]);
+                break;
+
+            case TacJumpIfNotZero jnz:
+                Asm.AddRange([
+                    AF.Cmp(AF.ImmOperand(0), TranslateVal(jnz.Src)),
+                    AF.JmpCC(AsmCmp.CondCode.NE, jnz.Identifier)
+                ]);
+                break;
+
             case TacUnary u when u.OpName == "Negate":
                 Asm.Add(AF.Mov(TranslateVal(u.Src), AF.PseudoOperand(u.Dst)));
                 Asm.Add(AF.Neg(AF.PseudoOperand(u.Dst)));
@@ -96,28 +115,54 @@ public class CodeGenerator(RuntimeState opts)
                 Asm.Add(AF.BitNot(AF.PseudoOperand(u.Dst)));
                 break;
 
+            case TacUnary u when u.OpName == "Not":
+                Asm.AddRange([
+                    AF.Cmp(AF.ImmOperand(0), TranslateVal(u.Src)),
+                    AF.Mov(AF.ImmOperand(0), AF.PseudoOperand(u.Dst)),
+                    AF.SetCC(AsmCmp.CondCode.EQ, AF.PseudoOperand(u.Dst))
+                ]);
+                break;
+
+            case TacBinary b when BinaryOp.RelationalOps.Contains(b.Op):
+                Asm.AddRange([
+                    AF.Cmp(TranslateVal(b.Src2), TranslateVal(b.Src1)),
+                    AF.Mov(AF.ImmOperand(0), AF.PseudoOperand(b.Dst)),
+                    AF.SetCC(TacBinary.CondCode[b.Op], AF.PseudoOperand(b.Dst))
+                ]);
+                break;
+
             case TacBinary b:
-                Asm.Add(AF.Mov(TranslateVal(b.Src1), AF.SCRATCH2));
-                Asm.Add(AF.Mov(TranslateVal(b.Src2), AF.PseudoOperand(b.Dst)));
-                Asm.Add(b.Op switch
-                {
-                    "+" => AF.Add(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                    "-" => AF.Subtract(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                    "*" => AF.Mul(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                    "/" => AF.Div(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                    "%" => AF.Mod(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                    "&" => AF.BitwiseAnd(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                    "<<" => AF.BitwiseLeft(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                    "|" => AF.BitwiseOr(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                    ">>" => AF.BitwiseRight(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                    "^" => AF.BitwiseXor(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                    _ => throw new NotImplementedException($"Operator \"{b.Op}\" not (yet) impelemented for TacBinary code generation")
-                });
+                Asm.AddRange([
+                    AF.Mov(TranslateVal(b.Src1), AF.SCRATCH2),
+                    AF.Mov(TranslateVal(b.Src2), AF.PseudoOperand(b.Dst)),
+                    b.Op switch
+                    {
+                        "+" => AF.Add(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        "-" => AF.Subtract(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        "*" => AF.Mul(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        "/" => AF.Div(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        "%" => AF.Mod(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        "&" => AF.BitwiseAnd(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        "<<" => AF.BitwiseLeft(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        "|" => AF.BitwiseOr(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        ">>" => AF.BitwiseRight(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        "^" => AF.BitwiseXor(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        _ => throw new NotImplementedException($"Operator \"{b.Op}\" not (yet) impelemented for TacBinary code generation")
+                    }
+                ]);
                 break;
 
             case TacReturn r:
                 Asm.Add(AF.Mov(TranslateVal(r.Val), AF.RegOperand(ArmReg.RETVAL)));
                 Asm.Add(AF.Ret(curFunc.Name));
+                break;
+
+            case TacCopy c:
+                Asm.Add(AF.Mov(TranslateVal(c.Src), AF.PseudoOperand(c.Dst)));
+                break;
+
+            case TacLabel l:
+                Asm.Add(AF.Label(l.Identifier));
                 break;
 
             default:

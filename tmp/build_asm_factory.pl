@@ -2,7 +2,7 @@
 
 # Constructs a static factory class for AbstractAsm classes.
 # 
-# Invoke from repo root as /tmp/build_asm_factory.pl
+# Invoke from repo root directory as tmp/build_asm_factory.pl
 
 use strict;
 use warnings;

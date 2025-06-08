@@ -1,6 +1,4 @@
 using Wacc.CodeGen.AbstractAsm;
-using Wacc.CodeGen.AbstractAsm.Instruction;
-using Wacc.CodeGen.AbstractAsm.Operand;
 using Wacc.Extensions;
 
 namespace Wacc.Emit;

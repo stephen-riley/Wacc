@@ -15,10 +15,14 @@ public static class AF
     public static AsmBitwiseOr BitwiseOr(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmBitwiseRight BitwiseRight(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmBitwiseXor BitwiseXor(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
+    public static AsmCmp Cmp(AsmOperand Src1, AsmOperand Src2) => new(Src1, Src2);
     public static AsmComment Comment(string Comment = "") => new(Comment);
     public static AsmDiv Div(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmFunction Function(string Name) => new(Name);
     public static AsmFunctionEpilogue FunctionEpilogue(string Name, AsmFunction Func) => new(Name, Func);
+    public static AsmJmp Jmp(string Label) => new(Label);
+    public static AsmJmpCC JmpCC(AsmCmp.CondCode CondCode, string Label) => new(CondCode, Label);
+    public static AsmLabel Label(string Label) => new(Label);
     public static AsmLoadStack LoadStack(AsmStackOperand Src, AsmDestOperand Dst) => new(Src, Dst);
     public static AsmMod Mod(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmMov Mov(AsmOperand Src, AsmDestOperand Dst) => new(Src, Dst);
@@ -28,6 +32,7 @@ public static class AF
     public static AsmProgram Program(string Filename) => new(Filename);
     public static AsmProgramEpilogue ProgramEpilogue() => new();
     public static AsmRet Ret(string FuncName) => new(FuncName);
+    public static AsmSetCC SetCC(AsmCmp.CondCode CondCode, AsmOperand Src) => new(CondCode, Src);
     public static AsmStoreStack StoreStack(AsmOperand Src, AsmStackOperand Dst) => new(Src, Dst);
     public static AsmSubtract Subtract(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmImmOperand ImmOperand(int Imm) => new(Imm);
