@@ -37,7 +37,7 @@ public class TackyGenerator(RuntimeState opts)
     private void Emit(ITackyInstr instr)
     {
         instructions.Add(instr);
-        Console.Error.WriteLine($"> {instr}");
+        // Console.Error.WriteLine($"> {instr}");
     }
 
     public bool Execute()
@@ -141,7 +141,7 @@ public class TackyGenerator(RuntimeState opts)
         var falseLabel = ReserveTmpLabel();
         var endLabel = ReserveTmpLabel();
         var v1 = ReserveTmpVar();
-        var v2 = ReserveTmpVar();
+        // var v2 = ReserveTmpVar();
         var result = ReserveTmpVar();
 
         // evaluate lexpr.  If false, jump to `falseLabel`; otherwise, fall through.
@@ -151,8 +151,8 @@ public class TackyGenerator(RuntimeState opts)
 
         // evaluate rexpr.  If false, jump to `falseLabel`; otherwise, fall through.
         var rexpr = TacConstantOrExpression(b.RExpr);
-        Emit(new TacCopy(rexpr, v2));
-        Emit(new TacJumpIfZero(v2, falseLabel));
+        Emit(new TacCopy(rexpr, v1));
+        Emit(new TacJumpIfZero(v1, falseLabel));
 
         // set result to 1 and jump to `endLabel`
         Emit(new TacCopy(new TacConstant(1), result));
@@ -162,6 +162,7 @@ public class TackyGenerator(RuntimeState opts)
         Emit(new TacLabel(falseLabel));
         Emit(new TacCopy(new TacConstant(0), result));
         Emit(new TacLabel(endLabel));
+        // Emit(new TacCopy)
     }
 
     internal void EmitLogicalOr(BinaryOp b)

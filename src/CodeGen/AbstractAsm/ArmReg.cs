@@ -29,9 +29,11 @@ public enum ArmReg
     W15,
 
     // special definitions
-    RETVAL = W0,
-    SCRATCH1 = W9,
-    SCRATCH2 = W10,
-    SCRATCH3 = W11,
+    RETVAL,         // W0,
+    SCRATCH1,       // W9,
+    SCRATCH2,       // W10,
+    SCRATCH3,       // W11,
+    ZR,
+
     LAST_REGISTER = W15,
 }

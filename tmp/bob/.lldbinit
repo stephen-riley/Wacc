@@ -1,3 +1,4 @@
-target create ./a
-process launch --stop-at-entry
-b main
+# target create ./a
+# add-dsym ./a.dSYM
+# process launch --stop-at-entry
+# b main

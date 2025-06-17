@@ -20,6 +20,7 @@ public static class AF
     public static AsmDiv Div(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmFunction Function(string Name) => new(Name);
     public static AsmFunctionEpilogue FunctionEpilogue(string Name, AsmFunction Func) => new(Name, Func);
+    public static AsmInstructionComment InstructionComment(string? Comment = "") => new(Comment);
     public static AsmJmp Jmp(string Label) => new(Label);
     public static AsmJmpCC JmpCC(AsmCmp.CondCode CondCode, string Label) => new(CondCode, Label);
     public static AsmLabel Label(string Label) => new(Label);
@@ -76,5 +77,7 @@ public static class AF
     public static AsmRegOperand SCRATCH3 => new(ArmReg.SCRATCH3);
 
     public static AsmRegOperand RETVAL => new(ArmReg.RETVAL);
+
+    public static AsmRegOperand ZR => new(ArmReg.ZR);
 }
 

@@ -74,6 +74,8 @@ public class CodeGenerator(RuntimeState opts)
 
         Asm.Add(af);
         Asm.Add(AF.AllocateStack(af.LocalsSize));
+        Asm.Add(AF.Newline());
+
         foreach (var i in f.Instructions)
         {
             TranslateTacInstruction(i, af);
@@ -83,7 +85,7 @@ public class CodeGenerator(RuntimeState opts)
 
     internal void TranslateTacInstruction(ITackyInstr instr, AsmFunction curFunc)
     {
-        var bundle = new List<AsmInstruction>();
+        Asm.Add(AF.InstructionComment(instr.ToString()));
 
         switch (instr)
         {
@@ -93,14 +95,16 @@ public class CodeGenerator(RuntimeState opts)
 
             case TacJumpIfZero jz:
                 Asm.AddRange([
-                    AF.Cmp(AF.ImmOperand(0), TranslateVal(jz.Src)),
+                    AF.Mov(TranslateVal(jz.Src), AF.SCRATCH1),
+                    AF.Cmp(AF.ZR, AF.SCRATCH1),
                     AF.JmpCC(AsmCmp.CondCode.EQ, jz.Identifier)
                 ]);
                 break;
 
             case TacJumpIfNotZero jnz:
                 Asm.AddRange([
-                    AF.Cmp(AF.ImmOperand(0), TranslateVal(jnz.Src)),
+                    AF.Mov(TranslateVal(jnz.Src), AF.SCRATCH1),
+                    AF.Cmp(AF.ZR, AF.SCRATCH1),
                     AF.JmpCC(AsmCmp.CondCode.NE, jnz.Identifier)
                 ]);
                 break;
@@ -117,8 +121,8 @@ public class CodeGenerator(RuntimeState opts)
 
             case TacUnary u when u.OpName == "Not":
                 Asm.AddRange([
-                    AF.Cmp(AF.ImmOperand(0), TranslateVal(u.Src)),
-                    // AF.Mov(AF.ImmOperand(0), AF.PseudoOperand(u.Dst)),
+                    AF.Mov(TranslateVal(u.Src), AF.SCRATCH1),
+                    AF.Cmp(AF.ZR, AF.SCRATCH1),
                     AF.SetCC(AsmCmp.CondCode.EQ, AF.PseudoOperand(u.Dst))
                 ]);
                 break;
@@ -126,7 +130,6 @@ public class CodeGenerator(RuntimeState opts)
             case TacBinary b when BinaryOp.RelationalOps.Contains(b.Op):
                 Asm.AddRange([
                     AF.Cmp(TranslateVal(b.Src2), TranslateVal(b.Src1)),
-                    // AF.Mov(AF.ImmOperand(0), AF.PseudoOperand(b.Dst)),
                     AF.SetCC(TacBinary.CondCode[b.Op], AF.PseudoOperand(b.Dst))
                 ]);
                 break;
@@ -167,6 +170,11 @@ public class CodeGenerator(RuntimeState opts)
 
             default:
                 throw new CodeGenError($"{nameof(CodeGenerator)}.{nameof(TranslateTacInstruction)} can't/shouldn't handle type {instr.GetType().Name} yet");
+        }
+
+        if (instr is not TacLabel)
+        {
+            Asm.Add(AF.Newline());
         }
     }
 

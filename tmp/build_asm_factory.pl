@@ -97,6 +97,8 @@ say OUT << 'EPILOG';
     public static AsmRegOperand SCRATCH3 => new(ArmReg.SCRATCH3);
 
     public static AsmRegOperand RETVAL => new(ArmReg.RETVAL);
+
+    public static AsmRegOperand ZR => new(ArmReg.ZR);
 }
 EPILOG
 

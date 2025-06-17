@@ -24,6 +24,7 @@ public record AsmProgram(string Filename) : AsmInstruction
         "        scratch3  .req w11",
         "        fp        .req w29",
         "        lr        .req w30",
+        "        zr        .req wZR",
         ""
     );
 

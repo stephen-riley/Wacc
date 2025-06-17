@@ -24,10 +24,10 @@ public class Pass3FixupInstructionsP3(RuntimeState options)
                     if (Options.Verbose)
                     {
                         pass3.AddRange([
-                            AF.Newline(),
+                            // AF.Newline(),
                             AF.Comment($"Fixup on {i}"),
                             ..newInstructions,
-                            AF.Comment(),
+                            AF.Comment($"end Fixup on {i}"),
                         ]);
                     }
                     else
