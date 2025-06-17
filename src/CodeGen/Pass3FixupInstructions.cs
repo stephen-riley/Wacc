@@ -4,7 +4,7 @@ using Wacc.CodeGen.AbstractAsm.Operand;
 
 namespace Wacc.CodeGen;
 
-public class Pass3FixupInstructionsP3(RuntimeState options)
+public class Pass3FixupInstructions(RuntimeState options)
 {
     internal RuntimeState Options => options;
 
@@ -25,9 +25,9 @@ public class Pass3FixupInstructionsP3(RuntimeState options)
                     {
                         pass3.AddRange([
                             // AF.Newline(),
-                            AF.Comment($"Fixup on {i}"),
+                            AF.Comment($"Fix {i}"),
                             ..newInstructions,
-                            AF.Comment($"end Fixup on {i}"),
+                            AF.Comment($"end fix for {i}"),
                         ]);
                     }
                     else
@@ -76,6 +76,28 @@ public class Pass3FixupInstructionsP3(RuntimeState options)
                 ? [
                     AF.Mov(imm1, AF.SCRATCH1),
                     AF.Cmp(AF.SCRATCH1, imm2),
+                ] : null,
+
+        // Cmp(imm1, Stack(x)) => Mov(imm1, SCRATCH), Mov(Stack(x), SCRATCH2), Cmp(SCRATCH, SCRATCH2)
+        i => i is AsmCmp cmp && cmp.Src1 is AsmImmOperand imm1 && cmp.Src2 is AsmStackOperand stackX
+                ? [
+                    AF.Mov(imm1, AF.SCRATCH1),
+                    AF.LoadStack(stackX, AF.SCRATCH2),
+                    AF.Cmp(AF.SCRATCH1, AF.SCRATCH2),
+                ] : null,
+
+        // Cmp(Stack(x), imm2) => LoadStack(Stack(x), SCRATCH), Cmp(SCRATCH, imm2)
+        i => i is AsmCmp cmp && cmp.Src1 is AsmStackOperand stackX && cmp.Src2 is AsmImmOperand imm2
+                ? [
+                    AF.LoadStack(stackX, AF.SCRATCH1),
+                    AF.Cmp(AF.SCRATCH1, imm2),
+                ] : null,
+
+        // SetCC(cond, Stack(x)) => LoadStack(Stack(x), SCRATCH), SetCC(cond, SCRATCH)
+        i => i is AsmSetCC setcc && setcc.Src is AsmStackOperand stackX
+                ? [
+                    AF.LoadStack(stackX, AF.SCRATCH1),
+                    AF.SetCC(setcc.CondCode, AF.SCRATCH1),
                 ] : null,
 
         // other Src-only instructions (eg. Unary):

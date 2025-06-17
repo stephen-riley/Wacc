@@ -8,7 +8,7 @@ public record AsmJmpCC(AsmCmp.CondCode CondCode, string Label) : AsmInstruction
     public override int OperandCount => 0;
 
     public override string EmitArmString()
-        => $"        b.{CondCode}    {Label}";
+        => $"        b.{CondCode.ToString().ToLower()}    {Label}";
 
 
     public override string EmitIrString() => $"JmpCC({CondCode}, \"{Label}\")";

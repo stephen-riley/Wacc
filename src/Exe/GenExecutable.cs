@@ -15,6 +15,11 @@ public class GenExecutable(RuntimeState opts)
             Console.Error.WriteLine($"\nWriting to temp file {tmpFileBase}.S");
         }
         File.WriteAllText($"{tmpFileBase}.S", Options.Assembly);
+
+        if (Options.Verbose)
+        {
+            Console.Error.WriteLine($"\nWriting executable to {Options.OutputFile ?? Options.BaseFilename}");
+        }
         var assemble = Process.Start("gcc", $"-g -c -o {tmpFileBase}.o {tmpFileBase}.S");
         assemble.WaitForExit();
         var link = Process.Start("gcc", $"{tmpFileBase}.o -o {Options.OutputFile ?? Options.BaseFilename} -arch arm64");

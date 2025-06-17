@@ -1,11 +1,10 @@
 using Wacc.CodeGen.AbstractAsm;
 using Wacc.CodeGen.AbstractAsm.Instruction;
 using Wacc.CodeGen.AbstractAsm.Operand;
-using Wacc.Extensions;
 
 namespace Wacc.CodeGen;
 
-public static class ResolvePseudoRegistersP2
+public static class Pass2ResolvePseudoRegisters
 {
     public static List<AsmInstruction> Execute(List<AsmInstruction> Asm)
     {

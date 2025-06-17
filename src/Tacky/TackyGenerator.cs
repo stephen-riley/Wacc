@@ -68,7 +68,7 @@ public class TackyGenerator(RuntimeState opts)
         return true;
     }
 
-    internal void EmitTacky(IAstNode node)
+    internal TacVal EmitTacky(IAstNode node)
     {
         switch (node)
         {
@@ -77,44 +77,41 @@ public class TackyGenerator(RuntimeState opts)
                 {
                     EmitTacky(s);
                 }
-                break;
+                return DUMMY;
 
             case Function f:
                 instructions = [];
                 functions.Add(new TacFunction(f.Name, instructions));
                 TmpVarCounter = 0;     // TODO: awkward here, shouldn't have to do this manually
                 EmitTacky(f.Body);
-                break;
+                return DUMMY;
 
             case Return r:
-                var retExpr = TacConstantOrExpression(r.Expr);
-                Emit(new TacReturn(retExpr));
-                break;
+                var result = EmitTacky(r.Expr);
+                Emit(new TacReturn(result));
+                return result;
 
             case Constant c:
-                Emit(new TacConstant(c.Int));
-                break;
+                return new TacConstant(c.Int);
 
             case UnaryOp u:
-                var src = TacConstantOrExpression(u.Expr);
+                var src = EmitTacky(u.Expr);
                 var dst = ReserveTmpVar();
                 Emit(new TacUnary(u.Op, src, dst));
-                break;
+                return dst;
 
             case BinaryOp b when b.Op == "&&":
-                EmitLogicalAnd(b);
-                break;
+                return EmitLogicalAnd(b);
 
             case BinaryOp b when b.Op == "||":
-                EmitLogicalOr(b);
-                break;
+                return EmitLogicalOr(b);
 
             case BinaryOp b:
-                var src1 = TacConstantOrExpression(b.LExpr);
-                var src2 = TacConstantOrExpression(b.RExpr);
+                var src1 = EmitTacky(b.LExpr);
+                var src2 = EmitTacky(b.RExpr);
                 dst = ReserveTmpVar();
                 Emit(new TacBinary(b.Op, src1, src2, dst));
-                break;
+                return dst;
 
             default:
                 throw new NotImplementedException($"{GetType().Name}.{nameof(EmitTacky)} can't handle {node.GetType().Name} yet");
@@ -136,21 +133,20 @@ public class TackyGenerator(RuntimeState opts)
         }
     }
 
-    internal void EmitLogicalAnd(BinaryOp b)
+    internal TacVar EmitLogicalAnd(BinaryOp b)
     {
         var falseLabel = ReserveTmpLabel();
         var endLabel = ReserveTmpLabel();
         var v1 = ReserveTmpVar();
-        // var v2 = ReserveTmpVar();
         var result = ReserveTmpVar();
 
         // evaluate lexpr.  If false, jump to `falseLabel`; otherwise, fall through.
-        var lexpr = TacConstantOrExpression(b.LExpr);
+        var lexpr = EmitTacky(b.LExpr);
         Emit(new TacCopy(lexpr, v1));
         Emit(new TacJumpIfZero(v1, falseLabel));
 
         // evaluate rexpr.  If false, jump to `falseLabel`; otherwise, fall through.
-        var rexpr = TacConstantOrExpression(b.RExpr);
+        var rexpr = EmitTacky(b.RExpr);
         Emit(new TacCopy(rexpr, v1));
         Emit(new TacJumpIfZero(v1, falseLabel));
 
@@ -162,10 +158,11 @@ public class TackyGenerator(RuntimeState opts)
         Emit(new TacLabel(falseLabel));
         Emit(new TacCopy(new TacConstant(0), result));
         Emit(new TacLabel(endLabel));
-        // Emit(new TacCopy)
+
+        return result;
     }
 
-    internal void EmitLogicalOr(BinaryOp b)
+    internal TacVar EmitLogicalOr(BinaryOp b)
     {
         var trueLabel = ReserveTmpLabel();
         var endLabel = ReserveTmpLabel();
@@ -191,5 +188,9 @@ public class TackyGenerator(RuntimeState opts)
         Emit(new TacLabel(trueLabel));
         Emit(new TacCopy(new TacConstant(1), result));
         Emit(new TacLabel(endLabel));
+
+        return result;
     }
+
+    internal static TacVar DUMMY = new("DUMMY");
 }

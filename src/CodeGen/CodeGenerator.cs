@@ -18,10 +18,10 @@ public class CodeGenerator(RuntimeState opts)
         TranslateProgram(Options.Tacky);
         Dump("asm IR, pass 1 (codegen)");
 
-        Asm = ResolvePseudoRegistersP2.Execute(Asm);
+        Asm = Pass2ResolvePseudoRegisters.Execute(Asm);
         Dump("asm IR, pass 2 (resolve tmp vars)");
 
-        Asm = new Pass3FixupInstructionsP3(Options).Execute(Asm);
+        Asm = new Pass3FixupInstructions(Options).Execute(Asm);
         Dump("asm IR, pass 3 (fix up addr modes)");
 
         Options.AbstractAsm = Asm;
@@ -129,7 +129,7 @@ public class CodeGenerator(RuntimeState opts)
 
             case TacBinary b when BinaryOp.RelationalOps.Contains(b.Op):
                 Asm.AddRange([
-                    AF.Cmp(TranslateVal(b.Src2), TranslateVal(b.Src1)),
+                    AF.Cmp(TranslateVal(b.Src1), TranslateVal(b.Src2)),
                     AF.SetCC(TacBinary.CondCode[b.Op], AF.PseudoOperand(b.Dst))
                 ]);
                 break;

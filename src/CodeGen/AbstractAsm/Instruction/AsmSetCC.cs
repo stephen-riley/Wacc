@@ -5,7 +5,7 @@ namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
 public record AsmSetCC(AsmCmp.CondCode CondCode, AsmOperand Src) : AsmInstruction
 {
-    public override int OperandCount => -1;
+    public override int OperandCount => 1;
 
     public override string EmitArmString() => $"        cset    {Src.EmitArmString()}, {CondCode}";
 

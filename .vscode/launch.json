@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "fixtures/valid/and_short_circuit.c -o /tmp/a.out --verbose --emit",
+            "args": "fixtures/valid/associativity.c -o /tmp/a.out --verbose",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
