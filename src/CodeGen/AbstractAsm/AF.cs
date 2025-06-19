@@ -33,7 +33,7 @@ public static class AF
     public static AsmProgram Program(string Filename) => new(Filename);
     public static AsmProgramEpilogue ProgramEpilogue() => new();
     public static AsmRet Ret(string FuncName) => new(FuncName);
-    public static AsmSetCC SetCC(AsmCmp.CondCode CondCode, AsmOperand Src) => new(CondCode, Src);
+    public static AsmSetCC SetCC(AsmCmp.CondCode CondCode, AsmDestOperand Dst) => new(CondCode, Dst);
     public static AsmStoreStack StoreStack(AsmOperand Src, AsmStackOperand Dst) => new(Src, Dst);
     public static AsmSubtract Subtract(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmImmOperand ImmOperand(int Imm) => new(Imm);

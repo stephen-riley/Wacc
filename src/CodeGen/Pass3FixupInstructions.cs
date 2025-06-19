@@ -93,11 +93,19 @@ public class Pass3FixupInstructions(RuntimeState options)
                     AF.Cmp(AF.SCRATCH1, imm2),
                 ] : null,
 
-        // SetCC(cond, Stack(x)) => LoadStack(Stack(x), SCRATCH), SetCC(cond, SCRATCH)
-        i => i is AsmSetCC setcc && setcc.Src is AsmStackOperand stackX
+        // Cmp(Stack(x), Stack(y)) => LoadStack(Stack(x), SCRATCH), LoadStack(Stack(y), SCRATCH2), Cmp(SCRATCH, SCRATCH2)
+        i => i is AsmCmp cmp && cmp.Src1 is AsmStackOperand stackX && cmp.Src2 is AsmStackOperand stackY
                 ? [
                     AF.LoadStack(stackX, AF.SCRATCH1),
+                    AF.LoadStack(stackY, AF.SCRATCH2),
+                    AF.Cmp(AF.SCRATCH1, AF.SCRATCH2),
+                ] : null,
+
+        // SetCC(cond, Stack(x)) => LoadStack(Stack(x), SCRATCH), SetCC(cond, SCRATCH)
+        i => i is AsmSetCC setcc && setcc.Dst is AsmStackOperand stackX
+                ? [
                     AF.SetCC(setcc.CondCode, AF.SCRATCH1),
+                    AF.StoreStack(AF.SCRATCH1, stackX)
                 ] : null,
 
         // other Src-only instructions (eg. Unary):
