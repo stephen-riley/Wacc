@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "fixtures/valid/multi_short_circuit.c -o /tmp/a.out --asmfile /tmp/a.S --verbose",
+            "args": "fixtures/book_tests/chapter_4/valid/extra_credit/bitwise_and_precedence.c -o /tmp/a.out --asmfile /tmp/a.S --verbose",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
