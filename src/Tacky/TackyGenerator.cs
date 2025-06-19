@@ -59,7 +59,12 @@ public class TackyGenerator(RuntimeState opts)
             {
                 foreach (var i in f.Instructions)
                 {
-                    stream.WriteLine(i);
+                    stream.WriteLine(i switch
+                    {
+                        TacConstant or TacVar => i.ToString(),
+                        TacLabel l => $"\n{l.Identifier}:",
+                        _ => $"    {i}"
+                    });
                 }
                 stream.WriteLine();
             }
@@ -167,18 +172,17 @@ public class TackyGenerator(RuntimeState opts)
         var trueLabel = ReserveTmpLabel();
         var endLabel = ReserveTmpLabel();
         var v1 = ReserveTmpVar();
-        var v2 = ReserveTmpVar();
         var result = ReserveTmpVar();
 
-        // Evaluate lexpr.  If true, jump to `trueLabel`; therwise, fall through.
-        TacConstantOrExpression(b.LExpr);
-        Emit(new TacCopy(GetLastTmpVarOrFail(), v1));
+        // Evaluate lexpr.  If true, jump to `trueLabel`; otherwise, fall through.
+        var lexpr = EmitTacky(b.LExpr);
+        Emit(new TacCopy(lexpr, v1));
         Emit(new TacJumpIfNotZero(v1, trueLabel));
 
         // Evaluate rexpr.  If true, jump to `trueLabel`; otherwise, fall through.
-        TacConstantOrExpression(b.RExpr);
-        Emit(new TacCopy(GetLastTmpVarOrFail(), v2));
-        Emit(new TacJumpIfNotZero(v2, trueLabel));
+        var rexpr = EmitTacky(b.RExpr);
+        Emit(new TacCopy(rexpr, v1));
+        Emit(new TacJumpIfNotZero(v1, trueLabel));
 
         // set result to 0 and jump to `endLabel`
         Emit(new TacCopy(new TacConstant(0), result));
