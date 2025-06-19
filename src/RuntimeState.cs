@@ -37,6 +37,9 @@ public class RuntimeState
     [Option('S', "assemble", HelpText = "Output assembly file and stop")]
     public bool Assemble { get; set; }
 
+    [Option("asmfile", HelpText = "Save assembly file to filename")]
+    public string? AsmFilename { get; set; }
+
     public bool DoLexer { get; } = true;
     public bool DoParser => !OnlyThroughLexer;
     public bool DoTacky => !OnlyThroughLexer && !OnlyThroughParser;

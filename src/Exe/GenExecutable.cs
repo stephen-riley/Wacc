@@ -8,7 +8,11 @@ public class GenExecutable(RuntimeState opts)
 
     public bool Execute()
     {
-        var tmpFileBase = Path.GetTempFileName();
+        var tmpFileBase = Options.AsmFilename ?? Path.GetTempFileName();
+        if (tmpFileBase.EndsWith(".s", StringComparison.InvariantCultureIgnoreCase))
+        {
+            tmpFileBase = tmpFileBase[..^2];
+        }
 
         if (Options.Verbose)
         {
