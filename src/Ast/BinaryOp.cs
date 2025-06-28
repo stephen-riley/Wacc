@@ -14,7 +14,10 @@ public class BinaryOp(string op, IAstNode lExpr, IAstNode rExpr) : IAstNode
 
     public static readonly HashSet<string> RelationalOps = ["==", "!=", ">", ">=", "<", "<="];
 
-    // Reference: https://en.cppreference.com/w/c/language/operator_precedence
+    public static readonly HashSet<TokenType> RightAssociativeOps = [Assign];
+
+    // Precedence climbing table
+    //  levels and values from https://en.cppreference.com/w/c/language/operator_precedence
     public static readonly Dictionary<TokenType, int> Precedence = new() {
         // level 3
         { MulSign, 50 },

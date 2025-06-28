@@ -6,17 +6,14 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public class Declaration(string identifier, IAstNode? expr = null) : IAstNode
+public record Declaration(string DeclType, Var Identifier, IAstNode? Expr = null) : IAstNode
 {
-    public string Identifier { get; internal set; } = identifier;
-    public IAstNode? Expr { get; internal set; } = expr;
-
     public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(IntKw);
 
     public static Declaration Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(IntKw);
-        var ident = tokenStream.Expect(TokenType.Identifier).Str ?? throw new ParseError("no identifier");
+        var ident = Var.Parse(tokenStream);
         var assignExpr = default(IAstNode);
 
         if (!tokenStream.PeekFor(Semicolon))
@@ -26,7 +23,7 @@ public class Declaration(string identifier, IAstNode? expr = null) : IAstNode
         }
         tokenStream.Expect(Semicolon);
 
-        return new Declaration(ident, assignExpr);
+        return new Declaration("int", ident, assignExpr);
     }
 
     public string ToPrettyString(int indent = 0)

@@ -42,7 +42,7 @@ public class ParserTests
 
         Assert.IsTrue(Declaration.CanParse(tokenStream));
         var decl = Declaration.Parse(tokenStream);
-        Assert.AreEqual("a", decl.Identifier);
+        Assert.AreEqual("a", decl.Identifier.Name);
         Assert.IsNull(decl.Expr);
     }
 
@@ -56,7 +56,7 @@ public class ParserTests
 
         Assert.IsTrue(Declaration.CanParse(tokenStream));
         var decl = Declaration.Parse(tokenStream);
-        Assert.AreEqual("a", decl.Identifier);
+        Assert.AreEqual("a", decl.Identifier.Name);
         Assert.IsInstanceOfType<BinaryOp>(decl.Expr);
     }
 }

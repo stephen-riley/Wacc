@@ -16,13 +16,19 @@ public record Expression(IAstNode SubExpr) : IAstNode
         var nextToken = tokenStream.Peek();
         while (nextToken.Is(BinaryOp.Operators) && BinaryOp.Precedence[nextToken.TokenType] >= minPrecedence)
         {
-            if (tokenStream.TryExpect(BinaryOp.Operators, out var opToken))
+            if (BinaryOp.RightAssociativeOps.Contains(tokenStream.Peek().TokenType))
+            {
+                tokenStream.Expect(TokenType.Assign);
+                var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType] + 1);
+                left = new Assignment(left, right);
+            }
+            else if (tokenStream.TryExpect(BinaryOp.Operators, out var opToken))
             {
                 var op = opToken.Str ?? throw new InvalidOperationException($"can't be {opToken}");
                 var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType] + 1);
                 left = new BinaryOp(op, left, right);
-                nextToken = tokenStream.Peek();
             }
+            nextToken = tokenStream.Peek();
         }
 
         return left;
