@@ -2,6 +2,7 @@ namespace Wacc.Tokens;
 
 public enum TokenType
 {
+    Assign,
     BitwiseAnd,
     BitwiseLeft,
     BitwiseOr,
