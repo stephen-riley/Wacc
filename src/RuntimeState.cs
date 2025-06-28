@@ -16,6 +16,9 @@ public class RuntimeState
     [Option('p', "parse", HelpText = "Run the lexer and parser, but stop before assembly generation")]
     public bool OnlyThroughParser { get; set; } = false;
 
+    [Option('v', "validate", HelpText = "Run semantic analysis before TACKY generation")]
+    public bool OnlyThroughValidate { get; set; } = false;
+
     [Option('t', "tacky", HelpText = "Perform lexing, parsing, and assembly generation, but stop before code emission")]
     public bool OnlyThroughTacky { get; set; } = false;
 
@@ -25,7 +28,7 @@ public class RuntimeState
     [Option('e', "emit", HelpText = "Perform lexing, parsing, assembly generation, and code emission")]
     public bool OnlyThroughCodeEmit { get; set; } = false;
 
-    [Option('v', "verbose", HelpText = "Verbose output on STDERR")]
+    [Option("verbose", HelpText = "Verbose output on STDERR")]
     public bool Verbose { get; set; }
 
     [Option('o', "output", HelpText = "Output exe filename")]
@@ -42,10 +45,11 @@ public class RuntimeState
 
     public bool DoLexer { get; } = true;
     public bool DoParser => !OnlyThroughLexer;
-    public bool DoTacky => !OnlyThroughLexer && !OnlyThroughParser;
-    public bool DoCodeGen => !OnlyThroughLexer && !OnlyThroughParser && !OnlyThroughTacky;
-    public bool DoCodeEmission => !OnlyThroughLexer && !OnlyThroughParser && !OnlyThroughTacky && !OnlyThroughCodeGen;
-    public bool DoAll => !(OnlyThroughLexer || OnlyThroughParser || OnlyThroughTacky || OnlyThroughCodeGen || OnlyThroughCodeEmit || Assemble);
+    public bool DoValidate => !OnlyThroughLexer && !OnlyThroughParser;
+    public bool DoTacky => !OnlyThroughLexer && !OnlyThroughParser && !OnlyThroughValidate;
+    public bool DoCodeGen => !OnlyThroughLexer && !OnlyThroughParser && !OnlyThroughValidate && !OnlyThroughTacky;
+    public bool DoCodeEmission => !OnlyThroughLexer && !OnlyThroughParser && !OnlyThroughValidate && !OnlyThroughTacky && !OnlyThroughCodeGen;
+    public bool DoAll => !(OnlyThroughLexer || OnlyThroughParser || OnlyThroughValidate || OnlyThroughTacky || OnlyThroughCodeGen || OnlyThroughCodeEmit || Assemble);
 
     [Value(0, MetaName = "input file", HelpText = ".c file to compile", Required = true)]
     public required string InputFile { get; set; }
