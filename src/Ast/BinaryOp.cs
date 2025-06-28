@@ -53,6 +53,9 @@ public class BinaryOp(string op, IAstNode lExpr, IAstNode rExpr) : IAstNode
 
         // level 12
         { LogicalOr, 5 },
+
+        // level 14
+        { Assign, 1 },
     };
 
     public static readonly HashSet<TokenType> Operators = [.. Precedence.Keys];

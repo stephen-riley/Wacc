@@ -1,5 +1,7 @@
+using Wacc.Ast;
 using Wacc.Lex;
 using Wacc.Parse;
+using Wacc.Tokens;
 
 namespace Wacc.Tests;
 
@@ -28,5 +30,33 @@ public class ParserTests
         _ = lexer.Lex(text);
         var parser = new Parser(DummyRts);
         parser.Parse();
+    }
+
+    [TestMethod]
+    public void ParseDeclarationNoExpression()
+    {
+        var lexer = new Lexer(new RuntimeState() { InputFile = "" });
+        var code = "int a;";
+        var tokens = lexer.Lex(code);
+        var tokenStream = new Queue<Token>(tokens);
+
+        Assert.IsTrue(Declaration.CanParse(tokenStream));
+        var decl = Declaration.Parse(tokenStream);
+        Assert.AreEqual("a", decl.Identifier);
+        Assert.IsNull(decl.Expr);
+    }
+
+    [TestMethod]
+    public void ParseDeclarationWithExpression()
+    {
+        var lexer = new Lexer(new RuntimeState() { InputFile = "" });
+        var code = "int a = 2 * 3;";
+        var tokens = lexer.Lex(code);
+        var tokenStream = new Queue<Token>(tokens);
+
+        Assert.IsTrue(Declaration.CanParse(tokenStream));
+        var decl = Declaration.Parse(tokenStream);
+        Assert.AreEqual("a", decl.Identifier);
+        Assert.IsInstanceOfType<BinaryOp>(decl.Expr);
     }
 }

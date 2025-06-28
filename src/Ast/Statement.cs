@@ -1,3 +1,4 @@
+using Wacc.Parse;
 using Wacc.Tokens;
 using static Wacc.Tokens.TokenType;
 
@@ -5,6 +6,8 @@ namespace Wacc.Ast;
 
 public class Statement : IAstNode
 {
+    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(TokenType.ReturnKw);
+
     public static IAstNode Parse(Queue<Token> tokenStream)
     {
         return tokenStream.Peek().TokenType switch
