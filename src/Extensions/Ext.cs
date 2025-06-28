@@ -1,4 +1,5 @@
 using System.Text;
+using Wacc.Tokens;
 
 namespace Wacc.Extensions;
 
@@ -15,4 +16,7 @@ public static class Ext
     }
 
     public static T Do<T>(Func<T> f) => f();
+
+    public static string NextFewTokens(this Queue<Token> tokenStream, int count = 3)
+        => string.Join(',', tokenStream.Take(count).Select(t => t.ToString()));
 }

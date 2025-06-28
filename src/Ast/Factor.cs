@@ -8,7 +8,7 @@ namespace Wacc.Ast;
 public record Factor(IAstNode SubExpr) : IAstNode
 {
     public static bool CanParse(Queue<Token> tokenStream)
-        => tokenStream.PeekFor([TokenType.Constant, TokenType.OpenParen])
+        => tokenStream.PeekFor([TokenType.Constant, TokenType.Identifier, TokenType.OpenParen])
             || UnaryOp.CanParse(tokenStream);
 
     public static IAstNode Parse(Queue<Token> tokenStream)
@@ -18,6 +18,7 @@ public record Factor(IAstNode SubExpr) : IAstNode
         return tok.TokenType switch
         {
             TokenType.Constant => Constant.Parse(tokenStream),
+            TokenType.Identifier => Var.Parse(tokenStream),
             TokenType.OpenParen => Ext.Do(() =>
             {
                 tokenStream.Expect(TokenType.OpenParen);

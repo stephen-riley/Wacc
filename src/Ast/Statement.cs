@@ -6,15 +6,22 @@ namespace Wacc.Ast;
 
 public class Statement : IAstNode
 {
-    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(TokenType.ReturnKw);
+    public static bool CanParse(Queue<Token> tokenStream)
+        => NullStatement.CanParse(tokenStream)
+            || Return.CanParse(tokenStream)
+            || Expression.CanParse(tokenStream);
 
     public static IAstNode Parse(Queue<Token> tokenStream)
     {
-        return tokenStream.Peek().TokenType switch
+        var stat = tokenStream.Peek().TokenType switch
         {
+            Semicolon => NullStatement.Parse(tokenStream),
             ReturnKw => Return.Parse(tokenStream),
-            _ => throw new NotImplementedException($"{nameof(Statement)}.{nameof(Parse)}")
+            _ => Expression.Parse(tokenStream)
         };
+
+        tokenStream.Expect(Semicolon);
+        return stat;
     }
 
     public string ToPrettyString(int indent = 0)

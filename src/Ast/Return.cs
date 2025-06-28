@@ -9,11 +9,12 @@ public class Return(IAstNode expr) : IAstNode
 {
     public IAstNode Expr { get; internal set; } = expr;
 
+    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(ReturnKw);
+
     public static Return Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(ReturnKw);
         var expr = new Return(Expression.Parse(tokenStream));
-        tokenStream.Expect(Semicolon);
         return expr;
     }
 

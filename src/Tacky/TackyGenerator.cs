@@ -88,7 +88,10 @@ public class TackyGenerator(RuntimeState opts)
                 instructions = [];
                 functions.Add(new TacFunction(f.Name, instructions));
                 TmpVarCounter = 0;     // TODO: awkward here, shouldn't have to do this manually
-                EmitTacky(f.Body);
+                foreach (var s in f.Body)
+                {
+                    EmitTacky(s);
+                }
                 return DUMMY;
 
             case Return r:
