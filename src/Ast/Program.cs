@@ -6,9 +6,9 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Program(IEnumerable<Function> Statements) : IAstNode
+public record Program(IEnumerable<Function> Functions) : IAstNode
 {
-    public static IAstNode Parse(Queue<Token> tokenStream)
+    public static Program Parse(Queue<Token> tokenStream)
     {
         var stats = new List<Function>();
 
@@ -24,7 +24,7 @@ public record Program(IEnumerable<Function> Statements) : IAstNode
     {
         var sb = new StringBuilder();
         sb.Append("Program(\n");
-        foreach (var stat in Statements)
+        foreach (var stat in Functions)
         {
             sb.Append(IAstNode.IndentStr(indent + 1));
             sb.Append(stat.ToPrettyString(indent + 1)).Append('\n');

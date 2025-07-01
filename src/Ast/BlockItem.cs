@@ -4,7 +4,7 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public class BlockItem : IAstNode
+public record BlockItem : IAstNode
 {
     public static bool CanParse(Queue<Token> tokenStream)
         => Statement.CanParse(tokenStream) || Declaration.CanParse(tokenStream);
@@ -25,5 +25,5 @@ public class BlockItem : IAstNode
         }
     }
 
-    public string ToPrettyString(int indent = 0) => throw new ParseError($"{GetType().Name}.{nameof(ToPrettyString)} should not be called");
+    public virtual string ToPrettyString(int indent = 0) => throw new ParseError($"{GetType().Name}.{nameof(ToPrettyString)} should not be called");
 }

@@ -60,7 +60,9 @@ public class RuntimeState
 
     public List<Token> TokenStream { get; set; } = [];
 
-    public IAstNode Ast { get; set; } = null!;
+    public Ast.Program Ast { get; set; } = null!;
+
+    public bool Validated { get; set; } = false;
 
     public TacProgram Tacky { get; set; } = null!;
 

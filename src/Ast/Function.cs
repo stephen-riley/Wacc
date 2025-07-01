@@ -5,7 +5,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Function(string Type, string Name, IAstNode[] Body) : IAstNode
+public record Function(string Type, string Name, BlockItem[] Body) : IAstNode
 {
     public static Function Parse(Queue<Token> tokenStream)
     {
@@ -16,10 +16,15 @@ public record Function(string Type, string Name, IAstNode[] Body) : IAstNode
         tokenStream.Expect(CloseParen);
         tokenStream.Expect(OpenBrace);
 
-        var body = new List<IAstNode>();
+        var body = new List<BlockItem>();
         while (tokenStream.Peek().TokenType != CloseBrace)
         {
-            body.Add(BlockItem.Parse(tokenStream));
+            var stat = BlockItem.Parse(tokenStream);
+            if (stat is not BlockItem)
+            {
+                stat = new Expression(stat);
+            }
+            body.Add((BlockItem)stat);
         }
         tokenStream.Expect(CloseBrace);
 
@@ -31,12 +36,14 @@ public record Function(string Type, string Name, IAstNode[] Body) : IAstNode
         var sb = new StringBuilder();
         sb.AppendLine("Function(");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"name={Name}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"Body=(");
+        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"body=[");
+
         foreach (var s in Body)
         {
             sb.Append(IAstNode.IndentStr(indent + 2)).AppendLine(s.ToPrettyString(indent + 2));
         }
-        sb.AppendLine(IAstNode.IndentStr(indent + 1)).Append(')');
+
+        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine("]");
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }

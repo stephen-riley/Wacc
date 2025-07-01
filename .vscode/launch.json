@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "fixtures/book_tests/chapter_5/invalid_semantics/declared_after_use.c -o /tmp/a.out --asmfile /tmp/a.S --verbose",
+            "args": "fixtures/book_tests/chapter_5/valid/use_assignment_result.c -o /tmp/a.out --asmfile /tmp/a.S --verbose --validate",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

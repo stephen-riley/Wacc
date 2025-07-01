@@ -4,14 +4,14 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public class Statement : IAstNode
+public record Statement : BlockItem
 {
-    public static bool CanParse(Queue<Token> tokenStream)
+    public new static bool CanParse(Queue<Token> tokenStream)
         => NullStatement.CanParse(tokenStream)
             || Return.CanParse(tokenStream)
             || Expression.CanParse(tokenStream);
 
-    public static IAstNode Parse(Queue<Token> tokenStream)
+    public new static IAstNode Parse(Queue<Token> tokenStream)
     {
         var stat = tokenStream.Peek().TokenType switch
         {
@@ -24,6 +24,6 @@ public class Statement : IAstNode
         return stat;
     }
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
         => throw new NotImplementedException($"{GetType().Name}.{nameof(ToPrettyString)}");
 }

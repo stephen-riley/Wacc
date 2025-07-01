@@ -4,9 +4,9 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record Expression(IAstNode SubExpr) : IAstNode
+public record Expression(IAstNode SubExpr) : BlockItem
 {
-    public static bool CanParse(Queue<Token> tokenStream)
+    public new static bool CanParse(Queue<Token> tokenStream)
         => Factor.CanParse(tokenStream);
 
     public static IAstNode Parse(Queue<Token> tokenStream, int minPrecedence = 0)
@@ -19,7 +19,7 @@ public record Expression(IAstNode SubExpr) : IAstNode
             if (BinaryOp.RightAssociativeOps.Contains(tokenStream.Peek().TokenType))
             {
                 tokenStream.Expect(TokenType.Assign);
-                var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType] + 1);
+                var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType]);
                 left = new Assignment(left, right);
             }
             else if (tokenStream.TryExpect(BinaryOp.Operators, out var opToken))
@@ -34,5 +34,5 @@ public record Expression(IAstNode SubExpr) : IAstNode
         return left;
     }
 
-    public string ToPrettyString(int indent = 0) => throw new ParseError($"{GetType().Name}.{nameof(ToPrettyString)} should not be called");
+    public override string ToPrettyString(int indent = 0) => SubExpr.ToPrettyString(indent);
 }

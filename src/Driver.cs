@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using CommandLine;
 using Wacc.CodeGen;
 using Wacc.Emit;
@@ -30,7 +31,13 @@ public class Driver(RuntimeState options)
             if (Rts.DoParser || Rts.DoAll)
             {
                 if (Rts.Verbose) Console.Error.WriteLine("\nStage: Parse");
-                new Wacc.Parse.Parser(Rts).Execute();
+                new Parse.Parser(Rts).Execute();
+            }
+
+            if (Rts.DoValidate || Rts.DoAll)
+            {
+                if (Rts.Verbose) Console.Error.WriteLine("\nStage: Validation");
+                new Validate.Validator(Rts).Execute();
             }
 
             if (Rts.DoTacky || Rts.DoAll)

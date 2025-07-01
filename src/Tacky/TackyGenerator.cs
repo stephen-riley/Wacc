@@ -78,7 +78,7 @@ public class TackyGenerator(RuntimeState opts)
         switch (node)
         {
             case Ast.Program p:
-                foreach (var s in p.Statements)
+                foreach (var s in p.Functions)
                 {
                     EmitTacky(s);
                 }

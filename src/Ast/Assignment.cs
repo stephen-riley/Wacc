@@ -3,11 +3,11 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record Assignment(IAstNode LExpr, IAstNode RExpr) : IAstNode
+public record Assignment(IAstNode LExpr, IAstNode RExpr) : BlockItem
 {
-    public static bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
+    public new static bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.Append($"Assignment(\n");
