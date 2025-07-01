@@ -3,9 +3,9 @@ using Wacc.Exceptions;
 
 using VarMap = System.Collections.Generic.Dictionary<string, string>;
 
-namespace Wacc.Validate;
+namespace Wacc.Analyzers;
 
-public class Validator(RuntimeState opts)
+public class SemanticAnalyzer(RuntimeState opts)
 {
     public RuntimeState Options = opts;
 

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using CommandLine;
+using Wacc.Analyzers;
 using Wacc.CodeGen;
 using Wacc.Emit;
 using Wacc.Exe;
@@ -37,7 +38,7 @@ public class Driver(RuntimeState options)
             if (Rts.DoValidate || Rts.DoAll)
             {
                 if (Rts.Verbose) Console.Error.WriteLine("\nStage: Validation");
-                new Validate.Validator(Rts).Execute();
+                new SemanticAnalyzer(Rts).Execute();
             }
 
             if (Rts.DoTacky || Rts.DoAll)
