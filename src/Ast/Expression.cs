@@ -1,4 +1,3 @@
-using Wacc.Exceptions;
 using Wacc.Parse;
 using Wacc.Tokens;
 

@@ -132,7 +132,6 @@ public class Validator(RuntimeState opts)
                 return new UnaryOp(u.Op, ResolveExpr(u.Expr, variableMap));
 
             default:
-                Console.Error.WriteLine($"*** ResolveExpr is default returning {e} unchanged");
                 return e;
         }
     }

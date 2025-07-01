@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "fixtures/book_tests/chapter_5/valid/use_assignment_result.c -o /tmp/a.out --asmfile /tmp/a.S --verbose --validate",
+            "args": "fixtures/book_tests/chapter_5/valid/use_assignment_result.c -o /tmp/a.out --asmfile /tmp/a.S --verbose --tacky",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

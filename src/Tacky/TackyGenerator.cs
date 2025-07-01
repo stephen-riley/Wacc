@@ -94,13 +94,32 @@ public class TackyGenerator(RuntimeState opts)
                 }
                 return DUMMY;
 
+            case Var v:
+                return new TacVar(v.Name);
+
+            case Declaration d when d.Expr is null:
+                return DUMMY;
+
+            case Declaration d when d.Expr is not null:
+                var declResult = EmitTacky(d.Expr);
+                Emit(new TacCopy(declResult, new TacVar(d.Identifier.Name)));
+                return declResult;
+
+            case Assignment a when a.LExpr is Var v:
+                var rhsResult = EmitTacky(a.RExpr);
+                Emit(new TacCopy(rhsResult, new TacVar(v.Name)));
+                return new TacVar(v.Name);
+
             case Return r:
-                var result = EmitTacky(r.Expr);
-                Emit(new TacReturn(result));
-                return result;
+                var retResult = EmitTacky(r.Expr);
+                Emit(new TacReturn(retResult));
+                return retResult;
 
             case Constant c:
                 return new TacConstant(c.Int);
+
+            case Expression e:
+                return EmitTacky(e.SubExpr);
 
             case UnaryOp u:
                 var src = EmitTacky(u.Expr);
@@ -120,6 +139,9 @@ public class TackyGenerator(RuntimeState opts)
                 dst = ReserveTmpVar();
                 Emit(new TacBinary(b.Op, src1, src2, dst));
                 return dst;
+
+            case NullStatement:
+                return DUMMY;
 
             default:
                 throw new NotImplementedException($"{GetType().Name}.{nameof(EmitTacky)} can't handle {node.GetType().Name} yet");
