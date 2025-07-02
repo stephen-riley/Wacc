@@ -28,6 +28,12 @@ public class TackyGenerator(RuntimeState opts)
         }
     }
 
+    internal TacVar RegisterVar(TacVar tv)
+    {
+        functions[^1].Locals.Add(tv);
+        return tv;
+    }
+
     internal TacVar? GetLastTmpVar() => LastTmpVar;
     internal TacVar GetLastTmpVarOrFail() => GetLastTmpVar() ?? throw new TackyGenError("need to know last temp var in UnaryOp, but none available");
 
@@ -92,17 +98,18 @@ public class TackyGenerator(RuntimeState opts)
                 {
                     EmitTacky(s);
                 }
+                Emit(new TacReturn(new TacConstant(0)));
                 return DUMMY;
 
             case Var v:
-                return new TacVar(v.Name);
+                return RegisterVar(new TacVar(v.Name));
 
             case Declaration d when d.Expr is null:
-                return DUMMY;
+                return RegisterVar(new TacVar(d.Identifier.Name));
 
             case Declaration d when d.Expr is not null:
                 var declResult = EmitTacky(d.Expr);
-                Emit(new TacCopy(declResult, new TacVar(d.Identifier.Name)));
+                Emit(new TacCopy(declResult, RegisterVar(new TacVar(d.Identifier.Name))));
                 return declResult;
 
             case Assignment a when a.LExpr is Var v:
