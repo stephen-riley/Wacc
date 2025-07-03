@@ -1,5 +1,6 @@
 using Wacc.Parse;
 using Wacc.Tokens;
+using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
@@ -17,9 +18,20 @@ public record Expression(IAstNode SubExpr) : BlockItem
         {
             if (BinaryOp.RightAssociativeOps.Contains(tokenStream.Peek().TokenType))
             {
-                tokenStream.Expect(TokenType.Assign);
-                var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType]);
-                left = new Assignment(left, right);
+                // TODO: there is a possible set equivalence issue between RighAssociativeOps and AssignOpMap
+                if (tokenStream.TryExpect(Assignment.AssignOpMap.Keys, out var opAssignToken))
+                {
+                    var assignType = opAssignToken.TokenType;
+                    var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType]);
+                    right = new BinaryOp("*********", left, right);
+                    left = new Assignment(left, right);
+                }
+                else
+                {
+                    tokenStream.Expect(Assign);
+                    var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType]);
+                    left = new Assignment(left, right);
+                }
             }
             else if (tokenStream.TryExpect(BinaryOp.Operators, out var opToken))
             {

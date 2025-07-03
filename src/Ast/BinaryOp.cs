@@ -10,11 +10,12 @@ public class BinaryOp(string op, IAstNode lExpr, IAstNode rExpr) : IAstNode
     public IAstNode LExpr => lExpr;
     public IAstNode RExpr => rExpr;
 
+    // TODO: change these string literals to TokenTypes
     public static readonly HashSet<string> ShortCircuitOps = ["&&", "||"];
 
     public static readonly HashSet<string> RelationalOps = ["==", "!=", ">", ">=", "<", "<="];
 
-    public static readonly HashSet<TokenType> RightAssociativeOps = [Assign];
+    public static readonly HashSet<TokenType> RightAssociativeOps = [Assign, PlusAssign, MinusAssign, MulAssign, DivAssign, ModAssign];
 
     // Precedence climbing table
     //  levels and values from https://en.cppreference.com/w/c/language/operator_precedence
@@ -59,6 +60,11 @@ public class BinaryOp(string op, IAstNode lExpr, IAstNode rExpr) : IAstNode
 
         // level 14
         { Assign, 1 },
+        { PlusAssign, 1 },
+        { MinusAssign, 1 },
+        { MulAssign, 1 },
+        { DivAssign, 1 },
+        { ModAssign, 1 },
     };
 
     public static readonly HashSet<TokenType> Operators = [.. Precedence.Keys];

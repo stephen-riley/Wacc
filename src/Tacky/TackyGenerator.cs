@@ -117,6 +117,10 @@ public class TackyGenerator(RuntimeState opts)
                 Emit(new TacCopy(rhsResult, new TacVar(v.Name)));
                 return new TacVar(v.Name);
 
+            case OpAssignment oa when oa.LExpr is Var v:
+                rhsResult = EmitTacky(oa.RExpr);
+                return new TacVar(v.Name);
+
             case Return r:
                 var retResult = EmitTacky(r.Expr);
                 Emit(new TacReturn(retResult));
