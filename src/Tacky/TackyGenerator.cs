@@ -1,6 +1,7 @@
 using Wacc.Ast;
 using Wacc.Exceptions;
 using Wacc.Tacky.Instruction;
+using Wacc.Tokens;
 
 namespace Wacc.Tacky;
 
@@ -138,10 +139,10 @@ public class TackyGenerator(RuntimeState opts)
                 Emit(new TacUnary(u.Op, src, dst));
                 return dst;
 
-            case BinaryOp b when b.Op == "&&":
+            case BinaryOp b when b.Op == TokenType.LogicalAnd:
                 return EmitLogicalAnd(b);
 
-            case BinaryOp b when b.Op == "||":
+            case BinaryOp b when b.Op == TokenType.LogicalOr:
                 return EmitLogicalOr(b);
 
             case BinaryOp b:

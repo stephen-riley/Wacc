@@ -4,6 +4,7 @@ using Wacc.CodeGen.AbstractAsm.Instruction;
 using Wacc.CodeGen.AbstractAsm.Operand;
 using Wacc.Exceptions;
 using Wacc.Tacky.Instruction;
+using static Wacc.Tokens.TokenType;
 
 namespace Wacc.CodeGen;
 
@@ -140,16 +141,16 @@ public class CodeGenerator(RuntimeState opts)
                     AF.Mov(TranslateVal(b.Src2), AF.PseudoOperand(b.Dst)),
                     b.Op switch
                     {
-                        "+" => AF.Add(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                        "-" => AF.Subtract(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                        "*" => AF.Mul(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                        "/" => AF.Div(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                        "%" => AF.Mod(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                        "&" => AF.BitwiseAnd(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                        "<<" => AF.BitwiseLeft(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                        "|" => AF.BitwiseOr(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                        ">>" => AF.BitwiseRight(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
-                        "^" => AF.BitwiseXor(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        PlusSign => AF.Add(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        MinusSign => AF.Subtract(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        MulSign => AF.Mul(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        DivSign => AF.Div(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        ModSign => AF.Mod(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        BitwiseAnd => AF.BitwiseAnd(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        BitwiseLeft => AF.BitwiseLeft(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        BitwiseOr => AF.BitwiseOr(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        BitwiseRight => AF.BitwiseRight(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
+                        BitwiseXor => AF.BitwiseXor(AF.SCRATCH2, AF.PseudoOperand(b.Dst), AF.PseudoOperand(b.Dst)),
                         _ => throw new NotImplementedException($"Operator \"{b.Op}\" not (yet) impelemented for TacBinary code generation")
                     }
                 ]);

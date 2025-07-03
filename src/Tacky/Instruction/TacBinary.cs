@@ -1,37 +1,39 @@
 using Wacc.CodeGen.AbstractAsm.Instruction;
+using Wacc.Tokens;
 using static Wacc.CodeGen.AbstractAsm.Instruction.AsmCmp.CondCode;
+using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Tacky.Instruction;
 
-public record TacBinary(string Op, TacVal Src1, TacVal Src2, TacVar Dst) : ITackyInstr
+public record TacBinary(TokenType Op, TacVal Src1, TacVal Src2, TacVar Dst) : ITackyInstr
 {
-    public static readonly Dictionary<string, AsmCmp.CondCode> CondCode = new() {
-        { "==", EQ },
-        { "!=", NE },
-        { "<", LT },
-        { "<=", LE },
-        { ">", GT },
-        { ">=", GE }
+    public static readonly Dictionary<TokenType, AsmCmp.CondCode> CondCode = new() {
+        { EqualTo, EQ },
+        { NotEqualTo, NE },
+        { LessThan, LT },
+        { LessOrEqual, LE },
+        { GreaterThan, GT },
+        { GreaterOrEqual, GE }
     };
 
     public string OpName => Op switch
     {
-        "+" => "Add",
-        "-" => "Subtract",
-        "*" => "Multiply",
-        "/" => "Divide",
-        "%" => "Modulus",
-        "&" => "BitwiseAnd",
-        "|" => "BitwiseOr",
-        "<<" => "BitwiseLeft",
-        ">>" => "BitwiseRight",
-        "^" => "BitwiseXor",
-        "==" => "Equal",
-        "!=" => "NotEqual",
-        "<" => "LessThan",
-        "<=" => "LessOrEqual",
-        ">" => "GreaterThan",
-        ">=" => "GreaterOrEqual",
+        PlusSign => "Add",
+        MinusSign => "Subtract",
+        MulSign => "Multiply",
+        DivSign => "Divide",
+        ModSign => "Modulus",
+        BitwiseAnd => "BitwiseAnd",
+        BitwiseOr => "BitwiseOr",
+        BitwiseLeft => "BitwiseLeft",
+        BitwiseRight => "BitwiseRight",
+        BitwiseXor => "BitwiseXor",
+        EqualTo => "Equal",
+        NotEqualTo => "NotEqual",
+        LessThan => "LessThan",
+        LessOrEqual => "LessOrEqual",
+        GreaterThan => "GreaterThan",
+        GreaterOrEqual => "GreaterOrEqual",
         _ => throw new InvalidOperationException($"no binary operator '{Op}'")
     };
 

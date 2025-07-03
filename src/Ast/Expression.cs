@@ -1,3 +1,4 @@
+using Wacc.Exceptions;
 using Wacc.Parse;
 using Wacc.Tokens;
 using static Wacc.Tokens.TokenType;
@@ -18,26 +19,31 @@ public record Expression(IAstNode SubExpr) : BlockItem
         {
             if (BinaryOp.RightAssociativeOps.Contains(tokenStream.Peek().TokenType))
             {
+                var opToken = tokenStream.Peek();
                 // TODO: there is a possible set equivalence issue between RighAssociativeOps and AssignOpMap
-                if (tokenStream.TryExpect(Assignment.AssignOpMap.Keys, out var opAssignToken))
+                if (opToken.Is([.. Assignment.AssignOpMap.Keys]))
                 {
-                    var assignType = opAssignToken.TokenType;
+                    var assignType = opToken.TokenType;
+                    tokenStream.Expect(Assignment.AssignOpMap.Keys);
                     var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType]);
-                    right = new BinaryOp("*********", left, right);
+                    right = new BinaryOp(Assignment.AssignOpMap[assignType], left, right);
                     left = new Assignment(left, right);
                 }
-                else
+                else if (opToken.Is(Assign))
                 {
                     tokenStream.Expect(Assign);
                     var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType]);
                     left = new Assignment(left, right);
                 }
+                else
+                {
+                    throw new NotImplementedException($"can't yet handle right-associative operator {opToken}");
+                }
             }
             else if (tokenStream.TryExpect(BinaryOp.Operators, out var opToken))
             {
-                var op = opToken.Str ?? throw new InvalidOperationException($"can't be {opToken}");
                 var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType] + 1);
-                left = new BinaryOp(op, left, right);
+                left = new BinaryOp(opToken.TokenType, left, right);
             }
             nextToken = tokenStream.Peek();
         }

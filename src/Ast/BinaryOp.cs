@@ -4,16 +4,16 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public class BinaryOp(string op, IAstNode lExpr, IAstNode rExpr) : IAstNode
+public class BinaryOp(TokenType op, IAstNode lExpr, IAstNode rExpr) : IAstNode
 {
-    public string Op => op;
+    public TokenType Op => op;
     public IAstNode LExpr => lExpr;
     public IAstNode RExpr => rExpr;
 
     // TODO: change these string literals to TokenTypes
-    public static readonly HashSet<string> ShortCircuitOps = ["&&", "||"];
+    public static readonly HashSet<TokenType> ShortCircuitOps = [LogicalAnd, LogicalOr];
 
-    public static readonly HashSet<string> RelationalOps = ["==", "!=", ">", ">=", "<", "<="];
+    public static readonly HashSet<TokenType> RelationalOps = [EqualTo, NotEqualTo, GreaterThan, GreaterOrEqual, LessThan, LessOrEqual];
 
     public static readonly HashSet<TokenType> RightAssociativeOps = [Assign, PlusAssign, MinusAssign, MulAssign, DivAssign, ModAssign];
 
@@ -74,7 +74,7 @@ public class BinaryOp(string op, IAstNode lExpr, IAstNode rExpr) : IAstNode
     public string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.Append($"Binary('{Op}'\n");
+        sb.Append($"Binary('{Op.Description()}'\n");
         sb.Append(IAstNode.IndentStr(indent + 1)).Append(lExpr.ToPrettyString(indent + 1)).Append('\n');
         sb.Append(IAstNode.IndentStr(indent + 1)).Append(rExpr.ToPrettyString(indent + 1)).Append('\n');
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
