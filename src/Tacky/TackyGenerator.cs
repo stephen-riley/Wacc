@@ -136,7 +136,7 @@ public class TackyGenerator(RuntimeState opts)
             case UnaryOp u:
                 var src = EmitTacky(u.Expr);
                 var dst = ReserveTmpVar();
-                Emit(new TacUnary(u.Op, src, dst));
+                Emit(new TacUnary(u.Op.TokenType, src, dst));
                 return dst;
 
             case BinaryOp b when b.Op == TokenType.LogicalAnd:

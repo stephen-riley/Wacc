@@ -10,19 +10,26 @@ public class BinaryOp(TokenType op, IAstNode lExpr, IAstNode rExpr) : IAstNode
     public IAstNode LExpr => lExpr;
     public IAstNode RExpr => rExpr;
 
-    // TODO: change these string literals to TokenTypes
     public static readonly HashSet<TokenType> ShortCircuitOps = [LogicalAnd, LogicalOr];
 
     public static readonly HashSet<TokenType> RelationalOps = [EqualTo, NotEqualTo, GreaterThan, GreaterOrEqual, LessThan, LessOrEqual];
 
     public static readonly HashSet<TokenType> RightAssociativeOps = [
         Assign, CompoundPlus, CompoundMinus, CompoundMul, CompoundDiv, CompoundMod,
-        CompoundBitwiseAnd, CompoundBitwiseOr, CompoundBitwiseXor, CompoundBitwiseLeft, CompoundBitwiseRight
+        CompoundBitwiseAnd, CompoundBitwiseOr, CompoundBitwiseXor, CompoundBitwiseLeft, CompoundBitwiseRight,
+        // Increment and Decrement are not here because they are handled in `UnaryOp.Parse()`.
     ];
 
     // Precedence climbing table
     //  levels and values from https://en.cppreference.com/w/c/language/operator_precedence
     public static readonly Dictionary<TokenType, int> Precedence = new() {
+        // level 1
+        { Increment, 60 },
+        { Decrement, 60 },
+
+        // level 2
+        // Don't include ++ and -- here; see note above.
+
         // level 3
         { MulSign, 50 },
         { DivSign, 50 },

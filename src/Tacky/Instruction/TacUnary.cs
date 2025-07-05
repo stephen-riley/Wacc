@@ -1,12 +1,15 @@
+using Wacc.Tokens;
+using static Wacc.Tokens.TokenType;
+
 namespace Wacc.Tacky.Instruction;
 
-public record TacUnary(string Op, TacVal Src, TacVar Dst) : ITackyInstr
+public record TacUnary(TokenType Op, TacVal Src, TacVar Dst) : ITackyInstr
 {
     public string OpName => Op switch
     {
-        "-" => "Negate",
-        "~" => "Complement",
-        "!" => "Not",
+        MinusSign => "Negate",
+        Complement => "Complement",
+        LogicalNot => "Not",
         _ => throw new InvalidOperationException($"no unary operator '{Op}'")
     };
 

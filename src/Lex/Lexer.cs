@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Wacc.Exceptions;
 using Wacc.Tokens;
@@ -22,7 +23,6 @@ public class Lexer(RuntimeState opts)
         { VoidKw, new Regex(@"\Gvoid\b") },
         { ReturnKw, new Regex(@"\Greturn\b") },
         { Identifier, new Regex(@"\G[a-zA-Z_]\w*\b") },
-        { Decrement, new Regex(@"\G--") },
         { Constant, new Regex(@"\G[0-9]+\b") },
         { OpenParen, new Regex(@"\G\(") },
         { CloseParen, new Regex(@"\G\)") },
@@ -40,6 +40,8 @@ public class Lexer(RuntimeState opts)
         { CompoundBitwiseXor, new Regex(@"\G\^=") },
         { CompoundBitwiseLeft, new Regex(@"\G<<=") },
         { CompoundBitwiseRight, new Regex(@"\G>>=") },
+        { Increment, new Regex(@"\G\+\+") },
+        { Decrement, new Regex(@"\G\-\-") },
         { PlusSign, new Regex(@"\G\+") },
         { MinusSign, new Regex(@"\G-") },
         { MulSign, new Regex(@"\G\*") },

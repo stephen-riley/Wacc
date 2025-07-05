@@ -1,7 +1,6 @@
 using Wacc.Ast;
-using Wacc.CodeGen.AbstractAsm.Instruction;
 using Wacc.Exceptions;
-
+using Wacc.Tokens;
 using VarMap = System.Collections.Generic.Dictionary<string, string>;
 
 namespace Wacc.Analyzers;
@@ -129,11 +128,17 @@ public class SemanticAnalyzer(RuntimeState opts)
             case BinaryOp b:
                 return new BinaryOp(b.Op, ResolveExpr(b.LExpr, variableMap), ResolveExpr(b.RExpr, variableMap));
 
-            case UnaryOp u when u.Op == "-" && u.Expr is Constant c:
+            case UnaryOp u when u.Op.TokenType == TokenType.MinusSign && u.Expr is Constant c:
                 return new Constant(-c.Int);
 
             case UnaryOp u:
                 return new UnaryOp(u.Op, ResolveExpr(u.Expr, variableMap));
+
+            case PrefixOp p1:
+                return new PrefixOp(p1.Op, ResolveExpr(p1.LValue, variableMap));
+
+            case PostfixOp p2:
+                return new PostfixOp(p2.Op, ResolveExpr(p2.LValue, variableMap));
 
             default:
                 return e;

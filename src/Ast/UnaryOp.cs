@@ -1,22 +1,26 @@
 using System.Text;
-using Wacc.Exceptions;
 using Wacc.Parse;
 using Wacc.Tokens;
+using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public class UnaryOp(string op, IAstNode expr) : IAstNode
+public record UnaryOp(Token Op, IAstNode Expr) : IAstNode
 {
-    public IAstNode Expr => expr;
-    public string Op => op;
+    internal static readonly List<TokenType> UnaryOpTokens = [Complement, MinusSign, LogicalNot, Increment, Decrement];
 
-    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.Peek().TokenType is TokenType.Complement or TokenType.MinusSign or TokenType.LogicalNot;
+    public static bool CanParse(Queue<Token> tokenStream)
+        => tokenStream.PeekFor(UnaryOpTokens);
 
     public static IAstNode Parse(Queue<Token> tokenStream)
     {
-        var op = tokenStream.Expect([TokenType.Complement, TokenType.MinusSign, TokenType.LogicalNot]).Str;
+        var op = tokenStream.Expect(UnaryOpTokens);
         var expr = Factor.Parse(tokenStream);
-        return new UnaryOp(op ?? throw new ParseError($"can't extract operator from {op}"), expr);
+        return op.TokenType switch
+        {
+            Increment or Decrement => new PrefixOp(op.TokenType, expr),
+            _ => new UnaryOp(op, expr)
+        };
     }
 
     public string ToPrettyString(int indent = 0)

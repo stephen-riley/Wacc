@@ -5,6 +5,16 @@ public enum TokenType
 {
     [Description("=")] Assign,
 
+    [Description("&")] BitwiseAnd,
+
+    [Description("<<")] BitwiseLeft,
+
+    [Description("|")] BitwiseOr,
+
+    [Description(">>")] BitwiseRight,
+
+    [Description("^")] BitwiseXor,
+
     [Description("&=")] CompoundBitwiseAnd,
 
     [Description("|=")] CompoundBitwiseOr,
@@ -15,15 +25,15 @@ public enum TokenType
 
     [Description(">>=")] CompoundBitwiseRight,
 
-    [Description("&")] BitwiseAnd,
+    [Description("/=")] CompoundDiv,
 
-    [Description("<<")] BitwiseLeft,
+    [Description("-=")] CompoundMinus,
 
-    [Description("|")] BitwiseOr,
+    [Description("%=")] CompoundMod,
 
-    [Description(">>")] BitwiseRight,
+    [Description("*=")] CompoundMul,
 
-    [Description("^")] BitwiseXor,
+    [Description("+=")] CompoundPlus,
 
     [Description("}")] CloseBrace,
 
@@ -35,8 +45,6 @@ public enum TokenType
 
     [Description("--")] Decrement,
 
-    [Description("/=")] CompoundDiv,
-
     [Description("/")] DivSign,
 
     [Description("==")] EqualTo,
@@ -46,6 +54,8 @@ public enum TokenType
     [Description(">")] GreaterThan,
 
     [Description("")] Identifier,
+
+    [Description("++")] Increment,
 
     [Description("int")] IntKw,
 
@@ -59,15 +69,9 @@ public enum TokenType
 
     [Description("||")] LogicalOr,
 
-    [Description("-=")] CompoundMinus,
-
     [Description("-")] MinusSign,
 
-    [Description("%=")] CompoundMod,
-
     [Description("%")] ModSign,
-
-    [Description("*=")] CompoundMul,
 
     [Description("*")] MulSign,
 
@@ -76,8 +80,6 @@ public enum TokenType
     [Description("{")] OpenBrace,
 
     [Description("(")] OpenParen,
-
-    [Description("+=")] CompoundPlus,
 
     [Description("+")] PlusSign,
 

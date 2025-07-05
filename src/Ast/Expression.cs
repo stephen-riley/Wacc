@@ -1,4 +1,3 @@
-using Wacc.Exceptions;
 using Wacc.Parse;
 using Wacc.Tokens;
 using static Wacc.Tokens.TokenType;
@@ -19,17 +18,16 @@ public record Expression(IAstNode SubExpr) : BlockItem
         {
             if (BinaryOp.RightAssociativeOps.Contains(tokenStream.Peek().TokenType))
             {
-                var opToken = tokenStream.Peek();
                 // TODO: there is a possible set equivalence issue between RighAssociativeOps and AssignOpMap
-                if (opToken.Is([.. Assignment.AssignOpMap.Keys]))
+                if (nextToken.Is([.. Assignment.AssignOpMap.Keys]))
                 {
-                    var assignType = opToken.TokenType;
+                    var assignType = nextToken.TokenType;
                     tokenStream.Expect(Assignment.AssignOpMap.Keys);
                     var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType]);
                     right = new BinaryOp(Assignment.AssignOpMap[assignType], left, right);
                     left = new Assignment(left, right);
                 }
-                else if (opToken.Is(Assign))
+                else if (nextToken.Is(Assign))
                 {
                     tokenStream.Expect(Assign);
                     var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType]);
@@ -37,13 +35,24 @@ public record Expression(IAstNode SubExpr) : BlockItem
                 }
                 else
                 {
-                    throw new NotImplementedException($"can't yet handle right-associative operator {opToken}");
+                    throw new NotImplementedException($"can't yet handle right-associative operator {nextToken}");
                 }
             }
-            else if (tokenStream.TryExpect(BinaryOp.Operators, out var opToken))
+            else // left-associative operator
             {
-                var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType] + 1);
-                left = new BinaryOp(opToken.TokenType, left, right);
+                if (tokenStream.TryExpect(BinaryOp.Operators, out var opToken))
+                {
+                    if (opToken.TokenType is Increment or Decrement)
+                    {
+                        left = new PostfixOp(nextToken.TokenType, left);
+                    }
+                    else
+                    {
+                        var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType] + 1);
+                        left = new BinaryOp(opToken.TokenType, left, right);
+
+                    }
+                }
             }
             nextToken = tokenStream.Peek();
         }
