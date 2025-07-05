@@ -45,7 +45,7 @@ public enum TokenType
 
     [Description("--")] Decrement,
 
-    [Description("/")] DivSign,
+    [Description("/")] Div,
 
     [Description("==")] EqualTo,
 
@@ -69,11 +69,11 @@ public enum TokenType
 
     [Description("||")] LogicalOr,
 
-    [Description("-")] MinusSign,
+    [Description("-")] Minus,
 
-    [Description("%")] ModSign,
+    [Description("%")] Mod,
 
-    [Description("*")] MulSign,
+    [Description("*")] Asterisk,
 
     [Description("!=")] NotEqualTo,
 
@@ -81,7 +81,7 @@ public enum TokenType
 
     [Description("(")] OpenParen,
 
-    [Description("+")] PlusSign,
+    [Description("+")] Plus,
 
     [Description("return")] ReturnKw,
 

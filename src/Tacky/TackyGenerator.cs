@@ -152,6 +152,22 @@ public class TackyGenerator(RuntimeState opts)
                 Emit(new TacBinary(b.Op, src1, src2, dst));
                 return dst;
 
+            case PrefixOp pe:
+                var peOp = pe.Op == TokenType.Increment ? TokenType.Plus : TokenType.Minus;
+                dst = ReserveTmpVar();
+                src1 = EmitTacky(pe.LValExpr);
+                Emit(new TacBinary(peOp, src1, new TacConstant(1), (TacVar)src1));
+                Emit(new TacCopy(src1, dst));
+                return dst;
+
+            case PostfixOp po:
+                var poOp = po.Op == TokenType.Increment ? TokenType.Plus : TokenType.Minus;
+                dst = ReserveTmpVar();
+                src1 = EmitTacky(po.LValExpr);
+                Emit(new TacCopy(src1, dst));
+                Emit(new TacBinary(poOp, src1, new TacConstant(1), (TacVar)src1));
+                return dst;
+
             case NullStatement:
                 return DUMMY;
 

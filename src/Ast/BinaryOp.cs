@@ -23,21 +23,14 @@ public class BinaryOp(TokenType op, IAstNode lExpr, IAstNode rExpr) : IAstNode
     // Precedence climbing table
     //  levels and values from https://en.cppreference.com/w/c/language/operator_precedence
     public static readonly Dictionary<TokenType, int> Precedence = new() {
-        // level 1
-        { Increment, 60 },
-        { Decrement, 60 },
-
-        // level 2
-        // Don't include ++ and -- here; see note above.
-
         // level 3
-        { MulSign, 50 },
-        { DivSign, 50 },
-        { ModSign, 50 },
+        { Asterisk, 50 },
+        { Div, 50 },
+        { Mod, 50 },
 
         // level 4
-        { PlusSign, 45 },
-        { MinusSign, 45 },
+        { Plus, 45 },
+        { Minus, 45 },
 
         // level 5
         { BitwiseLeft, 40 },

@@ -7,7 +7,7 @@ public record AsmSubtract(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) 
 {
     public override int OperandCount => 3;
 
-    public override string EmitArmString() => $"        sub     {Dst.EmitArmString()}, {Src1.EmitArmString()}, {Src2.EmitArmString()}";
+    public override string EmitArmString() => $"        subs    {Dst.EmitArmString()}, {Src1.EmitArmString()}, {Src2.EmitArmString()}";
 
     public override string EmitIrString() => $"Sub({Src1.EmitIrString()}, {Src2.EmitIrString()}, {Dst.EmitIrString()})";
 

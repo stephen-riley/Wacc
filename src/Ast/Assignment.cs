@@ -8,11 +8,11 @@ public record Assignment(IAstNode LExpr, IAstNode RExpr) : BlockItem
 {
     public static readonly Dictionary<TokenType, TokenType> AssignOpMap = new()
     {
-        [CompoundPlus] = PlusSign,
-        [CompoundMinus] = MinusSign,
-        [CompoundMul] = MulSign,
-        [CompoundDiv] = DivSign,
-        [CompoundMod] = ModSign,
+        [CompoundPlus] = Plus,
+        [CompoundMinus] = Minus,
+        [CompoundMul] = Asterisk,
+        [CompoundDiv] = Div,
+        [CompoundMod] = Mod,
         [CompoundBitwiseAnd] = BitwiseAnd,
         [CompoundBitwiseOr] = BitwiseOr,
         [CompoundBitwiseXor] = BitwiseXor,

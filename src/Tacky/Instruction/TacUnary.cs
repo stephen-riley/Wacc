@@ -7,7 +7,7 @@ public record TacUnary(TokenType Op, TacVal Src, TacVar Dst) : ITackyInstr
 {
     public string OpName => Op switch
     {
-        MinusSign => "Negate",
+        Minus => "Negate",
         Complement => "Complement",
         LogicalNot => "Not",
         _ => throw new InvalidOperationException($"no unary operator '{Op}'")

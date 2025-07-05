@@ -18,11 +18,11 @@ public record TacBinary(TokenType Op, TacVal Src1, TacVal Src2, TacVar Dst) : IT
 
     public string OpName => Op switch
     {
-        PlusSign => "Add",
-        MinusSign => "Subtract",
-        MulSign => "Multiply",
-        DivSign => "Divide",
-        ModSign => "Modulus",
+        Plus => "Add",
+        Minus => "Subtract",
+        Asterisk => "Multiply",
+        Div => "Divide",
+        Mod => "Modulus",
         BitwiseAnd => "BitwiseAnd",
         BitwiseOr => "BitwiseOr",
         BitwiseLeft => "BitwiseLeft",
@@ -34,6 +34,8 @@ public record TacBinary(TokenType Op, TacVal Src1, TacVal Src2, TacVar Dst) : IT
         LessOrEqual => "LessOrEqual",
         GreaterThan => "GreaterThan",
         GreaterOrEqual => "GreaterOrEqual",
+        Increment => "Increment",
+        Decrement => "Decrement",
         _ => throw new InvalidOperationException($"no binary operator '{Op}'")
     };
 

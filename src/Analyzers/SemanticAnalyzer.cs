@@ -128,17 +128,25 @@ public class SemanticAnalyzer(RuntimeState opts)
             case BinaryOp b:
                 return new BinaryOp(b.Op, ResolveExpr(b.LExpr, variableMap), ResolveExpr(b.RExpr, variableMap));
 
-            case UnaryOp u when u.Op.TokenType == TokenType.MinusSign && u.Expr is Constant c:
+            case UnaryOp u when u.Op.TokenType == TokenType.Minus && u.Expr is Constant c:
                 return new Constant(-c.Int);
 
             case UnaryOp u:
                 return new UnaryOp(u.Op, ResolveExpr(u.Expr, variableMap));
 
-            case PrefixOp p1:
-                return new PrefixOp(p1.Op, ResolveExpr(p1.LValue, variableMap));
+            case PrefixOp pe:
+                if (pe.LValExpr is not Var)
+                {
+                    throw new ValidationError($"PrefixOp lval must be a Var, not {pe.LValExpr}");
+                }
+                return new PrefixOp(pe.Op, ResolveExpr(pe.LValExpr, variableMap));
 
-            case PostfixOp p2:
-                return new PostfixOp(p2.Op, ResolveExpr(p2.LValue, variableMap));
+            case PostfixOp po:
+                if (po.LValExpr is not Var)
+                {
+                    throw new ValidationError($"PostfixOp lval must be a Var, not {po.LValExpr}");
+                }
+                return new PostfixOp(po.Op, ResolveExpr(po.LValExpr, variableMap));
 
             default:
                 return e;
