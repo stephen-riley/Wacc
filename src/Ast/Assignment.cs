@@ -8,11 +8,16 @@ public record Assignment(IAstNode LExpr, IAstNode RExpr) : BlockItem
 {
     public static readonly Dictionary<TokenType, TokenType> AssignOpMap = new()
     {
-        [PlusAssign] = PlusSign,
-        [MinusAssign] = MinusSign,
-        [MulAssign] = MulSign,
-        [DivAssign] = DivSign,
-        [ModAssign] = ModSign,
+        [CompoundPlus] = PlusSign,
+        [CompoundMinus] = MinusSign,
+        [CompoundMul] = MulSign,
+        [CompoundDiv] = DivSign,
+        [CompoundMod] = ModSign,
+        [CompoundBitwiseAnd] = BitwiseAnd,
+        [CompoundBitwiseOr] = BitwiseOr,
+        [CompoundBitwiseXor] = BitwiseXor,
+        [CompoundBitwiseLeft] = BitwiseLeft,
+        [CompoundBitwiseRight] = BitwiseRight,
     };
 
     public new static bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");

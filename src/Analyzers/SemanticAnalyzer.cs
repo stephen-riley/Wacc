@@ -1,4 +1,5 @@
 using Wacc.Ast;
+using Wacc.CodeGen.AbstractAsm.Instruction;
 using Wacc.Exceptions;
 
 using VarMap = System.Collections.Generic.Dictionary<string, string>;
@@ -127,6 +128,9 @@ public class SemanticAnalyzer(RuntimeState opts)
 
             case BinaryOp b:
                 return new BinaryOp(b.Op, ResolveExpr(b.LExpr, variableMap), ResolveExpr(b.RExpr, variableMap));
+
+            case UnaryOp u when u.Op == "-" && u.Expr is Constant c:
+                return new Constant(-c.Int);
 
             case UnaryOp u:
                 return new UnaryOp(u.Op, ResolveExpr(u.Expr, variableMap));

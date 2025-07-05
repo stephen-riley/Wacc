@@ -77,12 +77,20 @@ public class Pass3FixupInstructions(RuntimeState options)
                     AF.Mov(imm1, AF.SCRATCH1),
                     AF.Cmp(AF.SCRATCH1, imm2),
                 ] : null,
-
+        
         // Cmp(imm1, Stack(x)) => Mov(imm1, SCRATCH), Mov(Stack(x), SCRATCH2), Cmp(SCRATCH, SCRATCH2)
         i => i is AsmCmp cmp && cmp.Src1 is AsmImmOperand imm1 && cmp.Src2 is AsmStackOperand stackX
                 ? [
                     AF.Mov(imm1, AF.SCRATCH1),
                     AF.LoadStack(stackX, AF.SCRATCH2),
+                    AF.Cmp(AF.SCRATCH1, AF.SCRATCH2),
+                ] : null,
+
+        // Cmp(Stack(x), imm2) when imm2 >= 4096 => LoadStack(Stack(x), SCRATCH), Mov(imm2, SCRATCH2), Cmp(SCRATCH, imm2)
+        i => i is AsmCmp cmp && cmp.Src1 is AsmStackOperand stackX && cmp.Src2 is AsmImmOperand imm2 && imm2.Imm >= 4096
+                ? [
+                    AF.Mov(imm2, AF.SCRATCH2),
+                    AF.LoadStack(stackX, AF.SCRATCH1),
                     AF.Cmp(AF.SCRATCH1, AF.SCRATCH2),
                 ] : null,
 

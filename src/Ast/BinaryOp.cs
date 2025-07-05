@@ -15,7 +15,10 @@ public class BinaryOp(TokenType op, IAstNode lExpr, IAstNode rExpr) : IAstNode
 
     public static readonly HashSet<TokenType> RelationalOps = [EqualTo, NotEqualTo, GreaterThan, GreaterOrEqual, LessThan, LessOrEqual];
 
-    public static readonly HashSet<TokenType> RightAssociativeOps = [Assign, PlusAssign, MinusAssign, MulAssign, DivAssign, ModAssign];
+    public static readonly HashSet<TokenType> RightAssociativeOps = [
+        Assign, CompoundPlus, CompoundMinus, CompoundMul, CompoundDiv, CompoundMod,
+        CompoundBitwiseAnd, CompoundBitwiseOr, CompoundBitwiseXor, CompoundBitwiseLeft, CompoundBitwiseRight
+    ];
 
     // Precedence climbing table
     //  levels and values from https://en.cppreference.com/w/c/language/operator_precedence
@@ -60,11 +63,16 @@ public class BinaryOp(TokenType op, IAstNode lExpr, IAstNode rExpr) : IAstNode
 
         // level 14
         { Assign, 1 },
-        { PlusAssign, 1 },
-        { MinusAssign, 1 },
-        { MulAssign, 1 },
-        { DivAssign, 1 },
-        { ModAssign, 1 },
+        { CompoundPlus, 1 },
+        { CompoundMinus, 1 },
+        { CompoundMul, 1 },
+        { CompoundDiv, 1 },
+        { CompoundMod, 1 },
+        { CompoundBitwiseAnd, 1 },
+        { CompoundBitwiseOr, 1 },
+        { CompoundBitwiseXor, 1 },
+        { CompoundBitwiseLeft, 1 },
+        { CompoundBitwiseRight, 1 },
     };
 
     public static readonly HashSet<TokenType> Operators = [.. Precedence.Keys];

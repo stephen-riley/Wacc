@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using CommandLine;
 using Wacc.Analyzers;
 using Wacc.CodeGen;

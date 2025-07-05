@@ -1,7 +1,5 @@
 using System.Text.RegularExpressions;
 using CommandLine;
-using Wacc.CodeGen.AbstractAsm;
-using Wacc.Ast;
 using Wacc.Tacky.Instruction;
 using Wacc.Tokens;
 using Wacc.CodeGen.AbstractAsm.Instruction;
@@ -42,6 +40,9 @@ public class RuntimeState
 
     [Option("asmfile", HelpText = "Save assembly file to filename")]
     public string? AsmFilename { get; set; }
+
+    [Option("asm-include-comments", HelpText = "Include compiler-generated comments in assembly output")]
+    public bool AsmIncludeComments { get; set; }
 
     public bool DoLexer { get; } = true;
     public bool DoParser => !OnlyThroughLexer;

@@ -1,5 +1,5 @@
 using Wacc.CodeGen.AbstractAsm;
-using Wacc.Extensions;
+using Wacc.CodeGen.AbstractAsm.Instruction;
 
 namespace Wacc.Emit;
 
@@ -30,5 +30,13 @@ public class CodeEmitter(RuntimeState opts)
     }
 
     internal static void Emit(IEnumerable<AsmObject> asm, TextWriter stream)
-        => asm.ForEach(i => i.EmitArm(stream));
+    {
+        foreach (var i in asm)
+        {
+            if (i is not AsmComment)
+            {
+                i.EmitArm(stream);
+            }
+        }
+    }
 }

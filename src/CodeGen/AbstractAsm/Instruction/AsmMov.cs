@@ -9,6 +9,7 @@ public record AsmMov(AsmOperand Src, AsmDestOperand Dst) : AsmInstruction
 
     public override string EmitArmString() => Src switch
     {
+        _ when Src is AsmImmOperand imm && imm.Imm < 65536 => $"        mov     {Dst.EmitArmString()}, #{imm.Imm}",
         _ when Src is AsmImmOperand imm => $"        ldr     {Dst.EmitArmString()}, ={imm.Imm}",
         _ => $"        mov     {Dst.EmitArmString()}, {Src.EmitArmString()}"
     };
