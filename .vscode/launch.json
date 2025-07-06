@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "fixtures/valid/simple_subtraction.c -o /tmp/a.out --asmfile /tmp/a.S --verbose",
+            "args": "fixtures/book_tests/chapter_6/invalid_parse/incomplete_ternary.c -o /tmp/a.out --asmfile /tmp/a.S --verbose --lex",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

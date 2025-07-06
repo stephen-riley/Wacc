@@ -5,6 +5,8 @@ public enum TokenType
 {
     [Description("=")] Assign,
 
+    [Description("*")] Asterisk,
+
     [Description("&")] BitwiseAnd,
 
     [Description("<<")] BitwiseLeft,
@@ -15,15 +17,23 @@ public enum TokenType
 
     [Description("^")] BitwiseXor,
 
+    [Description("}")] CloseBrace,
+
+    [Description(")")] CloseParen,
+
+    [Description(":")] Colon,
+
+    [Description("~")] Complement,
+
     [Description("&=")] CompoundBitwiseAnd,
-
-    [Description("|=")] CompoundBitwiseOr,
-
-    [Description("^=")] CompoundBitwiseXor,
 
     [Description("<<=")] CompoundBitwiseLeft,
 
+    [Description("|=")] CompoundBitwiseOr,
+
     [Description(">>=")] CompoundBitwiseRight,
+
+    [Description("^=")] CompoundBitwiseXor,
 
     [Description("/=")] CompoundDiv,
 
@@ -35,17 +45,13 @@ public enum TokenType
 
     [Description("+=")] CompoundPlus,
 
-    [Description("}")] CloseBrace,
-
-    [Description(")")] CloseParen,
-
-    [Description("~")] Complement,
-
     [Description("")] Constant,
 
     [Description("--")] Decrement,
 
     [Description("/")] Div,
+
+    [Description("else")] ElseKw,
 
     [Description("==")] EqualTo,
 
@@ -54,6 +60,8 @@ public enum TokenType
     [Description(">")] GreaterThan,
 
     [Description("")] Identifier,
+
+    [Description("if")] IfKw,
 
     [Description("++")] Increment,
 
@@ -73,8 +81,6 @@ public enum TokenType
 
     [Description("%")] Mod,
 
-    [Description("*")] Asterisk,
-
     [Description("!=")] NotEqualTo,
 
     [Description("{")] OpenBrace,
@@ -82,6 +88,8 @@ public enum TokenType
     [Description("(")] OpenParen,
 
     [Description("+")] Plus,
+
+    [Description("?")] Question,
 
     [Description("return")] ReturnKw,
 
