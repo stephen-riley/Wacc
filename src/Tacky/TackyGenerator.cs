@@ -168,6 +168,41 @@ public class TackyGenerator(RuntimeState opts)
                 Emit(new TacBinary(poOp, src1, new TacConstant(1), (TacVar)src1));
                 return dst;
 
+            case IfElse ie when ie.ElseStat is null:
+                var endLabel = ReserveTmpLabel();
+                var cond = EmitTacky(ie.CondExpr);
+                Emit(new TacJumpIfZero(cond, endLabel));
+                EmitTacky(ie.ThenStat);
+                Emit(new TacLabel(endLabel));
+                return DUMMY;
+
+            case IfElse ie when ie.ElseStat is not null:
+                var elseLabel = ReserveTmpLabel();
+                endLabel = ReserveTmpLabel();
+                cond = EmitTacky(ie.CondExpr);
+                Emit(new TacJumpIfZero(cond, elseLabel));
+                EmitTacky(ie.ThenStat);
+                Emit(new TacJump(endLabel));
+                Emit(new TacLabel(elseLabel));
+                EmitTacky(ie.ElseStat);
+                Emit(new TacLabel(endLabel));
+                return DUMMY;
+
+            case Ternary t:
+                var altLabel = ReserveTmpLabel();
+                endLabel = ReserveTmpLabel();
+                var result = ReserveTmpVar();
+                cond = EmitTacky(t.CondExpr);
+                Emit(new TacJumpIfZero(cond, altLabel));
+                var middle = EmitTacky(t.Middle);
+                Emit(new TacCopy(middle, result));
+                Emit(new TacJump(endLabel));
+                Emit(new TacLabel(altLabel));
+                var right = EmitTacky(t.Right);
+                Emit(new TacCopy(right, result));
+                Emit(new TacLabel(endLabel));
+                return result;
+
             case NullStatement:
                 return DUMMY;
 
