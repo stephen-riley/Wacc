@@ -9,13 +9,14 @@ public record BlockItem : IAstNode
     public static bool CanParse(Queue<Token> tokenStream)
         => Statement.CanParse(tokenStream) || Declaration.CanParse(tokenStream);
 
-    public static IAstNode Parse(Queue<Token> tokenStream)
+    // `isDependent` flags whether we're parsing a single statement inside an `if` or `while`
+    public static IAstNode Parse(Queue<Token> tokenStream, bool isDependent = false)
     {
         if (Statement.CanParse(tokenStream))
         {
             return Statement.Parse(tokenStream);
         }
-        else if (Declaration.CanParse(tokenStream))
+        else if (!isDependent && Declaration.CanParse(tokenStream))
         {
             return Declaration.Parse(tokenStream);
         }

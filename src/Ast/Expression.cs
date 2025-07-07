@@ -33,6 +33,11 @@ public record Expression(IAstNode SubExpr) : BlockItem
                     var right = Parse(tokenStream, BinaryOp.Precedence[nextToken.TokenType]);
                     left = new Assignment(left, right);
                 }
+                else if (nextToken.Is(Question))
+                {
+                    // At this point, `left` is the condition.
+                    left = Ternary.Parse(tokenStream, left);
+                }
                 else
                 {
                     throw new NotImplementedException($"can't yet handle right-associative operator {nextToken}");

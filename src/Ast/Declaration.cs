@@ -7,20 +7,9 @@ namespace Wacc.Ast;
 
 public record Declaration(string DeclType, Var Identifier, IAstNode? Expr = null) : BlockItem
 {
-    // public string DeclType => declType;
-    // public Var Identifier => identifier;
-    // public IAstNode? Expr => expr;
-
-    // public void Deconstruct(out string declType, out Var identifier, out IAstNode? expr)
-    // {
-    //     declType = DeclType;
-    //     identifier = Identifier;
-    //     expr = Expr;
-    // }
-
     public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(IntKw);
 
-    public new static Declaration Parse(Queue<Token> tokenStream)
+    public static Declaration Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(IntKw);
         var ident = Var.Parse(tokenStream);

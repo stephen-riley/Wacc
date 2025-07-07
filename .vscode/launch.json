@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "fixtures/book_tests/chapter_6/invalid_parse/incomplete_ternary.c -o /tmp/a.out --asmfile /tmp/a.S --verbose --lex",
+            "args": "fixtures/book_tests/chapter_6/invalid_semantics/ternary_assign.c -o /tmp/a.out --asmfile /tmp/a.S --verbose --validate",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

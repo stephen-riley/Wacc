@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Wacc.Ast;
 using Wacc.Exceptions;
 using Wacc.Tokens;
@@ -98,16 +99,25 @@ public class SemanticAnalyzer(RuntimeState opts)
             Assignment a => (BlockItem)ResolveExpr(a, variableMap),
             Declaration d => ResolveDeclaration(d, variableMap),
             Return r => new Return(ResolveExpr(r.Expr, variableMap)),
-            Expression e => new Expression(ResolveExpr(e.SubExpr, variableMap)),
+            // Ast.Expression e when e.SubExpr is Ternary => throw new ValidationError("A ternary expression cannot be a top-level statement."),
+            Ast.Expression e => new Ast.Expression(ResolveExpr(e.SubExpr, variableMap)),
+            IfElse ie => new IfElse(
+                ResolveExpr(ie.CondExpr, variableMap),
+                ResolveStatement(ie.ThenStat, variableMap),
+                ie.ElseStat is not null ? ResolveStatement(ie.ElseStat, variableMap) : null
+            ),
             NullStatement => stat,
             _ => stat
         };
     }
 
-    internal static IAstNode ResolveExpr(IAstNode e, VarMap variableMap)
+    internal IAstNode ResolveExpr(IAstNode e, VarMap variableMap)
     {
         switch (e)
         {
+            case Constant c:
+                return c;
+
             case Assignment a:
                 if (a.LExpr is not Var)
                 {
@@ -148,8 +158,15 @@ public class SemanticAnalyzer(RuntimeState opts)
                 }
                 return new PostfixOp(po.Op, ResolveExpr(po.LValExpr, variableMap));
 
+            case Ternary t:
+                return new Ternary(
+                    ResolveExpr(t.CondExpr, variableMap),
+                    ResolveExpr(t.Middle, variableMap),
+                    ResolveExpr(t.Right, variableMap)
+                );
+
             default:
-                return e;
+                throw new NotImplementedException($"AST node {e} not handled yet");
         }
     }
 }

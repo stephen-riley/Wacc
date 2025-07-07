@@ -5,16 +5,15 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Return(IAstNode expr) : BlockItem
+public record Return(IAstNode Expr) : BlockItem
 {
-    public IAstNode Expr { get; internal set; } = expr;
-
     public static new bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(ReturnKw);
 
-    public static new Return Parse(Queue<Token> tokenStream)
+    public static Return Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(ReturnKw);
-        var expr = new Return(Expression.Parse(tokenStream));
+        var retExpr = Expression.Parse(tokenStream);
+        var expr = new Return(retExpr);
         return expr;
     }
 

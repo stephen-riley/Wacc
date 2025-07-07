@@ -9,7 +9,7 @@ public record NullStatement : BlockItem
 {
     public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(Semicolon);
 
-    public new static NullStatement Parse(Queue<Token> tokenStream) => new();
+    public static NullStatement Parse(Queue<Token> tokenStream) => new();
 
     public override string ToPrettyString(int indent = 0) => "NullStatement()";
 }

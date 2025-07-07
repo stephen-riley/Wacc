@@ -17,6 +17,7 @@ public class BinaryOp(TokenType op, IAstNode lExpr, IAstNode rExpr) : IAstNode
     public static readonly HashSet<TokenType> RightAssociativeOps = [
         Assign, CompoundPlus, CompoundMinus, CompoundMul, CompoundDiv, CompoundMod,
         CompoundBitwiseAnd, CompoundBitwiseOr, CompoundBitwiseXor, CompoundBitwiseLeft, CompoundBitwiseRight,
+        Question, Colon,
         // Increment and Decrement are not here because they are handled in `UnaryOp.Parse()`.
     ];
 
@@ -60,6 +61,9 @@ public class BinaryOp(TokenType op, IAstNode lExpr, IAstNode rExpr) : IAstNode
 
         // level 12
         { LogicalOr, 5 },
+
+        // level 13
+        { Question, 3 },
 
         // level 14
         { Assign, 1 },
