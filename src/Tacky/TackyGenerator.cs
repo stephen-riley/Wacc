@@ -127,6 +127,14 @@ public class TackyGenerator(RuntimeState opts)
                 Emit(new TacReturn(retResult));
                 return retResult;
 
+            case Goto g:
+                Emit(new TacJump(g.LabelName));
+                return DUMMY;
+
+            case Label l:
+                Emit(new TacLabel(l.Name));
+                return DUMMY;
+
             case Constant c:
                 return new TacConstant(c.Int);
 

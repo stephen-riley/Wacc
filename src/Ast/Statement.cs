@@ -13,6 +13,7 @@ public record Statement : BlockItem
         => NullStatement.CanParse(tokenStream)
             || Return.CanParse(tokenStream)
             || IfElse.CanParse(tokenStream)
+            || Goto.CanParse(tokenStream)
             || Expression.CanParse(tokenStream);
 
     public static IAstNode Parse(Queue<Token> tokenStream)
@@ -24,6 +25,7 @@ public record Statement : BlockItem
             Semicolon => NullStatement.Parse(tokenStream),
             ReturnKw => Return.Parse(tokenStream),
             IfKw => IfElse.Parse(tokenStream),
+            GotoKw => Goto.Parse(tokenStream),
             _ => Expression.Parse(tokenStream)
         };
 

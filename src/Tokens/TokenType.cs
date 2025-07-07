@@ -55,6 +55,8 @@ public enum TokenType
 
     [Description("==")] EqualTo,
 
+    [Description("goto")] GotoKw,
+
     [Description(">=")] GreaterOrEqual,
 
     [Description(">")] GreaterThan,

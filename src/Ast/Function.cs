@@ -19,6 +19,11 @@ public record Function(string Type, string Name, BlockItem[] Body) : IAstNode
         var body = new List<BlockItem>();
         while (tokenStream.Peek().TokenType != CloseBrace)
         {
+            if (Label.CanParse(tokenStream))
+            {
+                body.Add((BlockItem)Label.Parse(tokenStream));
+            }
+
             var stat = BlockItem.Parse(tokenStream);
             if (stat is not BlockItem)
             {

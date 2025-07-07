@@ -6,11 +6,17 @@ namespace Wacc.Parse;
 
 public static class ParseExtentions
 {
-    public static bool PeekFor(this Queue<Token> tokenStream, TokenType tokenType)
-        => tokenStream.Peek().TokenType == tokenType;
+    public static bool PeekFor(this Queue<Token> tokenStream, TokenType tokenType, int depth = 1)
+    {
+        Token? token = depth == 1 ? tokenStream.Peek() : tokenStream.ElementAtOrDefault(depth - 1);
+        return token is not null && token.TokenType == tokenType;
+    }
 
-    public static bool PeekFor(this Queue<Token> tokenStream, IEnumerable<TokenType> tokenTypes)
-        => new HashSet<TokenType>(tokenTypes).Contains(tokenStream.Peek().TokenType);
+    public static bool PeekFor(this Queue<Token> tokenStream, IEnumerable<TokenType> tokenTypes, int depth = 1)
+    {
+        Token? token = depth == 1 ? tokenStream.Peek() : tokenStream.ElementAtOrDefault(depth - 1);
+        return token is not null && new HashSet<TokenType>(tokenTypes).Contains(token.TokenType);
+    }
 
     public static bool TryExpect(this Queue<Token> tokenStream, IEnumerable<TokenType> tokenTypes, [NotNullWhen(true)] out Token topToken)
     {

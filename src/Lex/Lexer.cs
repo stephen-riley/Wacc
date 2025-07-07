@@ -24,6 +24,7 @@ public class Lexer(RuntimeState opts)
         { ReturnKw, new Regex(@"\Greturn\b") },
         { IfKw, new Regex(@"\Gif\b") },
         { ElseKw, new Regex(@"\Gelse\b") },
+        { GotoKw, new Regex(@"\Ggoto\b") },
         { Identifier, new Regex(@"\G[a-zA-Z_]\w*\b") },
         { Constant, new Regex(@"\G[0-9]+\b") },
         { Colon, new Regex(@"\G:") },
