@@ -13,5 +13,7 @@ public record Constant(int Int) : IAstNode
         return new Constant(tok.Int);
     }
 
+    public IEnumerable<IAstNode> Children() => [];
+
     public string ToPrettyString(int indent = 0) => $"Constant({Int})";
 }

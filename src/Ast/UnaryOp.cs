@@ -31,4 +31,6 @@ public record UnaryOp(Token Op, IAstNode Expr) : IAstNode
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
+
+    public IEnumerable<IAstNode> Children() => [Expr];
 }

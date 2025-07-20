@@ -4,7 +4,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Assignment(IAstNode LExpr, IAstNode RExpr) : BlockItem
+public record Assignment(IAstNode LExpr, IAstNode RExpr) : IAstNode
 {
     public static readonly Dictionary<TokenType, TokenType> AssignOpMap = new()
     {
@@ -20,9 +20,11 @@ public record Assignment(IAstNode LExpr, IAstNode RExpr) : BlockItem
         [CompoundBitwiseRight] = BitwiseRight,
     };
 
-    public new static bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
+    public bool IsBlockItem() => true;
 
-    public override string ToPrettyString(int indent = 0)
+    public static bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
+
+    public string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine($"Assignment(");
@@ -31,4 +33,6 @@ public record Assignment(IAstNode LExpr, IAstNode RExpr) : BlockItem
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
+
+    public IEnumerable<IAstNode> Children() => [LExpr, RExpr];
 }

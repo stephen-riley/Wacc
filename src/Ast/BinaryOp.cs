@@ -92,4 +92,6 @@ public class BinaryOp(TokenType op, IAstNode lExpr, IAstNode rExpr) : IAstNode
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
+
+    public IEnumerable<IAstNode> Children() => [];
 }

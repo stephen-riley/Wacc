@@ -3,11 +3,13 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record OpAssignment(TokenType Operation, IAstNode LExpr, IAstNode RExpr) : BlockItem
+public record OpAssignment(TokenType Operation, IAstNode LExpr, IAstNode RExpr) : IAstNode
 {
-    public new static bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
+    public bool IsBlockItem() => true;
 
-    public override string ToPrettyString(int indent = 0)
+    public static bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
+
+    public string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine($"OpAssignment(");
@@ -17,4 +19,6 @@ public record OpAssignment(TokenType Operation, IAstNode LExpr, IAstNode RExpr) 
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
+
+    public IEnumerable<IAstNode> Children() => [LExpr, RExpr];
 }

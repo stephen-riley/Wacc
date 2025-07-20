@@ -44,4 +44,6 @@ public record Factor(IAstNode SubExpr) : IAstNode
     }
 
     public string ToPrettyString(int indent = 0) => throw new ParseError($"{GetType().Name}.{nameof(ToPrettyString)} should not be called");
+
+    public IEnumerable<IAstNode> Children() => [];
 }

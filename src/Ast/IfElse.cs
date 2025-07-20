@@ -6,9 +6,11 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record IfElse(IAstNode CondExpr, BlockItem ThenStat, BlockItem? ElseStat) : BlockItem
+public record IfElse(IAstNode CondExpr, IAstNode ThenStat, IAstNode? ElseStat) : IAstNode
 {
-    public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(IfKw);
+    public bool IsBlockItem() => true;
+
+    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(IfKw);
 
     public static IfElse Parse(Queue<Token> tokenStream)
     {
@@ -17,22 +19,22 @@ public record IfElse(IAstNode CondExpr, BlockItem ThenStat, BlockItem? ElseStat)
         var condExpr = Expression.Parse(tokenStream);
         tokenStream.Expect(CloseParen);
 
-        var thenNode = Parse(tokenStream, isDependent: true);
-        var thenStat = thenNode as BlockItem ?? throw new ParseError($"{thenNode} is not a BlockItem");
+        var thenNode = BlockItem.Parse(tokenStream, isDependent: true);
+        var thenStat = thenNode.IsBlockItem() ? thenNode : throw new ParseError($"{thenNode} is not a BlockItem");
 
-        BlockItem? elseStat = null;
+        IAstNode? elseStat = null;
 
         if (tokenStream.PeekFor(ElseKw))
         {
             tokenStream.Expect(ElseKw);
-            var elseNode = Parse(tokenStream, isDependent: true);
-            elseStat = elseNode as BlockItem ?? throw new ParseError($"{elseNode} is not a BlockItem");
+            var elseNode = BlockItem.Parse(tokenStream, isDependent: true);
+            elseStat = elseNode.IsBlockItem() ? elseNode : throw new ParseError($"{elseNode} is not a BlockItem");
         }
 
         return new IfElse(condExpr, thenStat, elseStat);
     }
 
-    public override string ToPrettyString(int indent = 0)
+    public string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine("IfElse(");
@@ -44,6 +46,7 @@ public record IfElse(IAstNode CondExpr, BlockItem ThenStat, BlockItem? ElseStat)
         }
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
-
     }
+
+    public IEnumerable<IAstNode> Children() => ElseStat is not null ? [CondExpr, ThenStat, ElseStat] : [CondExpr, ThenStat];
 }

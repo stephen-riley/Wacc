@@ -4,9 +4,9 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Expression(IAstNode SubExpr) : BlockItem
+public record Expression(IAstNode SubExpr) : IAstNode
 {
-    public new static bool CanParse(Queue<Token> tokenStream)
+    public static bool CanParse(Queue<Token> tokenStream)
         => Factor.CanParse(tokenStream);
 
     public static IAstNode Parse(Queue<Token> tokenStream, int minPrecedence = 0)
@@ -65,5 +65,7 @@ public record Expression(IAstNode SubExpr) : BlockItem
         return left;
     }
 
-    public override string ToPrettyString(int indent = 0) => SubExpr.ToPrettyString(indent);
+    public IEnumerable<IAstNode> Children() => [];
+
+    public string ToPrettyString(int indent = 0) => SubExpr.ToPrettyString(indent);
 }

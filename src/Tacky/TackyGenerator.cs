@@ -128,7 +128,7 @@ public class TackyGenerator(RuntimeState opts)
                 return retResult;
 
             case Goto g:
-                Emit(new TacJump(g.LabelName));
+                Emit(new TacJump(g.Label?.Name ?? throw new InvalidOperationException("BlockItem.LabelName cannot be null here")));
                 return DUMMY;
 
             case Label l:
@@ -210,6 +210,10 @@ public class TackyGenerator(RuntimeState opts)
                 Emit(new TacCopy(right, result));
                 Emit(new TacLabel(endLabel));
                 return result;
+
+            case LabeledStatement ls:
+                Emit(new TacLabel(ls.Label.Name));
+                return EmitTacky(ls.Stat);
 
             case NullStatement:
                 return DUMMY;

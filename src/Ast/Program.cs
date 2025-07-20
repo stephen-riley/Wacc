@@ -32,4 +32,6 @@ public record Program(IEnumerable<Function> Functions) : IAstNode
         sb.Append(IAstNode.INDENT.X(indent)).Append(')');
         return sb.ToString();
     }
+
+    public IEnumerable<IAstNode> Children() => [.. Functions];
 }

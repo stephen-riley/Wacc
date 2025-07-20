@@ -33,6 +33,7 @@ public record Ternary(IAstNode CondExpr, IAstNode Middle, IAstNode Right) : IAst
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"right={Right.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
-
     }
+
+    public IEnumerable<IAstNode> Children() => [CondExpr, Middle, Right];
 }

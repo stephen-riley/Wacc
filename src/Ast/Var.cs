@@ -15,4 +15,6 @@ public record Var(string Name) : IAstNode
     }
 
     public string ToPrettyString(int indent = 0) => $"Var({Name})";
+
+    public IEnumerable<IAstNode> Children() => [];
 }

@@ -5,9 +5,11 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Return(IAstNode Expr) : BlockItem
+public record Return(IAstNode Expr) : IAstNode
 {
-    public static new bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(ReturnKw);
+    public bool IsBlockItem() => true;
+
+    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(ReturnKw);
 
     public static Return Parse(Queue<Token> tokenStream)
     {
@@ -17,7 +19,7 @@ public record Return(IAstNode Expr) : BlockItem
         return expr;
     }
 
-    public override string ToPrettyString(int indent = 0)
+    public string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine("Return(");
@@ -25,4 +27,6 @@ public record Return(IAstNode Expr) : BlockItem
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
+
+    public IEnumerable<IAstNode> Children() => [Expr];
 }

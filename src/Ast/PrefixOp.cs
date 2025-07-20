@@ -15,4 +15,6 @@ public record PrefixOp(TokenType Op, IAstNode LValExpr) : IAstNode
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
+
+    public IEnumerable<IAstNode> Children() => [LValExpr];
 }

@@ -5,9 +5,11 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Declaration(string DeclType, Var Identifier, IAstNode? Expr = null) : BlockItem
+public record Declaration(string DeclType, Var Identifier, IAstNode? Expr = null) : IAstNode
 {
-    public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(IntKw);
+    public bool IsBlockItem() => true;
+
+    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(IntKw);
 
     public static Declaration Parse(Queue<Token> tokenStream)
     {
@@ -25,7 +27,7 @@ public record Declaration(string DeclType, Var Identifier, IAstNode? Expr = null
         return new Declaration("int", ident, assignExpr);
     }
 
-    public override string ToPrettyString(int indent = 0)
+    public string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.Append("Declaration(\n");
@@ -40,4 +42,6 @@ public record Declaration(string DeclType, Var Identifier, IAstNode? Expr = null
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
+
+    public IEnumerable<IAstNode> Children() => Expr is not null ? [Expr] : [];
 }

@@ -5,7 +5,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Function(string Type, string Name, BlockItem[] Body) : IAstNode
+public record Function(string Type, string Name, IAstNode[] Body) : IAstNode
 {
     public static Function Parse(Queue<Token> tokenStream)
     {
@@ -16,21 +16,14 @@ public record Function(string Type, string Name, BlockItem[] Body) : IAstNode
         tokenStream.Expect(CloseParen);
         tokenStream.Expect(OpenBrace);
 
-        var body = new List<BlockItem>();
+        var body = new List<IAstNode>();
+
         while (tokenStream.Peek().TokenType != CloseBrace)
         {
-            if (Label.CanParse(tokenStream))
-            {
-                body.Add((BlockItem)Label.Parse(tokenStream));
-            }
-
-            var stat = BlockItem.Parse(tokenStream);
-            if (stat is not BlockItem)
-            {
-                stat = new Expression(stat);
-            }
-            body.Add((BlockItem)stat);
+            var item = BlockItem.Parse(tokenStream);
+            body.Add(item);
         }
+
         tokenStream.Expect(CloseBrace);
 
         return new Function("int", ident.Name ?? "", [.. body]);
@@ -52,4 +45,6 @@ public record Function(string Type, string Name, BlockItem[] Body) : IAstNode
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
+
+    public IEnumerable<IAstNode> Children() => [.. Body];
 }
