@@ -7,8 +7,6 @@ namespace Wacc.Ast;
 
 public record Label(string Name) : IAstNode
 {
-    public static string NullLabel { get; } = "<<<NULL LABEL>>>";
-
     public static bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor(Identifier) && tokenStream.PeekFor(Colon, depth: 2);
 

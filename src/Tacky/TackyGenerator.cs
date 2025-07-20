@@ -12,6 +12,8 @@ public class TackyGenerator(RuntimeState opts)
     internal List<TacFunction> functions = [];
     internal List<ITackyInstr> instructions = [];
 
+    internal HashSet<string> ReservedLabels = ["_main"];
+
     internal TacVar? LastTmpVar;
     internal int TmpVarCounter = 0;
     internal TacVar ReserveTmpVar()
@@ -34,6 +36,8 @@ public class TackyGenerator(RuntimeState opts)
         functions[^1].Locals.Add(tv);
         return tv;
     }
+
+    internal string GetCleanLabelName(string id) => ReservedLabels.Contains(id) ? $"{id}_X" : id;
 
     internal TacVar? GetLastTmpVar() => LastTmpVar;
     internal TacVar GetLastTmpVarOrFail() => GetLastTmpVar() ?? throw new TackyGenError("need to know last temp var in UnaryOp, but none available");
@@ -128,11 +132,11 @@ public class TackyGenerator(RuntimeState opts)
                 return retResult;
 
             case Goto g:
-                Emit(new TacJump(g.Label?.Name ?? throw new InvalidOperationException("BlockItem.LabelName cannot be null here")));
+                Emit(new TacJump(GetCleanLabelName(g.Label?.Name ?? throw new InvalidOperationException("BlockItem.LabelName cannot be null here"))));
                 return DUMMY;
 
             case Label l:
-                Emit(new TacLabel(l.Name));
+                Emit(new TacLabel(GetCleanLabelName(l.Name)));
                 return DUMMY;
 
             case Constant c:
@@ -212,7 +216,7 @@ public class TackyGenerator(RuntimeState opts)
                 return result;
 
             case LabeledStatement ls:
-                Emit(new TacLabel(ls.Label.Name));
+                Emit(new TacLabel(GetCleanLabelName(ls.Label.Name)));
                 return EmitTacky(ls.Stat);
 
             case NullStatement:

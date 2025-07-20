@@ -7,9 +7,9 @@ namespace Wacc.Ast;
 public record BlockItem : IAstNode
 {
     public static bool CanParse(Queue<Token> tokenStream)
-        => LabeledStatement.CanParse(tokenStream)
+        => Declaration.CanParse(tokenStream)
         || Statement.CanParse(tokenStream)
-        || Declaration.CanParse(tokenStream);
+        || LabeledStatement.CanParse(tokenStream);
 
     // `isDependent` flags whether we're parsing a single statement inside an `if` or `while`
     public static IAstNode Parse(Queue<Token> tokenStream, bool isDependent = false)
@@ -25,6 +25,10 @@ public record BlockItem : IAstNode
         else if (!isDependent && Declaration.CanParse(tokenStream))
         {
             stat = Declaration.Parse(tokenStream);
+            if (label is not null)
+            {
+                throw new ParseError($"cannot put label on declaration");
+            }
         }
         else
         {

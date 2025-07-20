@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "fixtures/book_tests/chapter_6/valid/extra_credit/goto_backwards.c -o /tmp/a.out --asmfile /tmp/a.S --verbose",
+            "args": "fixtures/book_tests/chapter_6/valid/extra_credit/goto_label_main_2.c -o /tmp/a.out --asmfile /tmp/a.S --verbose",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

@@ -73,22 +73,34 @@ public record VarAnalyzer(RuntimeState Options)
     {
         return stat switch
         {
-            Assignment a => (BlockItem)ResolveExpr(a, variableMap),
-            Declaration d => ResolveDeclaration(d, variableMap),
-            Return r => new Return(ResolveExpr(r.Expr, variableMap)),
             // Ast.Expression e when e.SubExpr is Ternary => throw new ValidationError("A ternary expression cannot be a top-level statement."),
+            Assignment a => ResolveExpr(a, variableMap),
+            BinaryOp b => ResolveExpr(b, variableMap),
+            Declaration d => ResolveDeclaration(d, variableMap),
             Expression e => new Expression(ResolveExpr(e.SubExpr, variableMap)),
             IfElse ie => new IfElse(
                 ResolveExpr(ie.CondExpr, variableMap),
                 ResolveStatement(ie.ThenStat, variableMap),
                 ie.ElseStat is not null ? ResolveStatement(ie.ElseStat, variableMap) : null
             ),
+            LabeledStatement ls => new LabeledStatement(
+                ls.Label,
+                ResolveStatement(ls.Stat, variableMap)
+            ),
             NullStatement => stat,
+            PostfixOp po => ResolveExpr(po, variableMap),
+            PrefixOp pr => ResolveExpr(pr, variableMap),
+            Return r => new Return(ResolveExpr(r.Expr, variableMap)),
+            Ternary t => new Ternary(
+                ResolveExpr(t.CondExpr, variableMap),
+                ResolveExpr(t.Middle, variableMap),
+                ResolveExpr(t.Right, variableMap)
+            ),
             _ => stat
         };
     }
 
-    internal IAstNode ResolveExpr(IAstNode e, VarMap variableMap)
+    internal static IAstNode ResolveExpr(IAstNode e, VarMap variableMap)
     {
         switch (e)
         {

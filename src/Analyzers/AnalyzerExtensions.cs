@@ -28,4 +28,13 @@ public static class AnalyzerExtensions
                 callback(t);
             }
         });
+
+    public static void WalkFor(this IAstNode @this, Func<IAstNode, bool> pred, Action<IAstNode> callback, bool prefix = true, bool postfix = false)
+        => @this.Walk(node =>
+        {
+            if (pred(@this))
+            {
+                callback(@this);
+            }
+        });
 }
