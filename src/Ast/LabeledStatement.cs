@@ -1,14 +1,10 @@
 using System.Text;
 using Wacc.Tokens;
-using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
 public record LabeledStatement(Label Label, IAstNode Stat) : IAstNode
 {
-    // This will list the statement types that don't have semicolons after them.
-    public static readonly HashSet<TokenType> BlockStatements = [IfKw /* ForKw WhileKw */];
-
     public bool IsBlockItem() => true;
 
     public static bool CanParse(Queue<Token> tokenStream) => Label.CanParse(tokenStream);
@@ -16,7 +12,7 @@ public record LabeledStatement(Label Label, IAstNode Stat) : IAstNode
     public static IAstNode Parse(Queue<Token> tokenStream)
     {
         var label = Label.Parse(tokenStream);
-        var stat = Statement.Parse(tokenStream);
+        var stat = Statement.Parse(tokenStream, nested: true);
         return new LabeledStatement(label, stat);
     }
 

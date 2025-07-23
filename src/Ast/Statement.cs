@@ -16,10 +16,16 @@ public record Statement() : IAstNode
             || Return.CanParse(tokenStream)
             || IfElse.CanParse(tokenStream)
             || Goto.CanParse(tokenStream)
-            || Expression.CanParse(tokenStream);
+            || Expression.CanParse(tokenStream)
+            || Label.CanParse(tokenStream);
 
-    public static IAstNode Parse(Queue<Token> tokenStream)
+    public static IAstNode Parse(Queue<Token> tokenStream, bool nested = false)
     {
+        if (Label.CanParse(tokenStream))
+        {
+            return LabeledStatement.Parse(tokenStream);
+        }
+
         var nextTokenType = tokenStream.Peek().TokenType;
 
         var stat = nextTokenType switch
@@ -31,7 +37,7 @@ public record Statement() : IAstNode
             _ => Expression.Parse(tokenStream)
         };
 
-        if (!BlockStatements.Contains(nextTokenType))
+        if (!nested && !BlockStatements.Contains(nextTokenType))
         {
             tokenStream.Expect(Semicolon);
         }
