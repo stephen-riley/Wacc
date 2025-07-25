@@ -6,6 +6,7 @@ using Wacc.CodeGen.AbstractAsm.Instruction;
 
 namespace Wacc;
 
+[Verb("cc", isDefault: true, HelpText = "Invoke compiler (default)")]
 public class RuntimeState
 {
     [Option('l', "lex", HelpText = "Run the lexer, but stop before parsing")]

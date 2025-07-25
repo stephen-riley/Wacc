@@ -10,10 +10,14 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "fixtures/book_tests/chapter_5/valid/assign.c -o /tmp/a.out --asmfile /tmp/a.S --verbose",
+            // "args": "fixtures/book_tests/chapter_5/valid/assign.c -o /tmp/a.out --asmfile /tmp/a.S --verbose",
+            "args": "test -c 3 --no-invalid --extra-credit",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
-            "console": "internalConsole"
+            "console": "internalConsole",
+            "env": {
+                "WACC_TESTS_PATH": "~/Projects/writing-a-c-compiler-tests/"
+            }
         },
         {
             "name": "Debug /tmp/a.out",

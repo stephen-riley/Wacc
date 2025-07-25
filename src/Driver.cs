@@ -20,60 +20,46 @@ public class Driver(RuntimeState options)
             Console.Error.WriteLine("CLI: " + Parser.Default.FormatCommandLine(Rts));
         }
 
-        try
+        if (Rts.DoLexer || Rts.DoAll)
         {
-            if (Rts.DoLexer || Rts.DoAll)
-            {
-                if (Rts.Verbose) Console.Error.WriteLine("\nStage: Lex");
-                new Lexer(Rts).Execute();
-            }
-
-            if (Rts.DoParser || Rts.DoAll)
-            {
-                if (Rts.Verbose) Console.Error.WriteLine("\nStage: Parse");
-                new Parse.Parser(Rts).Execute();
-            }
-
-            if (Rts.DoValidate || Rts.DoAll)
-            {
-                if (Rts.Verbose) Console.Error.WriteLine("\nStage: Validation");
-                new SemanticAnalyzer(Rts).Execute();
-            }
-
-            if (Rts.DoTacky || Rts.DoAll)
-            {
-                if (Rts.Verbose) Console.Error.WriteLine("\nStage: TAC IR gen");
-                new TackyGenerator(Rts).Execute();
-            }
-
-            if (Rts.DoCodeGen || Rts.DoAll)
-            {
-                if (Rts.Verbose) Console.Error.WriteLine("\nStage: Asm IR gen");
-                new CodeGenerator(Rts).Execute();
-            }
-
-            if (Rts.DoCodeEmission || Rts.Assemble || Rts.DoAll)
-            {
-                if (Rts.Verbose) Console.Error.WriteLine("\nStage: Asm emit");
-                new CodeEmitter(Rts).Execute();
-            }
-
-            if (Rts.DoAll)
-            {
-                if (Rts.Verbose) Console.Error.WriteLine("\nStage: assemble");
-                new GenExecutable(Rts).Execute();
-            }
+            if (Rts.Verbose) Console.Error.WriteLine("\nStage: Lex");
+            new Lexer(Rts).Execute();
         }
-        catch (Exception e)
+
+        if (Rts.DoParser || Rts.DoAll)
         {
-            var eName = e.GetType().Name;
-            Console.Error.WriteLine($"\n{eName}: {e.Message}");
-            if (!eName.EndsWith("Error"))
-            {
-                Console.Error.WriteLine(e.StackTrace);
-            }
-            Environment.Exit(1);
+            if (Rts.Verbose) Console.Error.WriteLine("\nStage: Parse");
+            new Parse.Parser(Rts).Execute();
+        }
+
+        if (Rts.DoValidate || Rts.DoAll)
+        {
+            if (Rts.Verbose) Console.Error.WriteLine("\nStage: Validation");
+            new SemanticAnalyzer(Rts).Execute();
+        }
+
+        if (Rts.DoTacky || Rts.DoAll)
+        {
+            if (Rts.Verbose) Console.Error.WriteLine("\nStage: TAC IR gen");
+            new TackyGenerator(Rts).Execute();
+        }
+
+        if (Rts.DoCodeGen || Rts.DoAll)
+        {
+            if (Rts.Verbose) Console.Error.WriteLine("\nStage: Asm IR gen");
+            new CodeGenerator(Rts).Execute();
+        }
+
+        if (Rts.DoCodeEmission || Rts.Assemble || Rts.DoAll)
+        {
+            if (Rts.Verbose) Console.Error.WriteLine("\nStage: Asm emit");
+            new CodeEmitter(Rts).Execute();
+        }
+
+        if (Rts.DoAll)
+        {
+            if (Rts.Verbose) Console.Error.WriteLine("\nStage: assemble");
+            new GenExecutable(Rts).Execute();
         }
     }
-
 }
