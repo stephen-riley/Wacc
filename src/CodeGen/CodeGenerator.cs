@@ -17,20 +17,20 @@ public class CodeGenerator(RuntimeState opts)
     public bool Execute()
     {
         TranslateProgram(Options.Tacky);
-        Dump("asm IR, pass 1 (codegen)");
+        Dump("asm IR, pass 1 (codegen)", !Options.Silent);
 
         Asm = Pass2ResolvePseudoRegisters.Execute(Asm);
-        Dump("asm IR, pass 2 (resolve tmp vars)");
+        Dump("asm IR, pass 2 (resolve tmp vars)", !Options.Silent);
 
         Asm = new Pass3FixupInstructions(Options).Execute(Asm);
-        Dump("asm IR, pass 3 (fix up addr modes)");
+        Dump("asm IR, pass 3 (fix up addr modes)", !Options.Silent);
 
         Options.AbstractAsm = Asm;
 
         return true;
     }
 
-    internal void Dump(string title)
+    internal void Dump(string title, bool show = true)
     {
         if (Options.Verbose)
         {

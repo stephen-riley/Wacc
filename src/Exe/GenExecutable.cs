@@ -14,13 +14,13 @@ public class GenExecutable(RuntimeState opts)
             tmpFileBase = tmpFileBase[..^2];
         }
 
-        if (Options.Verbose)
+        if (Options.Verbose && !Options.Silent)
         {
             Console.Error.WriteLine($"\nWriting to temp file {tmpFileBase}.S");
         }
         File.WriteAllText($"{tmpFileBase}.S", Options.Assembly);
 
-        if (Options.Verbose)
+        if (Options.Verbose && !Options.Silent)
         {
             Console.Error.WriteLine($"\nWriting executable to {Options.OutputFile ?? Options.BaseFilename}");
         }

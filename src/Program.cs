@@ -2,7 +2,7 @@
 using Wacc;
 using Wacc.BookTestsDriver;
 
-Parser.Default.ParseArguments<RuntimeState, TestRuntimeState>(args)
+Parser.Default.ParseArguments<RuntimeState, TestOptions>(args)
     .WithParsed<RuntimeState>(rts =>
     {
         try
@@ -18,10 +18,11 @@ Parser.Default.ParseArguments<RuntimeState, TestRuntimeState>(args)
             {
                 Console.Error.WriteLine(e.StackTrace);
             }
+            Environment.Exit(-1);
         }
     })
-    .WithParsed<TestRuntimeState>(trts =>
+    .WithParsed<TestOptions>(testOptions =>
     {
-        new TestDriver(trts).Entrypoint();
+        new TestDriver(testOptions).Entrypoint();
     });
 // .WithNotParsed(HandleParseError);

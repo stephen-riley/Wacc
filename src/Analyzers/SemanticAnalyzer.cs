@@ -14,16 +14,19 @@ public record SemanticAnalyzer(RuntimeState Options)
     {
         Options.Ast = Validate(Options.Ast);
 
-        if (Options.Verbose || Options.OnlyThroughLexer)
+        if (!Options.Silent)
         {
-            if (Options.Verbose)
+            if (Options.Verbose || Options.OnlyThroughLexer)
             {
-                Console.Error.WriteLine();
-                Console.Error.WriteLine("SEMANTIC VALIDATION:");
-                Console.Error.WriteLine("=====================");
+                if (Options.Verbose)
+                {
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine("SEMANTIC VALIDATION:");
+                    Console.Error.WriteLine("=====================");
 
-                var stream = Options.Verbose ? Console.Error : Console.Out;
-                stream.WriteLine(Options.Ast.ToPrettyString());
+                    var stream = Options.Verbose ? Console.Error : Console.Out;
+                    stream.WriteLine(Options.Ast.ToPrettyString());
+                }
             }
         }
 

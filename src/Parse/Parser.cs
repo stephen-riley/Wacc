@@ -16,17 +16,20 @@ public class Parser(RuntimeState opts)
         var program = Ast.Program.Parse(toks);
         Options.Ast = program ?? throw new ParseError("Parsing did not return a Program AST node");
 
-        if (Options.Verbose || Options.OnlyThroughParser)
+        if (!Options.Silent)
         {
-            if (Options.Verbose)
+            if (Options.Verbose || Options.OnlyThroughParser)
             {
-                Console.Error.WriteLine();
-                Console.Error.WriteLine("AST:");
-                Console.Error.WriteLine("=====");
-            }
+                if (Options.Verbose)
+                {
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine("AST:");
+                    Console.Error.WriteLine("=====");
+                }
 
-            var stream = Options.Verbose ? Console.Error : Console.Out;
-            stream.WriteLine(program.ToPrettyString());
+                var stream = Options.Verbose ? Console.Error : Console.Out;
+                stream.WriteLine(program.ToPrettyString());
+            }
         }
 
         return true;

@@ -13,11 +13,14 @@ public class CodeEmitter(RuntimeState opts)
         Emit(Options.AbstractAsm, sw);
         Options.Assembly = sw.ToString();
 
-        if (Options.Verbose)
+        if (!Options.Silent)
         {
-            Console.Error.WriteLine();
-            Console.Error.WriteLine("EMIT ASM:");
-            Console.Error.WriteLine("==========");
+            if (Options.Verbose)
+            {
+                Console.Error.WriteLine();
+                Console.Error.WriteLine("EMIT ASM:");
+                Console.Error.WriteLine("==========");
+            }
         }
 
         if (Options.Verbose || Options.OnlyThroughCodeEmit || Options.Assemble)

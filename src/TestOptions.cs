@@ -3,7 +3,7 @@ using CommandLine;
 namespace Wacc;
 
 [Verb("test", HelpText = "Run book tests")]
-public class TestRuntimeState
+public class TestOptions
 {
     const string TestsPathEnvVar = "WACC_TESTS_PATH";
 
@@ -24,6 +24,23 @@ public class TestRuntimeState
 
     [Option("stage", HelpText = "Run through stage")]
     public string Stage { get; set; } = "";
+
+    [Option("verbose", HelpText = "Show list of tests before executing")]
+    public bool Verbose { get; set; } = false;
+
+    [Option('f', "fail-fast", HelpText = "Halt tests immediately on first failure")]
+    public bool FailFast { get; set; } = false;
+
+    [Option("failure-code", HelpText = "Expected exit code for failures")]
+    public int FailureExitCode { get; set; } = -1;
+
+    [Option("plan", HelpText = "Show tests to be run (implies --verbose), but don't run them")]
+    public bool Plan { get; set; } = false;
+
+    [Option('a', "all", HelpText = "Run all tests from the beginning")]
+    public bool AllTests { get; set; } = false;
+
+    public bool AllStages => Stage == "";
 
     public string TestsPath => CliTestsPath ?? Environment.GetEnvironmentVariable(TestsPathEnvVar) ?? throw new InvalidOperationException("no tests path specified");
 }

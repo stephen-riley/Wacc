@@ -45,6 +45,8 @@ public class RuntimeState
     [Option("asm-include-comments", HelpText = "Include compiler-generated comments in assembly output")]
     public bool AsmIncludeComments { get; set; }
 
+    public bool Silent { get; set; }
+
     public bool DoLexer { get; } = true;
     public bool DoParser => !OnlyThroughLexer;
     public bool DoValidate => !OnlyThroughLexer && !OnlyThroughParser;

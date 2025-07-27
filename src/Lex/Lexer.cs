@@ -74,20 +74,23 @@ public class Lexer(RuntimeState opts)
     {
         Options.TokenStream = Lex(Options.Text);
 
-        if (Options.Verbose || Options.OnlyThroughLexer)
+        if (!Options.Silent)
         {
-            if (Options.Verbose)
+            if (Options.Verbose || Options.OnlyThroughLexer)
             {
-                Console.Error.WriteLine();
-                Console.Error.WriteLine("TOKENS:");
-                Console.Error.WriteLine("========");
-            }
+                if (Options.Verbose)
+                {
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine("TOKENS:");
+                    Console.Error.WriteLine("========");
+                }
 
-            var stream = Options.Verbose ? Console.Error : Console.Out;
+                var stream = Options.Verbose ? Console.Error : Console.Out;
 
-            foreach (var t in Options.TokenStream)
-            {
-                stream.WriteLine(t);
+                foreach (var t in Options.TokenStream)
+                {
+                    stream.WriteLine(t);
+                }
             }
         }
 

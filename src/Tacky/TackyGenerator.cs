@@ -63,21 +63,24 @@ public class TackyGenerator(RuntimeState opts)
             Console.Error.WriteLine("=======");
         }
 
-        if (Options.Verbose || Options.OnlyThroughTacky)
+        if (!Options.Silent)
         {
-            var stream = Options.Verbose ? Console.Error : Console.Out;
-            foreach (var f in Options.Tacky.Functions)
+            if (Options.Verbose || Options.OnlyThroughTacky)
             {
-                foreach (var i in f.Instructions)
+                var stream = Options.Verbose ? Console.Error : Console.Out;
+                foreach (var f in Options.Tacky.Functions)
                 {
-                    stream.WriteLine(i switch
+                    foreach (var i in f.Instructions)
                     {
-                        TacConstant or TacVar => i.ToString(),
-                        TacLabel l => $"\n{l.Identifier}:",
-                        _ => $"    {i}"
-                    });
+                        stream.WriteLine(i switch
+                        {
+                            TacConstant or TacVar => i.ToString(),
+                            TacLabel l => $"\n{l.Identifier}:",
+                            _ => $"    {i}"
+                        });
+                    }
+                    stream.WriteLine();
                 }
-                stream.WriteLine();
             }
         }
 
