@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
             // "args": "fixtures/book_tests/chapter_6/valid/extra_credit/label_token.c -o /tmp/a.out --asmfile /tmp/a.S --verbose",
-            "args": "test --path ~/Projects/writing-a-c-compiler-tests test -c 7  --stage parser -f",
+            "args": "test --path ~/Projects/writing-a-c-compiler-tests test -c 6 --stage parser -f",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole",

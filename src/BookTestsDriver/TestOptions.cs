@@ -1,6 +1,6 @@
 using CommandLine;
 
-namespace Wacc;
+namespace Wacc.BookTestsDriver;
 
 [Verb("test", HelpText = "Run book tests")]
 public class TestOptions
