@@ -1,6 +1,3 @@
-using Wacc.CodeGen.AbstractAsm;
-using Wacc.CodeGen.AbstractAsm.Instruction;
-
 namespace Wacc.Tests;
 
 [TestClass]

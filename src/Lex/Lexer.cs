@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Wacc.Exceptions;
 using Wacc.Tokens;

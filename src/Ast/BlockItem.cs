@@ -1,5 +1,4 @@
 using Wacc.Exceptions;
-using Wacc.Extensions;
 using Wacc.Tokens;
 
 namespace Wacc.Ast;
