@@ -20,7 +20,7 @@ public record IfElse(IAstNode CondExpr, IAstNode ThenBlock, IAstNode? ElseBlock)
         tokenStream.Expect(CloseParen);
 
         var thenNode = Block.Parse(tokenStream, isDependent: true);
-        var thenBlock = thenNode is Block or BlockItem ? thenNode : throw new ParseError($"{thenNode} is not a Block or BlockItem");
+        var thenBlock = thenNode is Block || thenNode.IsBlockItem() ? thenNode : throw new ParseError($"{thenNode} is not a Block or BlockItem");
 
         IAstNode? elseBlock = null;
 
@@ -28,7 +28,7 @@ public record IfElse(IAstNode CondExpr, IAstNode ThenBlock, IAstNode? ElseBlock)
         {
             tokenStream.Expect(ElseKw);
             var elseNode = Block.Parse(tokenStream, isDependent: true);
-            elseBlock = elseNode is Block or BlockItem ? elseNode : throw new ParseError($"{elseNode} is not a Block or BlockItem");
+            elseBlock = elseNode is Block || elseNode.IsBlockItem() ? elseNode : throw new ParseError($"{elseNode} is not a Block or BlockItem");
         }
 
         return new IfElse(condExpr, thenBlock, elseBlock);

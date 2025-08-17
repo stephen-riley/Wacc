@@ -1,14 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
 using Wacc.Ast;
 using Wacc.Exceptions;
 using Wacc.Tokens;
-using VarMap = System.Collections.Generic.Dictionary<string, string>;
 
 namespace Wacc.Validation;
 
 public record VarAnalyzer(RuntimeState Options)
 {
-    internal VarMap VariableMap = [];
-
     internal Dictionary<string, int> UniqueVarCounters = [];
 
     public Ast.Program Validate(IAstNode ast)
@@ -53,7 +51,7 @@ public record VarAnalyzer(RuntimeState Options)
     {
         var (declType, ident, init) = decl;
 
-        if (variableMap.ContainsKey(ident.Name))
+        if (variableMap.TryGetValue(ident.Name, out var value, out var inCurScope) && inCurScope)
         {
             throw new ValidationError($"duplicate variable declaration for {ident}");
         }
@@ -75,7 +73,7 @@ public record VarAnalyzer(RuntimeState Options)
         {
             // Ast.Expression e when e.SubExpr is Ternary => throw new ValidationError("A ternary expression cannot be a top-level statement."),
             Assignment a => ResolveExpr(a, variableMap),
-            BinaryOp b => ResolveExpr(b, variableMap),
+            BinaryOp bo => ResolveExpr(bo, variableMap),
             Declaration d => ResolveDeclaration(d, variableMap),
             Expression e => new Expression(ResolveExpr(e.SubExpr, variableMap)),
             IfElse ie => new IfElse(
@@ -96,6 +94,7 @@ public record VarAnalyzer(RuntimeState Options)
                 ResolveExpr(t.Middle, variableMap),
                 ResolveExpr(t.Right, variableMap)
             ),
+            Block b => ResolveBlock(b, variableMap),
             _ => stat
         };
     }
@@ -115,7 +114,7 @@ public record VarAnalyzer(RuntimeState Options)
                 return new Assignment(ResolveExpr(a.LExpr, variableMap), ResolveExpr(a.RExpr, variableMap));
 
             case Var v:
-                if (variableMap.TryGetValue(v.Name, out var globalName))
+                if (variableMap.TryGetValue(v.Name, out var globalName, out _))
                 {
                     return new Var(globalName);
                 }
@@ -157,5 +156,55 @@ public record VarAnalyzer(RuntimeState Options)
             default:
                 throw new NotImplementedException($"AST node {e} not handled yet");
         }
+    }
+
+    internal class VarMap
+    {
+        public VarMap() { }
+        public VarMap(VarMap m)
+        {
+            Map = [];
+            Parent = m;
+        }
+
+        private readonly Dictionary<string, string> Map = [];
+        public VarMap? Parent = null;
+        public bool ContainsKey(string key) => Map.ContainsKey(key);
+        public string this[string key]
+        {
+            get => Map[key];
+            set => Map[key] = value;
+        }
+        public bool TryGetValue(string key, [NotNullWhen(true)] out string value, out bool inCurScope)
+        {
+            inCurScope = false;
+            var scope = this;
+
+            do
+            {
+                if (scope.Map.TryGetValue(key, out var v))
+                {
+                    value = v;
+                    inCurScope = scope == this;
+                    return true;
+                }
+                scope = scope.Parent;
+            } while (scope is not null);
+
+            value = null!;
+            return false;
+        }
+    }
+
+    internal Block ResolveBlock(Block block, VarMap variableMap)
+    {
+        var newMap = new VarMap(variableMap);
+        var blockItems = new List<IAstNode>();
+        foreach (var item in block.BlockItems)
+        {
+            blockItems.Add(ResolveStatement(item, newMap));
+        }
+        var newBlock = new Block([.. blockItems]);
+        return newBlock;
     }
 }

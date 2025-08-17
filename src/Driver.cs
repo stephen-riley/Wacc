@@ -4,6 +4,7 @@ using Wacc.Emit;
 using Wacc.Exe;
 using Wacc.Lex;
 using Wacc.Tacky;
+using Wacc.Validation;
 
 namespace Wacc;
 
