@@ -98,14 +98,18 @@ public class TackyGenerator(RuntimeState opts)
                 }
                 return DUMMY;
 
+            case Block b:
+                foreach (var bi in b.BlockItems)
+                {
+                    EmitTacky(bi);
+                }
+                return DUMMY;
+
             case Function f:
                 instructions = [];
                 functions.Add(new TacFunction(f.Name, instructions));
                 TmpVarCounter = 0;     // TODO: awkward here, shouldn't have to do this manually
-                foreach (var s in f.Body.BlockItems)
-                {
-                    EmitTacky(s);
-                }
+                EmitTacky(f.Body);
                 Emit(new TacReturn(new TacConstant(0)));
                 return DUMMY;
 
