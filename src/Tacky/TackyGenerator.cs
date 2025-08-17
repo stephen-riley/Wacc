@@ -102,7 +102,7 @@ public class TackyGenerator(RuntimeState opts)
                 instructions = [];
                 functions.Add(new TacFunction(f.Name, instructions));
                 TmpVarCounter = 0;     // TODO: awkward here, shouldn't have to do this manually
-                foreach (var s in f.Body)
+                foreach (var s in f.Body.BlockItems)
                 {
                     EmitTacky(s);
                 }
@@ -183,23 +183,23 @@ public class TackyGenerator(RuntimeState opts)
                 Emit(new TacBinary(poOp, src1, new TacConstant(1), (TacVar)src1));
                 return dst;
 
-            case IfElse ie when ie.ElseStat is null:
+            case IfElse ie when ie.ElseBlock is null:
                 var endLabel = ReserveTmpLabel();
                 var cond = EmitTacky(ie.CondExpr);
                 Emit(new TacJumpIfZero(cond, endLabel));
-                EmitTacky(ie.ThenStat);
+                EmitTacky(ie.ThenBlock);
                 Emit(new TacLabel(endLabel));
                 return DUMMY;
 
-            case IfElse ie when ie.ElseStat is not null:
+            case IfElse ie when ie.ElseBlock is not null:
                 var elseLabel = ReserveTmpLabel();
                 endLabel = ReserveTmpLabel();
                 cond = EmitTacky(ie.CondExpr);
                 Emit(new TacJumpIfZero(cond, elseLabel));
-                EmitTacky(ie.ThenStat);
+                EmitTacky(ie.ThenBlock);
                 Emit(new TacJump(endLabel));
                 Emit(new TacLabel(elseLabel));
-                EmitTacky(ie.ElseStat);
+                EmitTacky(ie.ElseBlock);
                 Emit(new TacLabel(endLabel));
                 return DUMMY;
 

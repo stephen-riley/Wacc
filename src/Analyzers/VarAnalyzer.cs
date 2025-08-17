@@ -1,3 +1,4 @@
+using System.Reflection;
 using Wacc.Ast;
 using Wacc.Exceptions;
 using Wacc.Tokens;
@@ -20,12 +21,12 @@ public record VarAnalyzer(RuntimeState Options)
             foreach (var func in program.Functions)
             {
                 var funcVariableMap = new VarMap();
-                var newStats = func.Body.Select(stat =>
+                var newStats = func.Body.BlockItems.Select(stat =>
                 {
                     var newStat = ResolveStatement(stat, funcVariableMap);
                     return newStat;
                 });
-                newFuncs.Add(new Function(func.Type, func.Name, [.. newStats]));
+                newFuncs.Add(new Function(func.Type, func.Name, new Block([.. newStats])));
             }
 
             return new Ast.Program(newFuncs);
@@ -80,8 +81,8 @@ public record VarAnalyzer(RuntimeState Options)
             Expression e => new Expression(ResolveExpr(e.SubExpr, variableMap)),
             IfElse ie => new IfElse(
                 ResolveExpr(ie.CondExpr, variableMap),
-                ResolveStatement(ie.ThenStat, variableMap),
-                ie.ElseStat is not null ? ResolveStatement(ie.ElseStat, variableMap) : null
+                ResolveStatement(ie.ThenBlock, variableMap),
+                ie.ElseBlock is not null ? ResolveStatement(ie.ElseBlock, variableMap) : null
             ),
             LabeledStatement ls => new LabeledStatement(
                 ls.Label,

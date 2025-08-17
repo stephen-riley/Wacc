@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Nodes;
+using Wacc.Exceptions;
 
 namespace Wacc.BookTestsDriver;
 
@@ -74,7 +75,7 @@ public class TestDriver(TestOptions rts)
             var fullPath = ResolveHomeRelativePath(Path.Combine(Options.TestsPath, "tests", test.Key));
             if (TryParseBookTestName(fullPath, test.Value, out var ti))
             {
-                if (ti.IsExtraCredit ? Options.ExtraCredit : true)
+                if (!ti.IsExtraCredit || Options.ExtraCredit)
                 {
                     Tests.Add(ti);
                 }
@@ -219,6 +220,7 @@ public class TestDriver(TestOptions rts)
             case "tacky": rts.OnlyThroughTacky = true; break;
             case "codegen": rts.OnlyThroughCodeGen = true; break;
             case "emit": rts.OnlyThroughCodeEmit = true; break;
+            default: throw new TestDriverError($"invalid --stage {stage}");
         }
     }
 
