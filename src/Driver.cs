@@ -1,5 +1,4 @@
 using CommandLine;
-using Wacc.Analyzers;
 using Wacc.CodeGen;
 using Wacc.Emit;
 using Wacc.Exe;

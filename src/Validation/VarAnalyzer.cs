@@ -1,10 +1,9 @@
-using System.Reflection;
 using Wacc.Ast;
 using Wacc.Exceptions;
 using Wacc.Tokens;
 using VarMap = System.Collections.Generic.Dictionary<string, string>;
 
-namespace Wacc.Analyzers;
+namespace Wacc.Validation;
 
 public record VarAnalyzer(RuntimeState Options)
 {

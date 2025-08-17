@@ -2,7 +2,7 @@ using Wacc.Ast;
 using Wacc.Exceptions;
 using VarMap = System.Collections.Generic.Dictionary<string, string>;
 
-namespace Wacc.Analyzers;
+namespace Wacc.Validation;
 
 public record SemanticAnalyzer(RuntimeState Options)
 {

@@ -1,7 +1,7 @@
 using Wacc.Ast;
 using Wacc.Exceptions;
 
-namespace Wacc.Analyzers;
+namespace Wacc.Validation;
 
 public record LabelAnalyzer(RuntimeState Options)
 {
