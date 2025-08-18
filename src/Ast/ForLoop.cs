@@ -17,7 +17,7 @@ public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode UpdateStat,
         tokenStream.Expect(ForKw);
         tokenStream.Expect(OpenParen);
 
-        var initNode = BlockItem.Parse(tokenStream);
+        var initNode = tokenStream.PeekFor(Semicolon) ? new Block([]) : BlockItem.Parse(tokenStream);
         tokenStream.Expect(Semicolon);
 
         var condNode = Expression.Parse(tokenStream);
