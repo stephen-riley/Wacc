@@ -51,9 +51,17 @@ public enum TokenType
 
     [Description("/")] Div,
 
+    [Description("break")] BreakKw,
+
+    [Description("continue")] ContinueKw,
+
+    [Description("do")] DoKw,
+
     [Description("else")] ElseKw,
 
     [Description("==")] EqualTo,
+
+    [Description("for")] ForKw,
 
     [Description("goto")] GotoKw,
 
@@ -68,6 +76,8 @@ public enum TokenType
     [Description("++")] Increment,
 
     [Description("int")] IntKw,
+
+    [Description("while")] WhileKw,
 
     [Description("<=")] LessOrEqual,
 

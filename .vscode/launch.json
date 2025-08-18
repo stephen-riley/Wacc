@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
             // "args": "fixtures/book_tests/chapter_6/valid/binary_condition.c -o /tmp/a.out --asmfile /tmp/a.S --verbose --validate",
-            "args": "test -c 7 --stage tacky -f --all",
+            "args": "test -c 7 --stage lex -f --all",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole",
