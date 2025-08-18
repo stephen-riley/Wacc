@@ -17,7 +17,12 @@ public record Statement() : IAstNode
             || IfElse.CanParse(tokenStream)
             || Goto.CanParse(tokenStream)
             || Expression.CanParse(tokenStream)
-            || Label.CanParse(tokenStream);
+            || Label.CanParse(tokenStream)
+            || Break.CanParse(tokenStream)
+            || Continue.CanParse(tokenStream)
+            || DoLoop.CanParse(tokenStream)
+            || ForLoop.CanParse(tokenStream)
+            || WhileLoop.CanParse(tokenStream);
 
     public static IAstNode Parse(Queue<Token> tokenStream, bool nested = false)
     {
@@ -34,6 +39,11 @@ public record Statement() : IAstNode
             ReturnKw => Return.Parse(tokenStream),
             IfKw => IfElse.Parse(tokenStream),
             GotoKw => Goto.Parse(tokenStream),
+            BreakKw => Break.Parse(tokenStream),
+            ContinueKw => Continue.Parse(tokenStream),
+            DoKw => DoLoop.Parse(tokenStream),
+            ForKw => ForLoop.Parse(tokenStream),
+            WhileKw => WhileLoop.Parse(tokenStream),
             _ => Expression.Parse(tokenStream)
         };
 
