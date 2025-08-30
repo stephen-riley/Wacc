@@ -17,13 +17,13 @@ public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode UpdateStat,
         tokenStream.Expect(ForKw);
         tokenStream.Expect(OpenParen);
 
-        var initNode = tokenStream.PeekFor(Semicolon) ? new Block([]) : BlockItem.Parse(tokenStream);
+        var initNode = ForInit.Parse(tokenStream);
+        // Semicolon is handled by `Forinit`. See `ForInit.Parse` for details.
+
+        var condNode = tokenStream.PeekFor(Semicolon) ? new Block([]) : Expression.Parse(tokenStream);
         tokenStream.Expect(Semicolon);
 
-        var condNode = Expression.Parse(tokenStream);
-        tokenStream.Expect(Semicolon);
-
-        var updateNode = Statement.Parse(tokenStream);
+        var updateNode = tokenStream.PeekFor(CloseParen) ? new Block([]) : Expression.Parse(tokenStream);
         tokenStream.Expect(CloseParen);
 
         var bodyNode = Block.Parse(tokenStream, isDependent: true);

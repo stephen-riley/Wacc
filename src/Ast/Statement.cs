@@ -6,8 +6,8 @@ namespace Wacc.Ast;
 
 public record Statement() : IAstNode
 {
-    // This will list the statement types that don't have semicolons after them.
-    public static readonly HashSet<TokenType> BlockStatements = [IfKw];
+    // This will list the statement types that may not have semicolons after them.
+    public static readonly HashSet<TokenType> BlockStatements = [DoKw, ForKw, IfKw, WhileKw];
 
     public bool IsBlockItem() => true;
 

@@ -43,7 +43,7 @@ public record Block(IAstNode[] BlockItems) : IAstNode
 
         foreach (var s in BlockItems)
         {
-            sb.Append(IAstNode.IndentStr(indent + 2)).AppendLine(s.ToPrettyString(indent + 2));
+            sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine(s.ToPrettyString(indent + 1));
         }
 
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
