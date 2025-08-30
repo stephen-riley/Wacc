@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net9.0/Wacc.dll",
-            "args": "fixtures/book_tests/chapter_8/valid/null_for_header.c -o /tmp/a.out --asmfile /tmp/a.S --verbose --parse",
+            "args": "fixtures/book_tests/chapter_8/valid/continue_empty_post.c -o /tmp/a.out --asmfile /tmp/a.S --verbose --validate",
             // "args": "test -c 8 --stage parse --all",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,

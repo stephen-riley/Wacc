@@ -5,38 +5,31 @@ namespace Wacc.Validation;
 
 public record LabelAnalyzer(RuntimeState Options)
 {
-    public static Ast.Program Validate(IAstNode ast)
+    public static CompUnit Validate(CompUnit program)
     {
-        if (ast is Ast.Program program)
+        var labels = new HashSet<string>();
+        var gotoDestinations = new HashSet<string>();
+
+        program.WalkFor<LabeledStatement>(ls =>
         {
-            var labels = new HashSet<string>();
-            var gotoDestinations = new HashSet<string>();
-
-            program.WalkFor<LabeledStatement>(ls =>
+            if (labels.Contains(ls.Label.Name))
             {
-                if (labels.Contains(ls.Label.Name))
-                {
-                    throw new ValidationError($"Label {ls.Label.Name} cannot appear more than once per file.");
-                }
-                else
-                {
-                    labels.Add(ls.Label.Name);
-                }
-            });
-
-            program.WalkFor<Goto>(g =>
+                throw new ValidationError($"Label {ls.Label.Name} cannot appear more than once per file.");
+            }
+            else
             {
-                if (!labels.Contains(g.Label.Name))
-                {
-                    throw new ValidationError($"No label declared for goto {g.Label.Name}.");
-                }
-            });
+                labels.Add(ls.Label.Name);
+            }
+        });
 
-            return program;
-        }
-        else
+        program.WalkFor<Goto>(g =>
         {
-            throw new ValidationError($"Top AST node must be Program, not {ast.GetType().Name}");
-        }
+            if (!labels.Contains(g.Label.Name))
+            {
+                throw new ValidationError($"No label declared for goto {g.Label.Name}.");
+            }
+        });
+
+        return program;
     }
 }

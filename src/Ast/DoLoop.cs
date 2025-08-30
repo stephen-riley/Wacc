@@ -6,7 +6,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record DoLoop(IAstNode BodyBlock, IAstNode CondExpr) : IAstNode
+public record DoLoop(IAstNode BodyBlock, IAstNode CondExpr, string? Label = null) : IAstNode
 {
     public bool IsBlockItem() => true;
 
@@ -30,9 +30,9 @@ public record DoLoop(IAstNode BodyBlock, IAstNode CondExpr) : IAstNode
     public string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("DoLoop(");
+        sb.AppendLine($"DoLoop({Label ?? ""}");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"body={BodyBlock.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
+        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }

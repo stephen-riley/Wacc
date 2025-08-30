@@ -4,9 +4,9 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Continue(string Label) : IAstNode
+public record Continue(string? Label = null) : IAstNode
 {
-    public const string DefaultLabel = "$__TODO_WHILE_LABEL__";
+    public const string DefaultLabel = "$__TODO_CONTINUE_LABEL__";
 
     public bool IsBlockItem() => true;
 
@@ -15,10 +15,10 @@ public record Continue(string Label) : IAstNode
     public static IAstNode Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(ContinueKw);
-        return new Continue(DefaultLabel);
+        return new Continue();
     }
 
-    public string ToPrettyString(int indent = 0) => $"Continue({Label})";
+    public string ToPrettyString(int indent = 0) => $"Continue({Label ?? DefaultLabel})";
 
     public IEnumerable<IAstNode> Children() => [];
 }

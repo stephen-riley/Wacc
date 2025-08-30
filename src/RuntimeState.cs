@@ -3,6 +3,7 @@ using CommandLine;
 using Wacc.Tacky.Instruction;
 using Wacc.Tokens;
 using Wacc.CodeGen.AbstractAsm.Instruction;
+using Wacc.Ast;
 
 namespace Wacc;
 
@@ -64,7 +65,7 @@ public class RuntimeState
 
     public List<Token> TokenStream { get; set; } = [];
 
-    public Ast.Program Ast { get; set; } = null!;
+    public CompUnit Ast { get; set; } = null!;
 
     public bool Validated { get; set; } = false;
 

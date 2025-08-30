@@ -16,8 +16,6 @@ public interface IAstNode
 
     public static IAstNode Parse(Queue<Token> tokenStream) => throw new ParseError();
 
-    public void PrettyPrint(TextWriter stream, int indent = 0) => stream.Write(ToPrettyString(indent));
-
     public string ToPrettyString(int indent = 0);
 
     public IEnumerable<IAstNode> Children();

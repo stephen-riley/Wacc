@@ -1,6 +1,6 @@
-using System.Diagnostics.CodeAnalysis;
 using Wacc.Ast;
 using Wacc.Exceptions;
+using Wacc.Extensions;
 using Wacc.Tokens;
 
 namespace Wacc.Validation;
@@ -9,29 +9,22 @@ public record VarAnalyzer(RuntimeState Options)
 {
     internal Dictionary<string, int> UniqueVarCounters = [];
 
-    public Ast.Program Validate(IAstNode ast)
+    public CompUnit Validate(CompUnit program)
     {
-        if (ast is Ast.Program program)
-        {
-            var newFuncs = new List<Function>();
+        var newFuncs = new List<Function>();
 
-            foreach (var func in program.Functions)
+        foreach (var func in program.Functions)
+        {
+            var funcVariableMap = new VarMap();
+            var newStats = func.Body.BlockItems.Select(stat =>
             {
-                var funcVariableMap = new VarMap();
-                var newStats = func.Body.BlockItems.Select(stat =>
-                {
-                    var newStat = ResolveStatement(stat, funcVariableMap);
-                    return newStat;
-                });
-                newFuncs.Add(new Function(func.Type, func.Name, new Block([.. newStats])));
-            }
+                var newStat = ResolveStatement(stat, funcVariableMap);
+                return newStat;
+            });
+            newFuncs.Add(new Function(func.Type, func.Name, new Block([.. newStats])));
+        }
 
-            return new Ast.Program(newFuncs);
-        }
-        else
-        {
-            throw new ValidationError($"Top AST node must be Program, not {ast.GetType().Name}");
-        }
+        return new CompUnit(newFuncs);
     }
 
     internal string GenUniqueVarName(string name)
@@ -71,11 +64,43 @@ public record VarAnalyzer(RuntimeState Options)
     {
         return stat switch
         {
-            // Ast.Expression e when e.SubExpr is Ternary => throw new ValidationError("A ternary expression cannot be a top-level statement."),
             Assignment a => ResolveExpr(a, variableMap),
             BinaryOp bo => ResolveExpr(bo, variableMap),
+            Block b => Ext.Do(() =>
+            {
+                var newMap = new VarMap(variableMap);
+                var blockItems = new List<IAstNode>();
+                foreach (var item in b.BlockItems)
+                {
+                    blockItems.Add(ResolveStatement(item, newMap));
+                }
+                var newBlock = new Block([.. blockItems]);
+                return newBlock;
+            }),
+            Break br => br with { Label = ResolveLoopLabel(br.Label, variableMap) },
+            Continue c => c with { Label = ResolveLoopLabel(c.Label, variableMap) },
             Declaration d => ResolveDeclaration(d, variableMap),
+            DoLoop dl => Ext.Do(() =>
+            {
+                var newMap = new VarMap(variableMap);
+                var newLoopLabel = newMap.NewLoopLabel();
+                var cond = dl.CondExpr is NullStatement ? dl.CondExpr : ResolveExpr(dl.CondExpr, newMap);
+                var body = ResolveStatement(dl.BodyBlock, newMap);
+                var newDo = new DoLoop(body, cond, newLoopLabel);
+                return newDo;
+            }),
             Expression e => new Expression(ResolveExpr(e.SubExpr, variableMap)),
+            ForLoop fl => Ext.Do(() =>
+            {
+                var newMap = new VarMap(variableMap);
+                var newLoopLabel = newMap.NewLoopLabel();
+                var init = ResolveStatement(fl.InitStat, newMap);
+                var cond = fl.CondExpr is NullStatement ? fl.CondExpr : ResolveExpr(fl.CondExpr, newMap);
+                var post = fl.CondExpr is NullStatement ? fl.UpdateStat : ResolveExpr(fl.UpdateStat, newMap);
+                var body = ResolveStatement(fl.BodyBlock, newMap);
+                var newFor = new ForLoop(init, cond, post, body, newLoopLabel);
+                return newFor;
+            }),
             IfElse ie => new IfElse(
                 ResolveExpr(ie.CondExpr, variableMap),
                 ResolveStatement(ie.ThenBlock, variableMap),
@@ -94,7 +119,15 @@ public record VarAnalyzer(RuntimeState Options)
                 ResolveExpr(t.Middle, variableMap),
                 ResolveExpr(t.Right, variableMap)
             ),
-            Block b => ResolveBlock(b, variableMap),
+            WhileLoop wl => Ext.Do(() =>
+            {
+                var newMap = new VarMap(variableMap);
+                var newLoopLabel = newMap.NewLoopLabel();
+                var cond = wl.CondExpr is NullStatement ? wl.CondExpr : ResolveExpr(wl.CondExpr, newMap);
+                var body = ResolveStatement(wl.BodyBlock, newMap);
+                var newWhile = new DoLoop(cond, body, newLoopLabel);
+                return newWhile;
+            }),
             _ => stat
         };
     }
@@ -103,15 +136,48 @@ public record VarAnalyzer(RuntimeState Options)
     {
         switch (e)
         {
-            case Constant c:
-                return c;
-
             case Assignment a:
                 if (a.LExpr is not Var)
                 {
                     throw new ValidationError($"Invalid lval {a.LExpr} for Assignment");
                 }
                 return new Assignment(ResolveExpr(a.LExpr, variableMap), ResolveExpr(a.RExpr, variableMap));
+
+            case BinaryOp b:
+                return new BinaryOp(b.Op, ResolveExpr(b.LExpr, variableMap), ResolveExpr(b.RExpr, variableMap));
+
+            case Constant c:
+                return c;
+
+            case NullStatement:
+                return e;
+
+            case PostfixOp po:
+                if (po.LValExpr is not Var)
+                {
+                    throw new ValidationError($"PostfixOp lval must be a Var, not {po.LValExpr}");
+                }
+                return new PostfixOp(po.Op, ResolveExpr(po.LValExpr, variableMap));
+
+            case PrefixOp pe:
+                if (pe.LValExpr is not Var)
+                {
+                    throw new ValidationError($"PrefixOp lval must be a Var, not {pe.LValExpr}");
+                }
+                return new PrefixOp(pe.Op, ResolveExpr(pe.LValExpr, variableMap));
+
+            case Ternary t:
+                return new Ternary(
+                    ResolveExpr(t.CondExpr, variableMap),
+                    ResolveExpr(t.Middle, variableMap),
+                    ResolveExpr(t.Right, variableMap)
+                );
+
+            case UnaryOp u when u.Op.TokenType == TokenType.Minus && u.Expr is Constant c:
+                return new Constant(-c.Int);
+
+            case UnaryOp u:
+                return new UnaryOp(u.Op, ResolveExpr(u.Expr, variableMap));
 
             case Var v:
                 if (variableMap.TryGetValue(v.Name, out var globalName, out _))
@@ -123,88 +189,18 @@ public record VarAnalyzer(RuntimeState Options)
                     throw new ValidationError($"Undeclared variable {v.Name}");
                 }
 
-            case BinaryOp b:
-                return new BinaryOp(b.Op, ResolveExpr(b.LExpr, variableMap), ResolveExpr(b.RExpr, variableMap));
-
-            case UnaryOp u when u.Op.TokenType == TokenType.Minus && u.Expr is Constant c:
-                return new Constant(-c.Int);
-
-            case UnaryOp u:
-                return new UnaryOp(u.Op, ResolveExpr(u.Expr, variableMap));
-
-            case PrefixOp pe:
-                if (pe.LValExpr is not Var)
-                {
-                    throw new ValidationError($"PrefixOp lval must be a Var, not {pe.LValExpr}");
-                }
-                return new PrefixOp(pe.Op, ResolveExpr(pe.LValExpr, variableMap));
-
-            case PostfixOp po:
-                if (po.LValExpr is not Var)
-                {
-                    throw new ValidationError($"PostfixOp lval must be a Var, not {po.LValExpr}");
-                }
-                return new PostfixOp(po.Op, ResolveExpr(po.LValExpr, variableMap));
-
-            case Ternary t:
-                return new Ternary(
-                    ResolveExpr(t.CondExpr, variableMap),
-                    ResolveExpr(t.Middle, variableMap),
-                    ResolveExpr(t.Right, variableMap)
-                );
-
             default:
                 throw new NotImplementedException($"AST node {e} not handled yet");
         }
     }
 
-    internal class VarMap
+    internal static string? ResolveLoopLabel(string? curLabel, VarMap variableMap, bool makeNew = false)
     {
-        public VarMap() { }
-        public VarMap(VarMap m)
-        {
-            Map = [];
-            Parent = m;
-        }
+        if (curLabel is not null) return curLabel;
 
-        private readonly Dictionary<string, string> Map = [];
-        public VarMap? Parent = null;
-        public bool ContainsKey(string key) => Map.ContainsKey(key);
-        public string this[string key]
-        {
-            get => Map[key];
-            set => Map[key] = value;
-        }
-        public bool TryGetValue(string key, [NotNullWhen(true)] out string value, out bool inCurScope)
-        {
-            inCurScope = false;
-            var scope = this;
+        if (makeNew) variableMap.NewLoopLabel();
 
-            do
-            {
-                if (scope.Map.TryGetValue(key, out var v))
-                {
-                    value = v;
-                    inCurScope = scope == this;
-                    return true;
-                }
-                scope = scope.Parent;
-            } while (scope is not null);
-
-            value = null!;
-            return false;
-        }
-    }
-
-    internal Block ResolveBlock(Block block, VarMap variableMap)
-    {
-        var newMap = new VarMap(variableMap);
-        var blockItems = new List<IAstNode>();
-        foreach (var item in block.BlockItems)
-        {
-            blockItems.Add(ResolveStatement(item, newMap));
-        }
-        var newBlock = new Block([.. blockItems]);
-        return newBlock;
+        var curLoopLabel = variableMap.GetLoopLabel();
+        return curLoopLabel is not null ? curLoopLabel : throw new ValidationError($"no loop currently active");
     }
 }

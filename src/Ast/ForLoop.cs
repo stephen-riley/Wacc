@@ -6,7 +6,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode UpdateStat, IAstNode BodyBlock) : IAstNode
+public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode UpdateStat, IAstNode BodyBlock, string? Label = null) : IAstNode
 {
     public bool IsBlockItem() => true;
 
@@ -35,10 +35,10 @@ public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode UpdateStat,
     public string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("ForLoop(");
+        sb.AppendLine($"ForLoop({Label ?? ""}");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"init={InitStat.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"init={CondExpr.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"init={UpdateStat.ToPrettyString(indent + 1)}");
+        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
+        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"post={UpdateStat.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"body={BodyBlock.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();

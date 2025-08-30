@@ -6,9 +6,9 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Program(IEnumerable<Function> Functions) : IAstNode
+public record CompUnit(IEnumerable<Function> Functions) : IAstNode
 {
-    public static Program Parse(Queue<Token> tokenStream)
+    public static CompUnit Parse(Queue<Token> tokenStream)
     {
         var stats = new List<Function>();
 
@@ -17,7 +17,7 @@ public record Program(IEnumerable<Function> Functions) : IAstNode
             stats.Add(Function.Parse(tokenStream));
         }
 
-        return new Program(stats);
+        return new CompUnit(stats);
     }
 
     public string ToPrettyString(int indent = 0)

@@ -4,7 +4,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Break(string Label) : IAstNode
+public record Break(string? Label = null) : IAstNode
 {
     public const string DefaultLabel = "$__TODO_BREAK_LABEL__";
 
@@ -15,10 +15,10 @@ public record Break(string Label) : IAstNode
     public static IAstNode Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(BreakKw);
-        return new Break(DefaultLabel);
+        return new Break();
     }
 
-    public string ToPrettyString(int indent = 0) => $"Break({Label})";
+    public string ToPrettyString(int indent = 0) => $"Break({Label ?? DefaultLabel})";
 
     public IEnumerable<IAstNode> Children() => [];
 }

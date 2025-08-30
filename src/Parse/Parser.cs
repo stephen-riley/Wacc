@@ -1,3 +1,4 @@
+using Wacc.Ast;
 using Wacc.Exceptions;
 using Wacc.Tokens;
 
@@ -13,7 +14,7 @@ public class Parser(RuntimeState opts)
     {
         var toks = new Queue<Token>(Options.TokenStream);
         toks.Enqueue(new Token(TokenType.EOF, Options.Text.Length + 1, "", 0));
-        var program = Ast.Program.Parse(toks);
+        var program = CompUnit.Parse(toks);
         Options.Ast = program ?? throw new ParseError("Parsing did not return a Program AST node");
 
         if (!Options.Silent)

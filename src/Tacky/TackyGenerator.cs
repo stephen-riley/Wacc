@@ -91,7 +91,7 @@ public class TackyGenerator(RuntimeState opts)
     {
         switch (node)
         {
-            case Ast.Program p:
+            case CompUnit p:
                 foreach (var s in p.Functions)
                 {
                     EmitTacky(s);
@@ -221,6 +221,19 @@ public class TackyGenerator(RuntimeState opts)
                 Emit(new TacCopy(right, result));
                 Emit(new TacLabel(endLabel));
                 return result;
+
+            case ForLoop fl:
+                throw new NotImplementedException();
+            // return DUMMY;
+
+            case DoLoop dl:
+                throw new NotImplementedException();
+            // return DUMMY;
+
+            case WhileLoop wl:
+                throw new NotImplementedException();
+            // return DUMMY;
+
 
             case LabeledStatement ls:
                 Emit(new TacLabel(GetCleanLabelName(ls.Label.Name)));
