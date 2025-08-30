@@ -20,10 +20,10 @@ public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode UpdateStat,
         var initNode = ForInit.Parse(tokenStream);
         // Semicolon is handled by `Forinit`. See `ForInit.Parse` for details.
 
-        var condNode = tokenStream.PeekFor(Semicolon) ? new Block([]) : Expression.Parse(tokenStream);
+        var condNode = tokenStream.PeekFor(Semicolon) ? new NullStatement() : Expression.Parse(tokenStream);
         tokenStream.Expect(Semicolon);
 
-        var updateNode = tokenStream.PeekFor(CloseParen) ? new Block([]) : Expression.Parse(tokenStream);
+        var updateNode = tokenStream.PeekFor(CloseParen) ? new NullStatement() : Expression.Parse(tokenStream);
         tokenStream.Expect(CloseParen);
 
         var bodyNode = Block.Parse(tokenStream, isDependent: true);

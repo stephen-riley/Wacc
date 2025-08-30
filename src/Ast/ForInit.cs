@@ -18,7 +18,7 @@ public record ForInit(string DeclType, Var Identifier, IAstNode? Expr = null) : 
         if (tokenStream.PeekFor(TokenType.Semicolon))
         {
             tokenStream.Expect(TokenType.Semicolon);
-            return new Block([]);
+            return new NullStatement();
         }
         else if (Declaration.CanParse(tokenStream))
         {
