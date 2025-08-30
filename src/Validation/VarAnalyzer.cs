@@ -40,26 +40,6 @@ public record VarAnalyzer(RuntimeState Options)
         return $"${name}_{UniqueVarCounters[name]}";
     }
 
-    internal Declaration ResolveDeclaration(Declaration decl, VarMap variableMap)
-    {
-        var (declType, ident, init) = decl;
-
-        if (variableMap.TryGetValue(ident.Name, out var value, out var inCurScope) && inCurScope)
-        {
-            throw new ValidationError($"duplicate variable declaration for {ident}");
-        }
-
-        var uniqueName = GenUniqueVarName(ident.Name);
-        variableMap[ident.Name] = uniqueName;
-
-        if (init is not null)
-        {
-            init = ResolveExpr(init, variableMap);
-        }
-
-        return new Declaration(declType, new Var(uniqueName), init);
-    }
-
     internal IAstNode ResolveStatement(IAstNode stat, VarMap variableMap)
     {
         return stat switch
@@ -79,7 +59,25 @@ public record VarAnalyzer(RuntimeState Options)
             }),
             Break br => br with { Label = ResolveLoopLabel(br.Label, variableMap) },
             Continue c => c with { Label = ResolveLoopLabel(c.Label, variableMap) },
-            Declaration d => ResolveDeclaration(d, variableMap),
+            Declaration d => Ext.Do(() =>
+            {
+                var (declType, ident, init) = d;
+
+                if (variableMap.TryGetValue(ident.Name, out var value, out var inCurScope) && inCurScope)
+                {
+                    throw new ValidationError($"duplicate variable declaration for {ident}");
+                }
+
+                var uniqueName = GenUniqueVarName(ident.Name);
+                variableMap[ident.Name] = uniqueName;
+
+                if (init is not null)
+                {
+                    init = ResolveExpr(init, variableMap);
+                }
+
+                return new Declaration(declType, new Var(uniqueName), init);
+            }),
             DoLoop dl => Ext.Do(() =>
             {
                 var newMap = new VarMap(variableMap);

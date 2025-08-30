@@ -3,7 +3,7 @@ using Wacc.Exceptions;
 
 namespace Wacc.Validation;
 
-internal class VarMap
+public class VarMap
 {
     public VarMap() { }
     public VarMap(VarMap m)
