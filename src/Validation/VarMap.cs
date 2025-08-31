@@ -5,8 +5,16 @@ namespace Wacc.Validation;
 
 public class VarMap
 {
-    public VarMap() { }
-    public VarMap(VarMap m)
+    private static int ScopeCount = 0;
+
+    public VarMap? Parent = null;
+    public string Name { get; init; }
+    public VarMap()
+    {
+        Name = $"Scope{++ScopeCount}";
+    }
+
+    public VarMap(VarMap m) : this()
     {
         Map = [];
         Parent = m;
@@ -17,7 +25,6 @@ public class VarMap
     private readonly Dictionary<string, string> Map = [];
     private string? CurLoopLabel;
 
-    public VarMap? Parent = null;
     public bool ContainsKey(string key) => Map.ContainsKey(key);
 
     public string this[string key]
@@ -86,4 +93,6 @@ public class VarMap
         CurLoopLabel = NewLoopLabelName();
         return CurLoopLabel;
     }
+
+    public override string ToString() => $"{Name} ({Map.Count})";
 }

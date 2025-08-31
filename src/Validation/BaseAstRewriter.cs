@@ -17,11 +17,10 @@ public class BaseAstRewriter
 
     public virtual IAstNode OnBlockStat(Block stat, VarMap variableMap)
     {
-        var newMap = new VarMap(variableMap);
         var blockItems = new List<IAstNode>();
         foreach (var item in stat.BlockItems)
         {
-            blockItems.Add(ResolveStatement(item, newMap));
+            blockItems.Add(ResolveStatement(item, variableMap));
         }
         var newBlock = new Block([.. blockItems]) { VariableMap = variableMap };
         return newBlock;
@@ -210,6 +209,7 @@ public class BaseAstRewriter
             Function => OnFunction((Function)stat, variableMap),
             IfElse => OnIfElseStat((IfElse)stat, variableMap),
             LabeledStatement => OnLabeledStatementStat((LabeledStatement)stat, variableMap),
+            NullStatement => OnNullStatementExpr((NullStatement)stat, variableMap),
             PostfixOp => OnPostfixOpStat((PostfixOp)stat, variableMap),
             PrefixOp => OnPrefixOpStat((PrefixOp)stat, variableMap),
             Return => OnReturnStat((Return)stat, variableMap),

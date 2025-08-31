@@ -5,30 +5,74 @@ using Wacc.Tokens;
 
 namespace Wacc.Validation;
 
-public record VarAnalyzer(RuntimeState Options)
+public class VarAnalyzer : BaseAstRewriter
 {
     internal Dictionary<string, int> UniqueVarCounters = [];
 
-    public CompUnit Validate(CompUnit program)
+    public override CompUnit Validate(CompUnit program)
     {
-        var newFuncs = new List<Function>();
+        var variableMap = new VarMap();
+        var newAst = ResolveStatement(program, variableMap);
+        return newAst is CompUnit unit ? unit : throw new ValidationError($"{newAst} is not a CompUnit");
+    }
 
-        foreach (var func in program.Functions)
+    public override IAstNode OnBlockStat(Block stat, VarMap variableMap)
+        => base.OnBlockStat(stat, new VarMap(variableMap));
+
+    public override IAstNode OnDeclarationStat(Declaration stat, VarMap variableMap)
+    {
+        var (declType, ident, init) = stat;
+
+        if (variableMap.TryGetValue(ident.Name, out var value, out var inCurScope) && inCurScope)
         {
-            var funcVariableMap = new VarMap();
-            var body = ResolveStatement(func.Body, funcVariableMap);
-            if (body is Block b)
-            {
-                var newFunc = new Function(func.Type, func.Name, b) with { VariableMap = funcVariableMap };
-                newFuncs.Add(newFunc);
-            }
-            else
-            {
-                throw new ValidationError($"Function {func.Name} body must be a block");
-            }
+            throw new ValidationError($"duplicate variable declaration for {ident}");
         }
 
-        return new CompUnit(newFuncs);
+        var uniqueName = GenUniqueVarName(ident.Name);
+        variableMap[ident.Name] = uniqueName;
+
+        if (init is not null)
+        {
+            init = ResolveExpr(init, variableMap);
+        }
+
+        return new Declaration(declType, new Var(uniqueName), init);
+    }
+
+    public override IAstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
+    {
+        var newMap = new VarMap(variableMap);
+        return (DoLoop)base.OnDoLoopStat(stat, newMap) with { VariableMap = newMap };
+    }
+
+    public override IAstNode OnForLoopStat(ForLoop stat, VarMap variableMap)
+    {
+        var newMap = new VarMap(variableMap);
+        return (ForLoop)base.OnForLoopStat(stat, newMap) with { VariableMap = newMap };
+    }
+
+    public override IAstNode OnFunction(Function stat, VarMap variableMap)
+    {
+        var newMap = new VarMap(variableMap);
+        return (Function)base.OnFunction(stat, newMap) with { VariableMap = newMap };
+    }
+
+    public override IAstNode OnWhileLoopStat(WhileLoop stat, VarMap variableMap)
+    {
+        var newMap = new VarMap(variableMap);
+        return (WhileLoop)base.OnWhileLoopStat(stat, newMap) with { VariableMap = newMap };
+    }
+
+    public override IAstNode OnVarExpr(Var expr, VarMap variableMap)
+    {
+        if (variableMap.TryGetValue(expr.Name, out var globalName, out _))
+        {
+            return new Var(globalName);
+        }
+        else
+        {
+            throw new ValidationError($"Undeclared variable {expr.Name}");
+        }
     }
 
     internal string GenUniqueVarName(string name)
@@ -44,7 +88,7 @@ public record VarAnalyzer(RuntimeState Options)
         return $"${name}_{UniqueVarCounters[name]}";
     }
 
-    internal IAstNode ResolveStatement(IAstNode stat, VarMap variableMap)
+    internal IAstNode OldResolveStatement(IAstNode stat, VarMap variableMap)
     {
         return stat switch
         {
@@ -131,7 +175,7 @@ public record VarAnalyzer(RuntimeState Options)
         };
     }
 
-    internal static IAstNode ResolveExpr(IAstNode e, VarMap variableMap)
+    internal IAstNode OldResolveExpr(IAstNode e, VarMap variableMap)
     {
         switch (e)
         {

@@ -30,13 +30,12 @@ public record SemanticAnalyzer(RuntimeState Options)
         return true;
     }
 
-    public CompUnit Validate(IAstNode ast)
+    public static CompUnit Validate(IAstNode ast)
     {
         if (ast is CompUnit program)
         {
             program = LabelAnalyzer.Validate(program);
-            // TODO: convert VarAnalyzer to use BaseTreeRewriter?
-            program = new VarAnalyzer(Options).Validate(program);
+            program = new VarAnalyzer().Validate(program);
             program = new LoopAnalyzer().Validate(program);
             return program;
         }

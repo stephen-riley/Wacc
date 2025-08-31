@@ -13,7 +13,9 @@ Parser.Default.ParseArguments<RuntimeState, TestOptions>(args)
         catch (Exception e)
         {
             var eName = e.GetType().Name;
-            Console.Error.WriteLine($"\n{eName}: {e.Message}");
+            var className = e.TargetSite?.DeclaringType?.Name ?? "{UNKNOWN THROWER}";
+            var methodName = e.TargetSite?.Name ?? "{UNKNOWN METHOD}";
+            Console.Error.WriteLine($"\n[{className}.{methodName}] {eName}: {e.Message}");
             if (!eName.EndsWith("Error"))
             {
                 Console.Error.WriteLine(e.StackTrace);
