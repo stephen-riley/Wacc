@@ -1,14 +1,10 @@
-using System.Diagnostics.CodeAnalysis;
 using Wacc.Ast;
 using Wacc.Exceptions;
 using Wacc.Tokens;
 
 namespace Wacc.Validation;
 
-// TODO: this is experimental and currently unused.  Lots of problems with this, including it not
-//  exploring the children of each node.
-
-public class BaseTreeRewriter
+public class BaseAstRewriter
 {
     public RuntimeState? Options { get; set; }
 
@@ -194,7 +190,7 @@ public class BaseTreeRewriter
         }
     }
 
-    public virtual IAstNode OnExprDefault(IAstNode expr, VarMap variableMap) => throw new NotImplementedException($"{nameof(BaseTreeRewriter)}.{nameof(ResolveExpr)}: AST node {expr.GetType().Name} not handled yet");
+    public virtual IAstNode OnExprDefault(IAstNode expr, VarMap variableMap) => throw new NotImplementedException($"{nameof(BaseAstRewriter)}.{nameof(ResolveExpr)}: AST node {expr.GetType().Name} not handled yet");
     #endregion
 
     protected IAstNode ResolveStatement(IAstNode stat, VarMap variableMap)
