@@ -91,6 +91,8 @@ public class BaseAstRewriter
                 stat.ElseBlock is not null ? ResolveStatement(stat.ElseBlock, variableMap) : null
             );
 
+    public virtual IAstNode OnGotoStat(Goto stat, VarMap variableMap) => stat;
+
     public virtual IAstNode OnLabeledStatementStat(LabeledStatement stat, VarMap variableMap)
         => new LabeledStatement(
                 stat.Label,
@@ -121,7 +123,7 @@ public class BaseAstRewriter
     }
 
     public virtual IAstNode OnStatDefault(IAstNode stat, VarMap variableMap)
-        => throw new ValidationError($"{GetType().Name}.{nameof(OnStatDefault)} cannot yet handle {stat.GetType().Name}");
+        => throw new ValidationError($"AST node {stat.GetType().Name} not handled yet");
 
     #endregion
 
@@ -177,19 +179,9 @@ public class BaseAstRewriter
         }
     }
 
-    public virtual IAstNode OnVarExpr(Var expr, VarMap variableMap)
-    {
-        if (variableMap.TryGetValue(expr.Name, out var globalName, out _))
-        {
-            return new Var(globalName);
-        }
-        else
-        {
-            throw new ValidationError($"Undeclared variable {expr.Name}");
-        }
-    }
+    public virtual IAstNode OnVarExpr(Var expr, VarMap variableMap) => expr;
 
-    public virtual IAstNode OnExprDefault(IAstNode expr, VarMap variableMap) => throw new NotImplementedException($"{nameof(BaseAstRewriter)}.{nameof(ResolveExpr)}: AST node {expr.GetType().Name} not handled yet");
+    public virtual IAstNode OnExprDefault(IAstNode expr, VarMap variableMap) => throw new ValidationError($"AST node {expr.GetType().Name} not handled yet");
     #endregion
 
     protected IAstNode ResolveStatement(IAstNode stat, VarMap variableMap)
@@ -207,6 +199,7 @@ public class BaseAstRewriter
             Expression => OnExpressionStat((Expression)stat, variableMap),
             ForLoop => OnForLoopStat((ForLoop)stat, variableMap),
             Function => OnFunction((Function)stat, variableMap),
+            Goto => OnGotoStat((Goto)stat, variableMap),
             IfElse => OnIfElseStat((IfElse)stat, variableMap),
             LabeledStatement => OnLabeledStatementStat((LabeledStatement)stat, variableMap),
             NullStatement => OnNullStatementExpr((NullStatement)stat, variableMap),

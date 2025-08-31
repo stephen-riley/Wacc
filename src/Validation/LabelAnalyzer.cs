@@ -3,7 +3,7 @@ using Wacc.Exceptions;
 
 namespace Wacc.Validation;
 
-public record LabelAnalyzer(RuntimeState Options)
+public class LabelAnalyzer
 {
     public static CompUnit Validate(CompUnit program)
     {
