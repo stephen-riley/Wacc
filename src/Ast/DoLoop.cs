@@ -2,12 +2,17 @@ using System.Text;
 using Wacc.Exceptions;
 using Wacc.Parse;
 using Wacc.Tokens;
+using Wacc.Validation;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
 public record DoLoop(IAstNode BodyBlock, IAstNode CondExpr, string? Label = null) : IAstNode
 {
+    public const string DefaultLabel = "$__TODO_DO_LABEL__";
+
+    public VarMap? VariableMap;
+
     public bool IsBlockItem() => true;
 
     public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(DoKw);
@@ -30,7 +35,7 @@ public record DoLoop(IAstNode BodyBlock, IAstNode CondExpr, string? Label = null
     public string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"DoLoop({Label ?? ""}");
+        sb.AppendLine($"DoLoop({Label ?? DefaultLabel}");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"body={BodyBlock.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent)).Append(')');

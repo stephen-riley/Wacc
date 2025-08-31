@@ -16,12 +16,16 @@ public record VarAnalyzer(RuntimeState Options)
         foreach (var func in program.Functions)
         {
             var funcVariableMap = new VarMap();
-            var newStats = func.Body.BlockItems.Select(stat =>
+            var body = ResolveStatement(func.Body, funcVariableMap);
+            if (body is Block b)
             {
-                var newStat = ResolveStatement(stat, funcVariableMap);
-                return newStat;
-            });
-            newFuncs.Add(new Function(func.Type, func.Name, new Block([.. newStats])));
+                var newFunc = new Function(func.Type, func.Name, b) with { VariableMap = funcVariableMap };
+                newFuncs.Add(newFunc);
+            }
+            else
+            {
+                throw new ValidationError($"Function {func.Name} body must be a block");
+            }
         }
 
         return new CompUnit(newFuncs);
@@ -54,11 +58,11 @@ public record VarAnalyzer(RuntimeState Options)
                 {
                     blockItems.Add(ResolveStatement(item, newMap));
                 }
-                var newBlock = new Block([.. blockItems]);
+                var newBlock = new Block([.. blockItems]) with { VariableMap = newMap };
                 return newBlock;
             }),
-            Break br => br with { Label = ResolveLoopLabel(br.Label, variableMap) },
-            Continue c => c with { Label = ResolveLoopLabel(c.Label, variableMap) },
+            Break br => br,
+            Continue c => c,
             Declaration d => Ext.Do(() =>
             {
                 var (declType, ident, init) = d;
@@ -81,23 +85,21 @@ public record VarAnalyzer(RuntimeState Options)
             DoLoop dl => Ext.Do(() =>
             {
                 var newMap = new VarMap(variableMap);
-                var newLoopLabel = newMap.NewLoopLabel();
                 var cond = dl.CondExpr is NullStatement ? dl.CondExpr : ResolveExpr(dl.CondExpr, newMap);
                 var body = ResolveStatement(dl.BodyBlock, newMap);
-                var newDo = new DoLoop(body, cond, newLoopLabel);
-                return newDo;
+                var newDo = new DoLoop(body, cond, dl.Label);
+                return newDo with { VariableMap = newMap };
             }),
             Expression e => new Expression(ResolveExpr(e.SubExpr, variableMap)),
             ForLoop fl => Ext.Do(() =>
             {
                 var newMap = new VarMap(variableMap);
-                var newLoopLabel = newMap.NewLoopLabel();
                 var init = ResolveStatement(fl.InitStat, newMap);
                 var cond = fl.CondExpr is NullStatement ? fl.CondExpr : ResolveExpr(fl.CondExpr, newMap);
                 var post = fl.CondExpr is NullStatement ? fl.UpdateStat : ResolveExpr(fl.UpdateStat, newMap);
                 var body = ResolveStatement(fl.BodyBlock, newMap);
-                var newFor = new ForLoop(init, cond, post, body, newLoopLabel);
-                return newFor;
+                var newFor = new ForLoop(init, cond, post, body, fl.Label);
+                return newFor with { VariableMap = newMap };
             }),
             IfElse ie => new IfElse(
                 ResolveExpr(ie.CondExpr, variableMap),
@@ -120,11 +122,10 @@ public record VarAnalyzer(RuntimeState Options)
             WhileLoop wl => Ext.Do(() =>
             {
                 var newMap = new VarMap(variableMap);
-                var newLoopLabel = newMap.NewLoopLabel();
                 var cond = wl.CondExpr is NullStatement ? wl.CondExpr : ResolveExpr(wl.CondExpr, newMap);
                 var body = ResolveStatement(wl.BodyBlock, newMap);
-                var newWhile = new DoLoop(cond, body, newLoopLabel);
-                return newWhile;
+                var newWhile = new WhileLoop(cond, body, wl.Label);
+                return newWhile with { VariableMap = newMap };
             }),
             _ => stat
         };
@@ -190,15 +191,5 @@ public record VarAnalyzer(RuntimeState Options)
             default:
                 throw new NotImplementedException($"AST node {e} not handled yet");
         }
-    }
-
-    internal static string? ResolveLoopLabel(string? curLabel, VarMap variableMap, bool makeNew = false)
-    {
-        if (curLabel is not null) return curLabel;
-
-        if (makeNew) variableMap.NewLoopLabel();
-
-        var curLoopLabel = variableMap.GetLoopLabel();
-        return curLoopLabel is not null ? curLoopLabel : throw new ValidationError($"no loop currently active");
     }
 }

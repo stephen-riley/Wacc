@@ -34,10 +34,10 @@ public record SemanticAnalyzer(RuntimeState Options)
     {
         if (ast is CompUnit program)
         {
-            // TODO: break out the big switch statement in VarAnalyzer into a new LoopAnalyzer class
-            //  to handle loop labeling in a more obvious place
-            program = new VarAnalyzer(Options).Validate(program);
             program = LabelAnalyzer.Validate(program);
+            // TODO: convert VarAnalyzer to use BaseTreeRewriter?
+            program = new VarAnalyzer(Options).Validate(program);
+            program = new LoopAnalyzer().Validate(program);
             return program;
         }
         else

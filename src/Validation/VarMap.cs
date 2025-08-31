@@ -46,6 +46,27 @@ public class VarMap
         return false;
     }
 
+    public bool TryGetFromValues(string targetValue, [NotNullWhen(true)] out string value, out bool inCurScope)
+    {
+        inCurScope = false;
+        var scope = this;
+
+        do
+        {
+            var v = scope.Map.FirstOrDefault(pair => pair.Value == targetValue).Value;
+            if (v is not null)
+            {
+                value = v;
+                inCurScope = scope == this;
+                return true;
+            }
+            scope = scope.Parent;
+        } while (scope is not null);
+
+        value = null!;
+        return false;
+    }
+
     public string? GetLoopLabel() => this switch
     {
         _ when CurLoopLabel is not null => CurLoopLabel,
@@ -53,7 +74,7 @@ public class VarMap
         _ => Parent.GetLoopLabel()
     };
 
-    internal static string NewLoopLabelName() => $"_loop{++LoopCounter:000}";
+    internal static string NewLoopLabelName() => $"$_loop{++LoopCounter:000}";
 
     public string NewLoopLabel()
     {

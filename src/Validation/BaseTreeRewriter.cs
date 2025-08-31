@@ -1,5 +1,7 @@
+using System.Diagnostics.CodeAnalysis;
 using Wacc.Ast;
 using Wacc.Exceptions;
+using Wacc.Tokens;
 
 namespace Wacc.Validation;
 
@@ -8,193 +10,192 @@ namespace Wacc.Validation;
 
 public class BaseTreeRewriter
 {
-    public bool DefaultToError { get; set; }
-
     public RuntimeState? Options { get; set; }
 
     public virtual CompUnit Validate(CompUnit program) => throw new ValidationError($"{GetType().Name} must override {nameof(Validate)}");
 
-    public virtual IAstNode OnAssignmentStat(Assignment stat, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(Assignment)}")
-            : stat;
-    }
+    #region StatementHandlers
+    public virtual IAstNode OnAssignmentStat(Assignment stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
 
-    public virtual IAstNode OnBinaryOpStat(BinaryOp stat, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(BinaryOp)}")
-            : stat;
-    }
+    public virtual IAstNode OnBinaryOpStat(BinaryOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
 
     public virtual IAstNode OnBlockStat(Block stat, VarMap variableMap)
     {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(Block)}")
-            : stat;
+        var newMap = new VarMap(variableMap);
+        var blockItems = new List<IAstNode>();
+        foreach (var item in stat.BlockItems)
+        {
+            blockItems.Add(ResolveStatement(item, newMap));
+        }
+        var newBlock = new Block([.. blockItems]) { VariableMap = variableMap };
+        return newBlock;
     }
 
-    public virtual IAstNode OnBreakStat(Break stat, VarMap variableMap)
+    public virtual IAstNode OnBreakStat(Break stat, VarMap variableMap) => stat;
+
+    public virtual CompUnit OnCompUnit(CompUnit stat, VarMap variableMap)
     {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(Break)}")
-            : stat;
+        var newFuncs = new List<Function>();
+        foreach (var func in stat.Functions)
+        {
+            var nf = (Function)ResolveStatement(func, variableMap);
+            newFuncs.Add(nf);
+        }
+        return new CompUnit([.. newFuncs]);
     }
 
-    public virtual IAstNode OnContinueStat(Continue stat, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(Continue)}")
-            : stat;
-    }
+    public virtual IAstNode OnContinueStat(Continue stat, VarMap variableMap) => stat;
 
     public virtual IAstNode OnDeclarationStat(Declaration stat, VarMap variableMap)
     {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(Declaration)}")
-            : stat;
+        var (declType, ident, init) = stat;
+        if (init is not null)
+        {
+            init = ResolveExpr(init, variableMap);
+        }
+        return new Declaration(declType, ident, init);
     }
 
     public virtual IAstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
     {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(DoLoop)}")
-            : stat;
+        var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, variableMap);
+        var body = ResolveStatement(stat.BodyBlock, variableMap);
+        var newDo = new DoLoop(body, cond, variableMap.GetLoopLabel());
+        return newDo with { VariableMap = variableMap };
     }
 
-    public virtual IAstNode OnExpressionStat(Expression stat, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(Expression)}")
-            : stat;
-    }
+    public virtual IAstNode OnExpressionStat(Expression stat, VarMap variableMap) => new Expression(ResolveExpr(stat.SubExpr, variableMap));
 
     public virtual IAstNode OnForLoopStat(ForLoop stat, VarMap variableMap)
     {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(ForLoop)}")
-            : stat;
+        var init = ResolveStatement(stat.InitStat, variableMap);
+        var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, variableMap);
+        var post = stat.CondExpr is NullStatement ? stat.UpdateStat : ResolveExpr(stat.UpdateStat, variableMap);
+        var body = ResolveStatement(stat.BodyBlock, variableMap);
+        var newFor = new ForLoop(init, cond, post, body, variableMap.GetLoopLabel()) { VariableMap = variableMap };
+        return newFor;
+    }
+
+    public virtual IAstNode OnFunction(Function stat, VarMap variableMap)
+    {
+        var body = ResolveStatement(stat.Body, stat.Body.VariableMap!);
+        if (body is Block b)
+        {
+            return new Function(stat.Type, stat.Name, b) with { VariableMap = stat.VariableMap };
+        }
+        else
+        {
+            throw new ValidationError($"Function {stat.Name} body must be a block");
+        }
     }
 
     public virtual IAstNode OnIfElseStat(IfElse stat, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(IfElse)}")
-            : stat;
-    }
+        => new IfElse(
+                ResolveExpr(stat.CondExpr, variableMap),
+                ResolveStatement(stat.ThenBlock, variableMap),
+                stat.ElseBlock is not null ? ResolveStatement(stat.ElseBlock, variableMap) : null
+            );
 
     public virtual IAstNode OnLabeledStatementStat(LabeledStatement stat, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(LabeledStatement)}")
-            : stat;
-    }
+        => new LabeledStatement(
+                stat.Label,
+                ResolveStatement(stat.Stat, variableMap)
+            );
 
-    public virtual IAstNode OnPostfixOpStat(PostfixOp stat, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(PostfixOp)}")
-            : stat;
-    }
+    public virtual IAstNode OnNullStatementStat(NullStatement stat, VarMap variableMap) => stat;
 
-    public virtual IAstNode OnPrefixOpStat(PrefixOp stat, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(PrefixOp)}")
-            : stat;
-    }
+    public virtual IAstNode OnPostfixOpStat(PostfixOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
 
-    public virtual IAstNode OnReturnStat(Return stat, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(Return)}")
-            : stat;
-    }
+    public virtual IAstNode OnPrefixOpStat(PrefixOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
+
+    public virtual IAstNode OnReturnStat(Return stat, VarMap variableMap) => new Return(ResolveExpr(stat.Expr, variableMap));
 
     public virtual IAstNode OnTernaryStat(Ternary stat, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(Ternary)}")
-            : stat;
-    }
+        => new Ternary(
+                ResolveExpr(stat.CondExpr, variableMap),
+                ResolveExpr(stat.Middle, variableMap),
+                ResolveExpr(stat.Right, variableMap)
+            );
 
     public virtual IAstNode OnWhileLoopStat(WhileLoop stat, VarMap variableMap)
     {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(WhileLoop)}")
-            : stat;
+        var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, variableMap);
+        var body = ResolveStatement(stat.BodyBlock, variableMap);
+        var newWhile = new WhileLoop(cond, body, stat.Label);
+        return newWhile with { VariableMap = variableMap };
     }
 
     public virtual IAstNode OnStatDefault(IAstNode stat, VarMap variableMap)
+        => throw new ValidationError($"{GetType().Name}.{nameof(OnStatDefault)} cannot yet handle {stat.GetType().Name}");
+
+    #endregion
+
+    #region ExpressionHandlers
+    public virtual IAstNode OnAssignmentExpr(Assignment expr, VarMap variableMap)
     {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(OnStatDefault)}")
-            : stat;
+        if (expr.LExpr is not Var)
+        {
+            throw new ValidationError($"Invalid lval {expr.LExpr} for Assignment");
+        }
+        return new Assignment(ResolveExpr(expr.LExpr, variableMap), ResolveExpr(expr.RExpr, variableMap));
     }
 
-    public virtual IAstNode OnBinaryOpExpr(BinaryOp expr, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(BinaryOp)}")
-            : expr;
-    }
+    public virtual IAstNode OnBinaryOpExpr(BinaryOp expr, VarMap variableMap) => new BinaryOp(expr.Op, ResolveExpr(expr.LExpr, variableMap), ResolveExpr(expr.RExpr, variableMap));
 
-    public virtual IAstNode OnConstantExpr(Constant expr, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(Constant)}")
-            : expr;
-    }
+    public virtual IAstNode OnConstantExpr(Constant expr, VarMap variableMap) => expr;
 
-    public virtual IAstNode OnNullStatementExpr(NullStatement expr, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(NullStatement)}")
-            : expr;
-    }
+    public virtual IAstNode OnNullStatementExpr(NullStatement expr, VarMap variableMap) => expr;
 
     public virtual IAstNode OnPostfixOpExpr(PostfixOp expr, VarMap variableMap)
     {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(PostfixOp)}")
-            : expr;
+        if (expr.LValExpr is not Var)
+        {
+            throw new ValidationError($"PostfixOp lval must be a Var, not {expr.LValExpr}");
+        }
+        return new PostfixOp(expr.Op, ResolveExpr(expr.LValExpr, variableMap));
     }
 
     public virtual IAstNode OnPrefixOpExpr(PrefixOp expr, VarMap variableMap)
     {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(PrefixOp)}")
-            : expr;
+        if (expr.LValExpr is not Var)
+        {
+            throw new ValidationError($"PrefixOp lval must be a Var, not {expr.LValExpr}");
+        }
+        return new PrefixOp(expr.Op, ResolveExpr(expr.LValExpr, variableMap));
     }
 
-    public virtual IAstNode OnTernaryExpr(Ternary expr, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(Ternary)}")
-            : expr;
-    }
+    public virtual IAstNode OnTernaryExpr(Ternary expr, VarMap variableMap) => new Ternary(
+                    ResolveExpr(expr.CondExpr, variableMap),
+                    ResolveExpr(expr.Middle, variableMap),
+                    ResolveExpr(expr.Right, variableMap)
+                );
 
     public virtual IAstNode OnUnaryOpExpr(UnaryOp expr, VarMap variableMap)
     {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(UnaryOp)}")
-            : expr;
+        if (expr.Op.TokenType == TokenType.Minus && expr.Expr is Constant c)
+        {
+            return new Constant(-c.Int);
+        }
+        else
+        {
+            return new UnaryOp(expr.Op, ResolveExpr(expr.Expr, variableMap));
+        }
     }
 
     public virtual IAstNode OnVarExpr(Var expr, VarMap variableMap)
     {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {GetType().Name}.{nameof(Var)}")
-            : expr;
+        if (variableMap.TryGetValue(expr.Name, out var globalName, out _))
+        {
+            return new Var(globalName);
+        }
+        else
+        {
+            throw new ValidationError($"Undeclared variable {expr.Name}");
+        }
     }
 
-    public virtual IAstNode OnExprDefault(IAstNode expr, VarMap variableMap)
-    {
-        return DefaultToError
-            ? throw new ValidationError($"no override for {this.GetType().Name}.{nameof(OnExprDefault)}")
-            : expr;
-    }
+    public virtual IAstNode OnExprDefault(IAstNode expr, VarMap variableMap) => throw new NotImplementedException($"{nameof(BaseTreeRewriter)}.{nameof(ResolveExpr)}: AST node {expr.GetType().Name} not handled yet");
+    #endregion
 
     protected IAstNode ResolveStatement(IAstNode stat, VarMap variableMap)
     {
@@ -204,11 +205,13 @@ public class BaseTreeRewriter
             BinaryOp => OnBinaryOpStat((BinaryOp)stat, variableMap),
             Block => OnBlockStat((Block)stat, variableMap),
             Break => OnBreakStat((Break)stat, variableMap),
+            CompUnit => OnCompUnit((CompUnit)stat, variableMap),
             Continue => OnContinueStat((Continue)stat, variableMap),
             Declaration => OnDeclarationStat((Declaration)stat, variableMap),
             DoLoop => OnDoLoopStat((DoLoop)stat, variableMap),
             Expression => OnExpressionStat((Expression)stat, variableMap),
             ForLoop => OnForLoopStat((ForLoop)stat, variableMap),
+            Function => OnFunction((Function)stat, variableMap),
             IfElse => OnIfElseStat((IfElse)stat, variableMap),
             LabeledStatement => OnLabeledStatementStat((LabeledStatement)stat, variableMap),
             PostfixOp => OnPostfixOpStat((PostfixOp)stat, variableMap),
@@ -224,6 +227,7 @@ public class BaseTreeRewriter
     {
         return expr switch
         {
+            Assignment => OnAssignmentExpr((Assignment)expr, variableMap),
             BinaryOp => OnBinaryOpExpr((BinaryOp)expr, variableMap),
             Constant => OnConstantExpr((Constant)expr, variableMap),
             NullStatement => OnNullStatementExpr((NullStatement)expr, variableMap),

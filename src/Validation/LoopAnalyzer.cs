@@ -3,8 +3,6 @@ using Wacc.Exceptions;
 
 namespace Wacc.Validation;
 
-// TODO: experimental and not currently used.  See `BaseTreeRewriter` for details.
-
 public class LoopAnalyzer : BaseTreeRewriter
 {
     public override CompUnit Validate(CompUnit program)
@@ -16,47 +14,42 @@ public class LoopAnalyzer : BaseTreeRewriter
 
     public override IAstNode OnBlockStat(Block node, VarMap variableMap)
     {
-        var newMap = new VarMap(variableMap);
-        var blockItems = new List<IAstNode>();
-        foreach (var item in node.BlockItems)
-        {
-            blockItems.Add(ResolveStatement(item, newMap));
-        }
-        var newBlock = new Block([.. blockItems]);
-        return newBlock;
+        return (Block)base.OnBlockStat(node, node.VariableMap!);
     }
 
     public override IAstNode OnBreakStat(Break stat, VarMap variableMap) => stat with { Label = ResolveLoopLabel(stat.Label, variableMap) };
+
     public override IAstNode OnContinueStat(Continue stat, VarMap variableMap) => stat with { Label = ResolveLoopLabel(stat.Label, variableMap) };
+
     public override IAstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
     {
-        var newMap = new VarMap(variableMap);
-        var newLoopLabel = newMap.NewLoopLabel();
-        var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, newMap);
-        var body = ResolveStatement(stat.BodyBlock, newMap);
-        var newDo = new DoLoop(body, cond, newLoopLabel);
-        return newDo;
+        var newLoopLabel = stat.VariableMap!.NewLoopLabel();
+        return (DoLoop)base.OnDoLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
     }
     public override IAstNode OnForLoopStat(ForLoop stat, VarMap variableMap)
     {
-        var newMap = new VarMap(variableMap);
-        var newLoopLabel = newMap.NewLoopLabel();
-        var init = ResolveStatement(stat.InitStat, newMap);
-        var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, newMap);
-        var post = stat.CondExpr is NullStatement ? stat.UpdateStat : ResolveExpr(stat.UpdateStat, newMap);
-        var body = ResolveStatement(stat.BodyBlock, newMap);
-        var newFor = new ForLoop(init, cond, post, body, newLoopLabel);
-        return newFor;
+        var newLoopLabel = stat.VariableMap!.NewLoopLabel();
+        return (ForLoop)base.OnForLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
     }
 
     public override IAstNode OnWhileLoopStat(WhileLoop stat, VarMap variableMap)
     {
-        var newMap = new VarMap(variableMap);
-        var newLoopLabel = newMap.NewLoopLabel();
-        var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, newMap);
-        var body = ResolveStatement(stat.BodyBlock, newMap);
-        var newWhile = new DoLoop(cond, body, newLoopLabel);
-        return newWhile;
+        var newLoopLabel = stat.VariableMap!.NewLoopLabel();
+        return (WhileLoop)base.OnWhileLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
+    }
+
+    public override IAstNode OnStatDefault(IAstNode stat, VarMap variableMap) => stat;
+
+    public override IAstNode OnVarExpr(Var expr, VarMap variableMap)
+    {
+        if (variableMap.TryGetFromValues(expr.Name, out var globalName, out _))
+        {
+            return new Var(globalName);
+        }
+        else
+        {
+            throw new ValidationError($"Undeclared variable {expr.Name}");
+        }
     }
 
     internal static string? ResolveLoopLabel(string? curLabel, VarMap variableMap, bool makeNew = false)

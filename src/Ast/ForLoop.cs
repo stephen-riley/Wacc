@@ -2,12 +2,17 @@ using System.Text;
 using Wacc.Exceptions;
 using Wacc.Parse;
 using Wacc.Tokens;
+using Wacc.Validation;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
 public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode UpdateStat, IAstNode BodyBlock, string? Label = null) : IAstNode
 {
+    public const string DefaultLabel = "$__TODO_FOR_LABEL__";
+
+    public VarMap? VariableMap;
+
     public bool IsBlockItem() => true;
 
     public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(ForKw);
@@ -35,7 +40,7 @@ public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode UpdateStat,
     public string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"ForLoop({Label ?? ""}");
+        sb.AppendLine($"ForLoop({Label ?? DefaultLabel}");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"init={InitStat.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"post={UpdateStat.ToPrettyString(indent + 1)}");

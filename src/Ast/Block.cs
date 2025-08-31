@@ -1,12 +1,15 @@
 using System.Text;
 using Wacc.Parse;
 using Wacc.Tokens;
+using Wacc.Validation;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
 public record Block(IAstNode[] BlockItems) : IAstNode
 {
+    public VarMap? VariableMap;
+
     public static bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor(OpenBrace)
         || BlockItem.CanParse(tokenStream);
