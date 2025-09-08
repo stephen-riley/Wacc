@@ -150,7 +150,7 @@ public class VarAnalyzer : BaseAstRewriter
                 ResolveStatement(ie.ThenBlock, variableMap),
                 ie.ElseBlock is not null ? ResolveStatement(ie.ElseBlock, variableMap) : null
             ),
-            LabeledStatement ls => new LabeledStatement(
+            LabeledBlock ls => new LabeledBlock(
                 ls.Label,
                 ResolveStatement(ls.Stat, variableMap)
             ),

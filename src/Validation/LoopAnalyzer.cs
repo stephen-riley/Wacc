@@ -17,10 +17,6 @@ public class LoopAnalyzer : BaseAstRewriter
         return (Block)base.OnBlockStat(node, node.VariableMap!);
     }
 
-    public override IAstNode OnBreakStat(Break stat, VarMap variableMap) => stat with { Label = ResolveLoopLabel(stat.Label, variableMap) };
-
-    public override IAstNode OnContinueStat(Continue stat, VarMap variableMap) => stat with { Label = ResolveLoopLabel(stat.Label, variableMap) };
-
     public override IAstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
     {
         var newLoopLabel = stat.VariableMap!.NewLoopLabel();

@@ -299,7 +299,7 @@ public class TackyGenerator(RuntimeState opts)
                 Emit(new TacJump(contLabel));
                 return DUMMY;
 
-            case LabeledStatement ls:
+            case LabeledBlock ls:
                 Emit(new TacLabel(GetCleanLabelName(ls.Label.Name)));
                 return EmitTacky(ls.Stat);
 

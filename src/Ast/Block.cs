@@ -1,4 +1,5 @@
 using System.Text;
+using Wacc.Exceptions;
 using Wacc.Parse;
 using Wacc.Tokens;
 using Wacc.Validation;
@@ -14,7 +15,7 @@ public record Block(IAstNode[] BlockItems) : IAstNode
         => tokenStream.PeekFor(OpenBrace)
         || BlockItem.CanParse(tokenStream);
 
-    public static IAstNode Parse(Queue<Token> tokenStream, bool isDependent = false)
+    public static IAstNode Parse(Queue<Token> tokenStream, bool isDependent = false, bool forceBlock = false)
     {
         var children = new List<IAstNode>();
 
@@ -31,9 +32,13 @@ public record Block(IAstNode[] BlockItems) : IAstNode
 
             return new Block([.. children]);
         }
-        else
+        else if (!forceBlock)
         {
             return BlockItem.Parse(tokenStream, isDependent);
+        }
+        else
+        {
+            throw new ParseError("caller forced a full block but a statement was found");
         }
     }
 

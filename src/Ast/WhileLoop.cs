@@ -23,11 +23,9 @@ public record WhileLoop(IAstNode CondExpr, IAstNode BodyBlock, string? Label = n
         tokenStream.Expect(OpenParen);
         var condExpr = Expression.Parse(tokenStream);
         tokenStream.Expect(CloseParen);
+        var bodyNode = Block.Parse(tokenStream);
 
-        var bodyNode = Block.Parse(tokenStream, isDependent: true);
-        var bodyBlock = bodyNode is Block || bodyNode.IsBlockItem() ? bodyNode : throw new ParseError($"{bodyNode} is not a Block or BlockItem");
-
-        return new WhileLoop(condExpr, bodyBlock);
+        return new WhileLoop(condExpr, bodyNode);
     }
 
     public string ToPrettyString(int indent = 0)

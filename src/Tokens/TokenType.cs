@@ -17,6 +17,8 @@ public enum TokenType
 
     [Description("^")] BitwiseXor,
 
+    [Description("case")] CaseKw,
+
     [Description("}")] CloseBrace,
 
     [Description(")")] CloseParen,
@@ -48,6 +50,8 @@ public enum TokenType
     [Description("")] Constant,
 
     [Description("--")] Decrement,
+
+    [Description("default")] DefaultKw,
 
     [Description("/")] Div,
 
@@ -106,6 +110,8 @@ public enum TokenType
     [Description("return")] ReturnKw,
 
     [Description(";")] Semicolon,
+
+    [Description("switch")] SwitchKw,
 
     [Description("void")] VoidKw,
 

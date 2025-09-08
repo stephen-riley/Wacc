@@ -28,6 +28,8 @@ public class BaseAstRewriter
 
     public virtual IAstNode OnBreakStat(Break stat, VarMap variableMap) => stat;
 
+    public virtual IAstNode OnCase(Case stat, VarMap variableMap) => stat;
+
     public virtual CompUnit OnCompUnit(CompUnit stat, VarMap variableMap)
     {
         var newFuncs = new List<Function>();
@@ -93,8 +95,8 @@ public class BaseAstRewriter
 
     public virtual IAstNode OnGotoStat(Goto stat, VarMap variableMap) => stat;
 
-    public virtual IAstNode OnLabeledStatementStat(LabeledStatement stat, VarMap variableMap)
-        => new LabeledStatement(
+    public virtual IAstNode OnLabeledStatementStat(LabeledBlock stat, VarMap variableMap)
+        => new LabeledBlock(
                 stat.Label,
                 ResolveStatement(stat.Stat, variableMap)
             );
@@ -106,6 +108,12 @@ public class BaseAstRewriter
     public virtual IAstNode OnPrefixOpStat(PrefixOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
 
     public virtual IAstNode OnReturnStat(Return stat, VarMap variableMap) => new Return(ResolveExpr(stat.Expr, variableMap));
+
+    public virtual IAstNode OnSwitch(Switch stat, VarMap variableMap)
+        => new Switch(
+                ResolveExpr(stat.CondExpr, variableMap),
+                ResolveStatement(stat.CaseBlock, variableMap)
+            );
 
     public virtual IAstNode OnTernaryStat(Ternary stat, VarMap variableMap)
         => new Ternary(
@@ -201,7 +209,7 @@ public class BaseAstRewriter
             Function => OnFunction((Function)stat, variableMap),
             Goto => OnGotoStat((Goto)stat, variableMap),
             IfElse => OnIfElseStat((IfElse)stat, variableMap),
-            LabeledStatement => OnLabeledStatementStat((LabeledStatement)stat, variableMap),
+            LabeledBlock => OnLabeledStatementStat((LabeledBlock)stat, variableMap),
             NullStatement => OnNullStatementExpr((NullStatement)stat, variableMap),
             PostfixOp => OnPostfixOpStat((PostfixOp)stat, variableMap),
             PrefixOp => OnPrefixOpStat((PrefixOp)stat, variableMap),

@@ -10,7 +10,7 @@ public class LabelAnalyzer
         var labels = new HashSet<string>();
         var gotoDestinations = new HashSet<string>();
 
-        program.WalkFor<LabeledStatement>(ls =>
+        program.WalkFor<LabeledBlock>(ls =>
         {
             if (labels.Contains(ls.Label.Name))
             {

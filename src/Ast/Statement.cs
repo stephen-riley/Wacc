@@ -7,42 +7,48 @@ namespace Wacc.Ast;
 public record Statement() : IAstNode
 {
     // This will list the statement types that may not have semicolons after them.
-    public static readonly HashSet<TokenType> BlockStatements = [DoKw, ForKw, IfKw, WhileKw];
+    public static readonly HashSet<TokenType> BlockStatements = [DefaultKw, CaseKw, DoKw, ForKw, IfKw, SwitchKw, WhileKw];
 
     public bool IsBlockItem() => true;
 
     public static bool CanParse(Queue<Token> tokenStream)
-        => NullStatement.CanParse(tokenStream)
-            || Return.CanParse(tokenStream)
-            || IfElse.CanParse(tokenStream)
-            || Goto.CanParse(tokenStream)
-            || Expression.CanParse(tokenStream)
-            || Label.CanParse(tokenStream)
-            || Break.CanParse(tokenStream)
+        => Break.CanParse(tokenStream)
+            || Case.CanParse(tokenStream)
             || Continue.CanParse(tokenStream)
+            || Default.CanParse(tokenStream)
             || DoLoop.CanParse(tokenStream)
+            || Expression.CanParse(tokenStream)
             || ForLoop.CanParse(tokenStream)
+            || Goto.CanParse(tokenStream)
+            || IfElse.CanParse(tokenStream)
+            || Label.CanParse(tokenStream)
+            || NullStatement.CanParse(tokenStream)
+            || Return.CanParse(tokenStream)
+            || Switch.CanParse(tokenStream)
             || WhileLoop.CanParse(tokenStream);
 
     public static IAstNode Parse(Queue<Token> tokenStream, bool nested = false)
     {
         if (Label.CanParse(tokenStream))
         {
-            return LabeledStatement.Parse(tokenStream);
+            return LabeledBlock.Parse(tokenStream);
         }
 
         var nextTokenType = tokenStream.Peek().TokenType;
 
         var stat = nextTokenType switch
         {
-            Semicolon => NullStatement.Parse(tokenStream),
-            ReturnKw => Return.Parse(tokenStream),
-            IfKw => IfElse.Parse(tokenStream),
-            GotoKw => Goto.Parse(tokenStream),
             BreakKw => Break.Parse(tokenStream),
+            CaseKw => Case.Parse(tokenStream),
             ContinueKw => Continue.Parse(tokenStream),
+            DefaultKw => Default.Parse(tokenStream),
             DoKw => DoLoop.Parse(tokenStream),
             ForKw => ForLoop.Parse(tokenStream),
+            GotoKw => Goto.Parse(tokenStream),
+            IfKw => IfElse.Parse(tokenStream),
+            ReturnKw => Return.Parse(tokenStream),
+            Semicolon => NullStatement.Parse(tokenStream),
+            SwitchKw => Switch.Parse(tokenStream),
             WhileKw => WhileLoop.Parse(tokenStream),
             _ => Expression.Parse(tokenStream)
         };

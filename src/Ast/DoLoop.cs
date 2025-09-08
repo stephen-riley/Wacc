@@ -21,7 +21,7 @@ public record DoLoop(IAstNode BodyBlock, IAstNode CondExpr, string? Label = null
     {
         tokenStream.Expect(DoKw);
 
-        var bodyNode = Block.Parse(tokenStream, isDependent: true);
+        var bodyNode = Block.Parse(tokenStream);
         var bodyBlock = bodyNode is Block || bodyNode.IsBlockItem() ? bodyNode : throw new ParseError($"{bodyNode} is not a Block or BlockItem");
 
         tokenStream.Expect(WhileKw);
