@@ -1,5 +1,6 @@
 using Wacc.Ast;
 using Wacc.Exceptions;
+using Wacc.Parse;
 using Wacc.Tacky.Instruction;
 using Wacc.Tokens;
 
@@ -13,6 +14,9 @@ public class TackyGenerator(RuntimeState opts)
     internal List<ITackyInstr> instructions = [];
 
     internal HashSet<string> ReservedLabels = ["_main"];
+
+    internal Stack<string> BreakLabelStack = [];
+    internal Stack<string> ContinueLabelStack = [];
 
     internal TacVar? LastTmpVar;
     internal int TmpVarCounter = 0;
@@ -223,17 +227,77 @@ public class TackyGenerator(RuntimeState opts)
                 return result;
 
             case ForLoop fl:
-                throw new NotImplementedException();
-            // return DUMMY;
+                var startLabel = ReserveTmpLabel("_for");
+                var contLabel = ReserveTmpLabel("_for");
+                endLabel = ReserveTmpLabel("_for");
+                BreakLabelStack.Push(endLabel);
+                ContinueLabelStack.Push(contLabel);
+
+                endLabel = ReserveTmpLabel("_for");
+                EmitTacky(fl.InitStat);
+                Emit(new TacLabel(startLabel));
+                cond = EmitTacky(fl.CondExpr);
+                Emit(new TacJumpIfZero(cond, endLabel));
+                EmitTacky(fl.BodyBlock);
+                Emit(new TacLabel(contLabel));
+                EmitTacky(fl.PostStat);
+                Emit(new TacJump(startLabel));
+                Emit(new TacLabel(endLabel));
+
+                BreakLabelStack.Pop();
+                ContinueLabelStack.Pop();
+                return DUMMY;
 
             case DoLoop dl:
-                throw new NotImplementedException();
-            // return DUMMY;
+                startLabel = ReserveTmpLabel("_do");
+                var condLabel = ReserveTmpLabel("_do");
+                endLabel = ReserveTmpLabel("_do");
+                BreakLabelStack.Push(endLabel);
+                ContinueLabelStack.Push(condLabel);
+
+                Emit(new TacLabel(startLabel));
+                EmitTacky(dl.BodyBlock);
+                Emit(new TacLabel(condLabel));
+                var condResult = EmitTacky(dl.CondExpr);
+                Emit(new TacJumpIfNotZero(condResult, startLabel));
+                Emit(new TacLabel(endLabel));
+
+                BreakLabelStack.Pop();
+                ContinueLabelStack.Pop();
+                return DUMMY;
 
             case WhileLoop wl:
-                throw new NotImplementedException();
-            // return DUMMY;
+                startLabel = ReserveTmpLabel("_wh");
+                endLabel = ReserveTmpLabel("_wh");
+                BreakLabelStack.Push(endLabel);
+                ContinueLabelStack.Push(startLabel);
 
+                Emit(new TacLabel(startLabel));
+                condResult = EmitTacky(wl.CondExpr);
+                Emit(new TacJumpIfZero(condResult, endLabel));
+                EmitTacky(wl.BodyBlock);
+                Emit(new TacJump(startLabel));
+                Emit(new TacLabel(endLabel));
+
+                BreakLabelStack.Pop();
+                ContinueLabelStack.Pop();
+                return DUMMY;
+
+            case Break:
+                if (!BreakLabelStack.TryPeek(out var breakLabel))
+                {
+                    throw new TackyGenError("no break label in this scope");
+                }
+                Emit(new TacJump(breakLabel));
+                return DUMMY;
+
+            case Continue:
+                if (!BreakLabelStack.TryPeek(out contLabel))
+                {
+                    throw new TackyGenError("no break label in this scope");
+                }
+                Emit(new TacJump(contLabel));
+                return DUMMY;
 
             case LabeledStatement ls:
                 Emit(new TacLabel(GetCleanLabelName(ls.Label.Name)));

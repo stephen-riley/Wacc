@@ -7,7 +7,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record DoLoop(IAstNode BodyBlock, IAstNode CondExpr, string? Label = null) : IAstNode
+public record DoLoop(IAstNode BodyBlock, IAstNode CondExpr, string? Label = null, bool HasBreak = false, bool HasContinue = false) : IAstNode
 {
     public const string DefaultLabel = "$__TODO_DO_LABEL__";
 

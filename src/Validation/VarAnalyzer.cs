@@ -140,7 +140,7 @@ public class VarAnalyzer : BaseAstRewriter
                 var newMap = new VarMap(variableMap);
                 var init = ResolveStatement(fl.InitStat, newMap);
                 var cond = fl.CondExpr is NullStatement ? fl.CondExpr : ResolveExpr(fl.CondExpr, newMap);
-                var post = fl.CondExpr is NullStatement ? fl.UpdateStat : ResolveExpr(fl.UpdateStat, newMap);
+                var post = fl.CondExpr is NullStatement ? fl.PostStat : ResolveExpr(fl.PostStat, newMap);
                 var body = ResolveStatement(fl.BodyBlock, newMap);
                 var newFor = new ForLoop(init, cond, post, body, fl.Label);
                 return newFor with { VariableMap = newMap };

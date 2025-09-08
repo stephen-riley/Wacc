@@ -65,7 +65,7 @@ public class BaseAstRewriter
     {
         var init = ResolveStatement(stat.InitStat, variableMap);
         var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, variableMap);
-        var post = stat.CondExpr is NullStatement ? stat.UpdateStat : ResolveExpr(stat.UpdateStat, variableMap);
+        var post = stat.CondExpr is NullStatement ? stat.PostStat : ResolveExpr(stat.PostStat, variableMap);
         var body = ResolveStatement(stat.BodyBlock, variableMap);
         var newFor = new ForLoop(init, cond, post, body, variableMap.GetLoopLabel()) { VariableMap = variableMap };
         return newFor;

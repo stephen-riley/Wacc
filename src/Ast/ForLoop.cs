@@ -7,7 +7,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode UpdateStat, IAstNode BodyBlock, string? Label = null) : IAstNode
+public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode PostStat, IAstNode BodyBlock, string? Label = null) : IAstNode
 {
     public const string DefaultLabel = "$__TODO_FOR_LABEL__";
 
@@ -43,11 +43,11 @@ public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode UpdateStat,
         sb.AppendLine($"ForLoop({Label ?? DefaultLabel}");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"init={InitStat.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"post={UpdateStat.ToPrettyString(indent + 1)}");
+        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"post={PostStat.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"body={BodyBlock.ToPrettyString(indent + 1)}");
         sb.Append(IAstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => [InitStat, CondExpr, UpdateStat, BodyBlock];
+    public IEnumerable<IAstNode> Children() => [InitStat, CondExpr, PostStat, BodyBlock];
 }

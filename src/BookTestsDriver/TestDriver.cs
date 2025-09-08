@@ -20,6 +20,7 @@ public class TestDriver(TestOptions rts)
     public void Entrypoint()
     {
         TestsPath = ResolveHomeRelativePath(Options.TestsPath);
+        VerboseWriteLine($"Tests path: {TestsPath}");
 
         CollectValidTests();
         CollectOtherTests();
@@ -29,17 +30,14 @@ public class TestDriver(TestOptions rts)
             FilterOutSuccessfulTests();
         }
 
-        if (Options.Verbose || Options.Plan)
-        {
-            Tests.ForEach(Console.Error.WriteLine);
-        }
+        Tests.ForEach(t => VerboseWriteLine(t.ToString(), includePlan: true));
 
         if (Options.Plan)
         {
-            Console.Error.WriteLine("----------------------------------------------------------------------");
-            Console.Error.WriteLine($"Planned {Tests.Count} tests");
-            Console.Error.WriteLine();
-            Console.Error.WriteLine("OK");
+            VerboseWriteLine("----------------------------------------------------------------------", includePlan: true);
+            VerboseWriteLine($"Planned {Tests.Count} tests", includePlan: true);
+            VerboseWriteLine(includePlan: true);
+            VerboseWriteLine("OK", includePlan: true);
             return;
         }
 
@@ -62,6 +60,16 @@ public class TestDriver(TestOptions rts)
         {
             Console.Error.WriteLine($"FAILED (failures={Errors.Count})");
             Errors.ForEach(Console.Error.WriteLine);
+        }
+    }
+
+    void VerboseWriteLine(bool includePlan = false) => VerboseWriteLine("", includePlan);
+
+    void VerboseWriteLine(string msg, bool includePlan = false)
+    {
+        if (Options.Verbose || (Options.Plan && includePlan))
+        {
+            Console.Error.WriteLine(msg);
         }
     }
 
@@ -156,7 +164,7 @@ public class TestDriver(TestOptions rts)
             new Driver(rts).Entrypoint();
             if (Options.Stage == "")
             {
-                var actualCode = RunProgram("/tmp/a.out");
+                var actualCode = RunCompiledProgram("/tmp/a.out");
                 if (actualCode == test.ExpectedExitCode)
                 {
                     return true;
@@ -187,7 +195,7 @@ public class TestDriver(TestOptions rts)
         }
     }
 
-    public static int RunProgram(string path)
+    public static int RunCompiledProgram(string path)
     {
         var startInfo = new ProcessStartInfo
         {

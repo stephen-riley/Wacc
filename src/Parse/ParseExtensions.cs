@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Wacc.Ast;
 using Wacc.Exceptions;
 using Wacc.Tokens;
 
@@ -37,4 +38,27 @@ public static class ParseExtentions
     public static bool Is(this Token tok, TokenType tokenType) => tok.Is([tokenType]);
 
     public static bool Is(this Token tok, HashSet<TokenType> tokenTypes) => tokenTypes.Contains(tok.TokenType);
+
+    public static IAstNode? SearchFor<T>(this IAstNode @this, int depth = 10_000)
+    {
+        if (depth == 0) return null;
+
+        foreach (var child in @this.Children())
+        {
+            if (child is T)
+            {
+                return child;
+            }
+            else
+            {
+                var searchResult = child.SearchFor<T>(depth - 1);
+                if (searchResult is not null)
+                {
+                    return searchResult;
+                }
+            }
+        }
+
+        return null;
+    }
 }
