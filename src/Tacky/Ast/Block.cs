@@ -1,5 +1,6 @@
 using Wacc.Tacky;
 using Wacc.Tacky.Instruction;
+using static Wacc.Tacky.TackyGenerator;
 
 namespace Wacc.Ast;
 
@@ -9,8 +10,11 @@ public partial record Block
 
     private TacVal EmitTacky(TackyGenerator gen, Block b)
     {
-        gen.instructions = [];
-        throw new NotImplementedException("Tacky generation for Block is not implemented yet.");
+        foreach (var bi in b.BlockItems)
+        {
+            gen.EmitTacky(bi);
+        }
+        return DUMMY;
     }
 }
 

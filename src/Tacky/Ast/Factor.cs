@@ -9,7 +9,6 @@ public partial record Factor
 
     private TacVal EmitTacky(TackyGenerator gen, Factor f)
     {
-        gen.instructions = [];
         throw new NotImplementedException("Tacky generation for Factor is not implemented yet.");
     }
 }

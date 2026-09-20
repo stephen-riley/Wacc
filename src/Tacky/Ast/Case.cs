@@ -9,7 +9,6 @@ public partial record Case
 
     private TacVal EmitTacky(TackyGenerator gen, Case c)
     {
-        gen.instructions = [];
         throw new NotImplementedException("Tacky generation for Case is not implemented yet.");
     }
 }

@@ -9,8 +9,16 @@ public partial record Declaration
 
     private TacVal EmitTacky(TackyGenerator gen, Declaration d)
     {
-        gen.instructions = [];
-        throw new NotImplementedException("Tacky generation for Declaration is not implemented yet.");
+        if (d.Expr is null)
+        {
+            return gen.RegisterVar(new TacVar(d.Identifier.Name));
+        }
+        else
+        {
+            var declResult = gen.EmitTacky(d.Expr);
+            gen.Emit(new TacCopy(declResult, gen.RegisterVar(new TacVar(d.Identifier.Name))));
+            return declResult;
+        }
     }
 }
 

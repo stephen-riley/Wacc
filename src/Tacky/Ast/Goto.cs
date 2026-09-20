@@ -1,5 +1,6 @@
 using Wacc.Tacky;
 using Wacc.Tacky.Instruction;
+using static Wacc.Tacky.TackyGenerator;
 
 namespace Wacc.Ast;
 
@@ -9,8 +10,8 @@ public partial record Goto
 
     private TacVal EmitTacky(TackyGenerator gen, Goto g)
     {
-        gen.instructions = [];
-        throw new NotImplementedException("Tacky generation for Goto is not implemented yet.");
+        gen.Emit(new TacJump(gen.GetCleanLabelName(g.Label?.Name ?? throw new InvalidOperationException("BlockItem.LabelName cannot be null here"))));
+        return DUMMY;
     }
 }
 

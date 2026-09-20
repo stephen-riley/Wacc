@@ -1,5 +1,6 @@
 using Wacc.Tacky;
 using Wacc.Tacky.Instruction;
+using static Wacc.Tacky.TackyGenerator;
 
 namespace Wacc.Ast;
 
@@ -9,8 +10,8 @@ public partial record Default
 
     private TacVal EmitTacky(TackyGenerator gen, Default d)
     {
-        gen.instructions = [];
-        throw new NotImplementedException("Tacky generation for Default is not implemented yet.");
+        gen.EmitTacky(d.DefaultBlock);
+        return DUMMY;
     }
 }
 

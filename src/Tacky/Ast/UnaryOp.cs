@@ -9,8 +9,10 @@ public partial record UnaryOp
 
     private TacVal EmitTacky(TackyGenerator gen, UnaryOp u)
     {
-        gen.instructions = [];
-        throw new NotImplementedException("Tacky generation for UnaryOp is not implemented yet.");
+        var src = gen.EmitTacky(u.Expr);
+        var dst = gen.ReserveTmpVar();
+        gen.Emit(new TacUnary(u.Op.TokenType, src, dst));
+        return dst;
     }
 }
 

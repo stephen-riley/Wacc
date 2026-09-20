@@ -9,8 +9,16 @@ public partial record Assignment
 
     private TacVal EmitTacky(TackyGenerator gen, Assignment a)
     {
-        gen.instructions = [];
-        throw new NotImplementedException("Tacky generation for Assignment is not implemented yet.");
+        if (a.LExpr is Var v)
+        {
+            var rhsResult = gen.EmitTacky(a.RExpr);
+            gen.Emit(new TacCopy(rhsResult, new TacVar(v.Name)));
+            return new TacVar(v.Name);
+        }
+        else
+        {
+            throw new NotImplementedException("Tacky generation for complicated lvals is not implemented yet.");
+        }
     }
 }
 

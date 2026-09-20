@@ -1,5 +1,7 @@
+using Wacc.Exceptions;
 using Wacc.Tacky;
 using Wacc.Tacky.Instruction;
+using static Wacc.Tacky.TackyGenerator;
 
 namespace Wacc.Ast;
 
@@ -9,8 +11,12 @@ public partial record Break
 
     private TacVal EmitTacky(TackyGenerator gen, Break b)
     {
-        gen.instructions = [];
-        throw new NotImplementedException("Tacky generation for Break is not implemented yet.");
+        if (!gen.BreakLabelStack.TryPeek(out var breakLabel))
+        {
+            throw new TackyGenError("no break label in this scope");
+        }
+        gen.Emit(new TacJump(breakLabel));
+        return DUMMY;
     }
 }
 

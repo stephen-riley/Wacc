@@ -26,6 +26,7 @@ sub gen_class {
     return <<"END_CLASS";
 using Wacc.Tacky;
 using Wacc.Tacky.Instruction;
+using static Wacc.Tacky.TackyGenerator;
 
 namespace Wacc.Ast;
 
@@ -35,7 +36,6 @@ public partial record ${class_name}
 
     private TacVal EmitTacky(TackyGenerator gen, ${class_name} ${var_name})
     {
-        gen.instructions = [];
         throw new NotImplementedException("Tacky generation for ${class_name} is not implemented yet.");
     }
 }

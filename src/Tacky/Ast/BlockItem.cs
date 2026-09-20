@@ -9,7 +9,6 @@ public partial record BlockItem
 
     private TacVal EmitTacky(TackyGenerator gen, BlockItem b)
     {
-        gen.instructions = [];
         throw new NotImplementedException("Tacky generation for BlockItem is not implemented yet.");
     }
 }

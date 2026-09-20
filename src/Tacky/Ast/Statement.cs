@@ -9,7 +9,6 @@ public partial record Statement
 
     private TacVal EmitTacky(TackyGenerator gen, Statement s)
     {
-        gen.instructions = [];
         throw new NotImplementedException("Tacky generation for Statement is not implemented yet.");
     }
 }

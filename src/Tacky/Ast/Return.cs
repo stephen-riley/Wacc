@@ -9,8 +9,9 @@ public partial record Return
 
     private TacVal EmitTacky(TackyGenerator gen, Return r)
     {
-        gen.instructions = [];
-        throw new NotImplementedException("Tacky generation for Return is not implemented yet.");
+        var retResult = gen.EmitTacky(r.Expr);
+        gen.Emit(new TacReturn(retResult));
+        return retResult;
     }
 }
 

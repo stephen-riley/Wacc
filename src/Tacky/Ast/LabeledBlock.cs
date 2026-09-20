@@ -1,5 +1,6 @@
 using Wacc.Tacky;
 using Wacc.Tacky.Instruction;
+using static Wacc.Tacky.TackyGenerator;
 
 namespace Wacc.Ast;
 
@@ -9,8 +10,7 @@ public partial record LabeledBlock
 
     private TacVal EmitTacky(TackyGenerator gen, LabeledBlock l)
     {
-        gen.instructions = [];
-        throw new NotImplementedException("Tacky generation for LabeledBlock is not implemented yet.");
+        gen.Emit(new TacLabel(gen.GetCleanLabelName(l.Label.Name)));
+        return DUMMY;
     }
 }
-

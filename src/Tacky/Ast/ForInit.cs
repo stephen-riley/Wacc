@@ -9,7 +9,6 @@ public partial record ForInit
 
     private TacVal EmitTacky(TackyGenerator gen, ForInit f)
     {
-        gen.instructions = [];
         throw new NotImplementedException("Tacky generation for ForInit is not implemented yet.");
     }
 }

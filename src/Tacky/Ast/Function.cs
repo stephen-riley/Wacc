@@ -1,5 +1,6 @@
 using Wacc.Tacky;
 using Wacc.Tacky.Instruction;
+using static Wacc.Tacky.TackyGenerator;
 
 namespace Wacc.Ast;
 
@@ -14,6 +15,6 @@ public partial record Function
         gen.TmpVarCounter = 0;     // TODO: awkward here, shouldn't have to do this manually
         gen.EmitTacky(f.Body);
         gen.Emit(new TacReturn(new TacConstant(0)));
-        return TackyGenerator.DUMMY;
+        return DUMMY;
     }
 }

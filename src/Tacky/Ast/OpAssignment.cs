@@ -7,10 +7,17 @@ public partial record OpAssignment
 {
     public override TacVal EmitTacky(TackyGenerator gen, AstNode node) => EmitTacky(gen, (OpAssignment)node);
 
-    private TacVal EmitTacky(TackyGenerator gen, OpAssignment o)
+    private TacVal EmitTacky(TackyGenerator gen, OpAssignment oa)
     {
-        gen.instructions = [];
-        throw new NotImplementedException("Tacky generation for OpAssignment is not implemented yet.");
+        if (oa.LExpr is Var v)
+        {
+            var rhsResult = gen.EmitTacky(oa.RExpr);
+            return new TacVar(v.Name);
+        }
+        else
+        {
+            throw new NotImplementedException("Tacky generation for complicated lvals is not implemented yet.");
+        }
     }
 }
 
