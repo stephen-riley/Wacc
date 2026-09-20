@@ -7,5 +7,3 @@ public partial class TackyGenerator
 {
     private TacVal EmityTackyForConstant(Constant c) => new TacConstant(c.Int);
 }
-
-

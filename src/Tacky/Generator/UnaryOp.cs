@@ -13,5 +13,3 @@ public partial class TackyGenerator
         return dst;
     }
 }
-
-

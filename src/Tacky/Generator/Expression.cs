@@ -7,5 +7,3 @@ public partial class TackyGenerator
 {
     private TacVal EmityTackyForExpression(Expression e) => EmitTacky(e.SubExpr);
 }
-
-

@@ -18,5 +18,3 @@ public partial class TackyGenerator
         }
     }
 }
-
-

@@ -12,5 +12,3 @@ public partial class TackyGenerator
         return retResult;
     }
 }
-
-

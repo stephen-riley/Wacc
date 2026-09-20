@@ -7,5 +7,3 @@ public partial class TackyGenerator
 {
     private TacVal EmityTackyForLabel(Label l) => EmitWithDummy(new TacLabel(GetCleanLabelName(l.Name)));
 }
-
-

@@ -7,5 +7,3 @@ public partial class TackyGenerator
 {
     private TacVal EmityTackyForVar(Var v) => RegisterVar(new TacVar(v.Name));
 }
-
-

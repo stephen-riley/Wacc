@@ -10,5 +10,3 @@ public partial class TackyGenerator
         throw new NotImplementedException("Tacky generation for Case is not implemented yet.");
     }
 }
-
-

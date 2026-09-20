@@ -10,5 +10,3 @@ public partial class TackyGenerator
         throw new NotImplementedException("Tacky generation for Factor is not implemented yet.");
     }
 }
-
-
