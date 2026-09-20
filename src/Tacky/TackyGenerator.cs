@@ -4,7 +4,7 @@ using Wacc.Tacky.Instruction;
 
 namespace Wacc.Tacky;
 
-public class TackyGenerator(RuntimeState opts)
+public partial class TackyGenerator(RuntimeState opts)
 {
     internal static TacVar DUMMY = new("DUMMY");
 
@@ -98,15 +98,40 @@ public class TackyGenerator(RuntimeState opts)
         return true;
     }
 
-    internal TacVal EmitTacky(AstNode node)
+    internal TacVal EmitTacky(AstNode node) => node switch
     {
-        try
-        {
-            return node.EmitTacky(this, node);
-        }
-        catch (NotImplementedException e)
-        {
-            throw new TackyGenError($"{GetType().Name}.{nameof(EmitTacky)} can't handle {node.GetType().Name} yet", e);
-        }
-    }
+        Assignment a => EmityTackyForAssignment(a),
+        BinaryOp bo => EmityTackyForBinaryOp(bo),
+        Block b => EmityTackyForBlock(b),
+        BlockItem bi => EmityTackyForBlockItem(bi),
+        Break b => EmityTackyForBreak(b),
+        Case c => EmityTackyForCase(c),
+        CompUnit cu => EmityTackyForCompUnit(cu),
+        Constant c => EmityTackyForConstant(c),
+        Continue c => EmityTackyForContinue(c),
+        Declaration d => EmityTackyForDeclaration(d),
+        Default d => EmityTackyForDefault(d),
+        DoLoop dl => EmityTackyForDoLoop(dl),
+        Expression e => EmityTackyForExpression(e),
+        Factor f => EmityTackyForFactor(f),
+        ForInit fi => EmityTackyForForInit(fi),
+        ForLoop fl => EmityTackyForForLoop(fl),
+        Function f => EmityTackyForFunction(f),
+        Goto g => EmityTackyForGoto(g),
+        IfElse ie => EmityTackyForIfElse(ie),
+        Label l => EmityTackyForLabel(l),
+        LabeledBlock lb => EmityTackyForLabeledBlock(lb),
+        NullStatement ns => EmityTackyForNullStatement(ns),
+        OpAssignment oa => EmityTackyForOpAssignment(oa),
+        PostfixOp po => EmityTackyForPostfixOp(po),
+        PrefixOp po => EmityTackyForPrefixOp(po),
+        Return r => EmityTackyForReturn(r),
+        Statement s => EmityTackyForStatement(s),
+        Switch s => EmityTackyForSwitch(s),
+        Ternary t => EmityTackyForTernary(t),
+        UnaryOp uo => EmityTackyForUnaryOp(uo),
+        Var v => EmityTackyForVar(v),
+        WhileLoop wl => EmityTackyForWhileLoop(wl),
+        // _ => throw new TackyGenError($"{GetType().Name}.{nameof(EmitTacky)} can't handle {node.GetType().Name} yet"),
+    };
 }

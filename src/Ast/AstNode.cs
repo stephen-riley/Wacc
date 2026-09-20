@@ -4,7 +4,7 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public abstract partial record AstNode
+public closed partial record AstNode
 {
     protected static readonly string INDENT = "  ";
 
