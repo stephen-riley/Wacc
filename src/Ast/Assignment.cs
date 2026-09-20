@@ -4,7 +4,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Assignment(IAstNode LExpr, IAstNode RExpr) : IAstNode
+public record Assignment(AstNode LExpr, AstNode RExpr) : AstNode
 {
     public static readonly Dictionary<TokenType, TokenType> AssignOpMap = new()
     {
@@ -20,19 +20,19 @@ public record Assignment(IAstNode LExpr, IAstNode RExpr) : IAstNode
         [CompoundBitwiseRight] = BitwiseRight,
     };
 
-    public bool IsBlockItem() => true;
+    public override bool IsBlockItem() => true;
 
-    public static bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
+    public new bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine($"Assignment(");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine(LExpr.ToPrettyString(indent + 1));
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine(RExpr.ToPrettyString(indent + 1));
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine(LExpr.ToPrettyString(indent + 1));
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine(RExpr.ToPrettyString(indent + 1));
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => [LExpr, RExpr];
+    public override IEnumerable<AstNode> Children() => [LExpr, RExpr];
 }

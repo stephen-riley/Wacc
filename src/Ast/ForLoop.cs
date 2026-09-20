@@ -7,17 +7,17 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode PostStat, IAstNode BodyBlock, string? Label = null) : IAstNode
+public record ForLoop(AstNode InitStat, AstNode CondExpr, AstNode PostStat, AstNode BodyBlock, string? Label = null) : AstNode
 {
     public const string DefaultLabel = "$__TODO_FOR_LABEL__";
 
     public VarMap? VariableMap;
 
-    public bool IsBlockItem() => true;
+    public override bool IsBlockItem() => true;
 
-    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(ForKw);
+    public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(ForKw);
 
-    public static ForLoop Parse(Queue<Token> tokenStream)
+    public new static ForLoop Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(ForKw);
         tokenStream.Expect(OpenParen);
@@ -37,17 +37,17 @@ public record ForLoop(IAstNode InitStat, IAstNode CondExpr, IAstNode PostStat, I
         return new ForLoop(initNode, condNode, updateNode, bodyBlock);
     }
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine($"ForLoop({Label ?? DefaultLabel}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"init={InitStat.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"post={PostStat.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"body={BodyBlock.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"init={InitStat.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"post={PostStat.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"body={BodyBlock.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => [InitStat, CondExpr, PostStat, BodyBlock];
+    public override IEnumerable<AstNode> Children() => [InitStat, CondExpr, PostStat, BodyBlock];
 }

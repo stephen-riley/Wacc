@@ -4,7 +4,7 @@ namespace Wacc.Validation;
 
 public static class AnalyzerExtensions
 {
-    public static void Walk(this IAstNode @this, Action<IAstNode> callback, bool prefix = true, bool postfix = false)
+    public static void Walk(this AstNode @this, Action<AstNode> callback, bool prefix = true, bool postfix = false)
     {
         if (prefix)
         {
@@ -20,7 +20,7 @@ public static class AnalyzerExtensions
         }
     }
 
-    public static void WalkFor<T>(this IAstNode @this, Action<T> callback, bool prefix = true, bool postfix = false)
+    public static void WalkFor<T>(this AstNode @this, Action<T> callback, bool prefix = true, bool postfix = false)
         => @this.Walk(node =>
         {
             if (node is T t)
@@ -29,7 +29,7 @@ public static class AnalyzerExtensions
             }
         });
 
-    public static void WalkFor(this IAstNode @this, Func<IAstNode, bool> pred, Action<IAstNode> callback, bool prefix = true, bool postfix = false)
+    public static void WalkFor(this AstNode @this, Func<AstNode, bool> pred, Action<AstNode> callback, bool prefix = true, bool postfix = false)
         => @this.Walk(node =>
         {
             if (pred(@this))

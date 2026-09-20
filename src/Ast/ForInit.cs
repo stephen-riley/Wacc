@@ -4,13 +4,13 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record ForInit(string DeclType, Var Identifier, IAstNode? Expr = null) : IAstNode
+public record ForInit(string DeclType, Var Identifier, AstNode? Expr = null) : AstNode
 {
-    public bool IsBlockItem() => true;
+    public override bool IsBlockItem() => true;
 
-    public static bool CanParse(Queue<Token> tokenStream) => Declaration.CanParse(tokenStream) | Expression.CanParse(tokenStream);
+    public new bool CanParse(Queue<Token> tokenStream) => Declaration.CanParse(tokenStream) | Expression.CanParse(tokenStream);
 
-    public static IAstNode Parse(Queue<Token> tokenStream)
+    public new static AstNode Parse(Queue<Token> tokenStream)
     {
         // `Declaration` eats its terminal semicolon, so `ForInit` makes sure
         // to eat `Expressions`'s as well for consistency.
@@ -32,21 +32,21 @@ public record ForInit(string DeclType, Var Identifier, IAstNode? Expr = null) : 
         }
     }
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.Append("Declaration(\n");
-        sb.Append(IAstNode.IndentStr(indent + 1)).Append($"type={DeclType}").Append('\n');
-        sb.Append(IAstNode.IndentStr(indent + 1)).Append(Identifier.ToPrettyString()).Append('\n');
+        sb.Append(AstNode.IndentStr(indent + 1)).Append($"type={DeclType}").Append('\n');
+        sb.Append(AstNode.IndentStr(indent + 1)).Append(Identifier.ToPrettyString()).Append('\n');
 
         if (Expr is not null)
         {
-            sb.Append(IAstNode.IndentStr(indent + 1)).Append(Expr.ToPrettyString(indent + 1)).Append('\n');
+            sb.Append(AstNode.IndentStr(indent + 1)).Append(Expr.ToPrettyString(indent + 1)).Append('\n');
         }
 
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => Expr is not null ? [Expr] : [];
+    public override IEnumerable<AstNode> Children() => Expr is not null ? [Expr] : [];
 }

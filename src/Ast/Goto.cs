@@ -5,14 +5,14 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Goto(Label Label) : IAstNode
+public record Goto(Label Label) : AstNode
 {
-    public bool IsBlockItem() => true;
+    public override bool IsBlockItem() => true;
 
-    public static bool CanParse(Queue<Token> tokenStream)
+    public new static bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor(GotoKw) && tokenStream.PeekFor(Identifier, depth: 2);
 
-    public static IAstNode Parse(Queue<Token> tokenStream)
+    public new static AstNode Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(GotoKw);
         var label = tokenStream.Expect(Identifier);
@@ -24,7 +24,7 @@ public record Goto(Label Label) : IAstNode
         return new Goto(new Label(label.Str));
     }
 
-    public string ToPrettyString(int indent = 0) => $"Goto({Label.ToPrettyString()})";
+    public override string ToPrettyString(int indent = 0) => $"Goto({Label.ToPrettyString()})";
 
-    public IEnumerable<IAstNode> Children() => [];
+    public override IEnumerable<AstNode> Children() => [];
 }

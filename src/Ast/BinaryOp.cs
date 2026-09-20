@@ -4,11 +4,11 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public class BinaryOp(TokenType op, IAstNode lExpr, IAstNode rExpr) : IAstNode
+public record BinaryOp(TokenType Op, AstNode LExpr, AstNode RExpr) : AstNode
 {
-    public TokenType Op => op;
-    public IAstNode LExpr => lExpr;
-    public IAstNode RExpr => rExpr;
+    // public TokenType Op => op;
+    // public IAstNode LExpr => lExpr;
+    // public IAstNode RExpr => rExpr;
 
     public static readonly HashSet<TokenType> ShortCircuitOps = [LogicalAnd, LogicalOr];
 
@@ -81,17 +81,17 @@ public class BinaryOp(TokenType op, IAstNode lExpr, IAstNode rExpr) : IAstNode
 
     public static readonly HashSet<TokenType> Operators = [.. Precedence.Keys];
 
-    public static bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
+    public new bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.Append($"Binary('{Op.Description()}'\n");
-        sb.Append(IAstNode.IndentStr(indent + 1)).Append(lExpr.ToPrettyString(indent + 1)).Append('\n');
-        sb.Append(IAstNode.IndentStr(indent + 1)).Append(rExpr.ToPrettyString(indent + 1)).Append('\n');
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent + 1)).Append(LExpr.ToPrettyString(indent + 1)).Append('\n');
+        sb.Append(AstNode.IndentStr(indent + 1)).Append(RExpr.ToPrettyString(indent + 1)).Append('\n');
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => [];
+    public override IEnumerable<AstNode> Children() => [];
 }

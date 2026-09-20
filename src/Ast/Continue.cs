@@ -4,19 +4,19 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Continue() : IAstNode
+public record Continue() : AstNode
 {
-    public bool IsBlockItem() => true;
+    public override bool IsBlockItem() => true;
 
-    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(ContinueKw);
+    public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(ContinueKw);
 
-    public static IAstNode Parse(Queue<Token> tokenStream)
+    public new static AstNode Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(ContinueKw);
         return new Continue();
     }
 
-    public string ToPrettyString(int indent = 0) => $"Continue()";
+    public override string ToPrettyString(int indent = 0) => $"Continue()";
 
-    public IEnumerable<IAstNode> Children() => [];
+    public override IEnumerable<AstNode> Children() => [];
 }

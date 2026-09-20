@@ -3,18 +3,18 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record PrefixOp(TokenType Op, IAstNode LValExpr) : IAstNode
+public record PrefixOp(TokenType Op, AstNode LValExpr) : AstNode
 {
-    public static bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
+    public new bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine($"PrefixOp({Op.Description()}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine(LValExpr.ToPrettyString(indent + 1));
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine(LValExpr.ToPrettyString(indent + 1));
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => [LValExpr];
+    public override IEnumerable<AstNode> Children() => [LValExpr];
 }

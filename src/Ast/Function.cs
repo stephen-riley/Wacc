@@ -6,11 +6,11 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Function(string Type, string Name, Block Body) : IAstNode
+public record Function(string Type, string Name, Block Body) : AstNode
 {
     public VarMap? VariableMap;
 
-    public static Function Parse(Queue<Token> tokenStream)
+    public new static Function Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(IntKw);
         var ident = Var.Parse(tokenStream);
@@ -23,15 +23,15 @@ public record Function(string Type, string Name, Block Body) : IAstNode
         return new Function("int", ident.Name ?? "", block);
     }
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine("Function(");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"name={Name}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"body={Body.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"name={Name}");
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"body={Body.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => [Body];
+    public override IEnumerable<AstNode> Children() => [Body];
 }

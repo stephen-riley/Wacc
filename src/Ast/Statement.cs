@@ -4,14 +4,14 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Statement() : IAstNode
+public record Statement() : AstNode
 {
     // This will list the statement types that may not have semicolons after them.
     public static readonly HashSet<TokenType> BlockStatements = [DefaultKw, CaseKw, DoKw, ForKw, IfKw, SwitchKw, WhileKw];
 
-    public bool IsBlockItem() => true;
+    public override bool IsBlockItem() => true;
 
-    public static bool CanParse(Queue<Token> tokenStream)
+    public new static bool CanParse(Queue<Token> tokenStream)
         => Break.CanParse(tokenStream)
             || Case.CanParse(tokenStream)
             || Continue.CanParse(tokenStream)
@@ -27,7 +27,7 @@ public record Statement() : IAstNode
             || Switch.CanParse(tokenStream)
             || WhileLoop.CanParse(tokenStream);
 
-    public static IAstNode Parse(Queue<Token> tokenStream, bool nested = false)
+    public static AstNode Parse(Queue<Token> tokenStream, bool nested = false)
     {
         if (Label.CanParse(tokenStream))
         {
@@ -61,8 +61,8 @@ public record Statement() : IAstNode
         return stat;
     }
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
         => throw new NotImplementedException($"{GetType().Name}.{nameof(ToPrettyString)}");
 
-    public IEnumerable<IAstNode> Children() => [];
+    public override IEnumerable<AstNode> Children() => [];
 }

@@ -16,10 +16,10 @@ public class VarAnalyzer : BaseAstRewriter
         return newAst is CompUnit unit ? unit : throw new ValidationError($"{newAst} is not a CompUnit");
     }
 
-    public override IAstNode OnBlockStat(Block stat, VarMap variableMap)
+    public override AstNode OnBlockStat(Block stat, VarMap variableMap)
         => base.OnBlockStat(stat, new VarMap(variableMap));
 
-    public override IAstNode OnDeclarationStat(Declaration stat, VarMap variableMap)
+    public override AstNode OnDeclarationStat(Declaration stat, VarMap variableMap)
     {
         var (declType, ident, init) = stat;
 
@@ -39,31 +39,31 @@ public class VarAnalyzer : BaseAstRewriter
         return new Declaration(declType, new Var(uniqueName), init);
     }
 
-    public override IAstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
+    public override AstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
     {
         var newMap = new VarMap(variableMap);
         return (DoLoop)base.OnDoLoopStat(stat, newMap) with { VariableMap = newMap };
     }
 
-    public override IAstNode OnForLoopStat(ForLoop stat, VarMap variableMap)
+    public override AstNode OnForLoopStat(ForLoop stat, VarMap variableMap)
     {
         var newMap = new VarMap(variableMap);
         return (ForLoop)base.OnForLoopStat(stat, newMap) with { VariableMap = newMap };
     }
 
-    public override IAstNode OnFunction(Function stat, VarMap variableMap)
+    public override AstNode OnFunction(Function stat, VarMap variableMap)
     {
         var newMap = new VarMap(variableMap);
         return (Function)base.OnFunction(stat, newMap) with { VariableMap = newMap };
     }
 
-    public override IAstNode OnWhileLoopStat(WhileLoop stat, VarMap variableMap)
+    public override AstNode OnWhileLoopStat(WhileLoop stat, VarMap variableMap)
     {
         var newMap = new VarMap(variableMap);
         return (WhileLoop)base.OnWhileLoopStat(stat, newMap) with { VariableMap = newMap };
     }
 
-    public override IAstNode OnVarExpr(Var expr, VarMap variableMap)
+    public override AstNode OnVarExpr(Var expr, VarMap variableMap)
     {
         if (variableMap.TryGetValue(expr.Name, out var globalName, out _))
         {
@@ -88,7 +88,7 @@ public class VarAnalyzer : BaseAstRewriter
         return $"${name}_{UniqueVarCounters[name]}";
     }
 
-    internal IAstNode OldResolveStatement(IAstNode stat, VarMap variableMap)
+    internal AstNode OldResolveStatement(AstNode stat, VarMap variableMap)
     {
         return stat switch
         {
@@ -97,7 +97,7 @@ public class VarAnalyzer : BaseAstRewriter
             Block b => Ext.Do(() =>
             {
                 var newMap = new VarMap(variableMap);
-                var blockItems = new List<IAstNode>();
+                var blockItems = new List<AstNode>();
                 foreach (var item in b.BlockItems)
                 {
                     blockItems.Add(ResolveStatement(item, newMap));
@@ -175,7 +175,7 @@ public class VarAnalyzer : BaseAstRewriter
         };
     }
 
-    internal IAstNode OldResolveExpr(IAstNode e, VarMap variableMap)
+    internal AstNode OldResolveExpr(AstNode e, VarMap variableMap)
     {
         switch (e)
         {

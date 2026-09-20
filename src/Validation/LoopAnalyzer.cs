@@ -12,31 +12,31 @@ public class LoopAnalyzer : BaseAstRewriter
         return newAst is CompUnit unit ? unit : throw new ValidationError($"{newAst} is not a CompUnit");
     }
 
-    public override IAstNode OnBlockStat(Block node, VarMap variableMap)
+    public override AstNode OnBlockStat(Block node, VarMap variableMap)
     {
         return (Block)base.OnBlockStat(node, node.VariableMap!);
     }
 
-    public override IAstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
+    public override AstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
     {
         var newLoopLabel = stat.VariableMap!.NewLoopLabel();
         return (DoLoop)base.OnDoLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
     }
-    public override IAstNode OnForLoopStat(ForLoop stat, VarMap variableMap)
+    public override AstNode OnForLoopStat(ForLoop stat, VarMap variableMap)
     {
         var newLoopLabel = stat.VariableMap!.NewLoopLabel();
         return (ForLoop)base.OnForLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
     }
 
-    public override IAstNode OnWhileLoopStat(WhileLoop stat, VarMap variableMap)
+    public override AstNode OnWhileLoopStat(WhileLoop stat, VarMap variableMap)
     {
         var newLoopLabel = stat.VariableMap!.NewLoopLabel();
         return (WhileLoop)base.OnWhileLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
     }
 
-    public override IAstNode OnStatDefault(IAstNode stat, VarMap variableMap) => stat;
+    public override AstNode OnStatDefault(AstNode stat, VarMap variableMap) => stat;
 
-    public override IAstNode OnVarExpr(Var expr, VarMap variableMap)
+    public override AstNode OnVarExpr(Var expr, VarMap variableMap)
     {
         if (variableMap.TryGetFromValues(expr.Name, out var globalName, out _))
         {

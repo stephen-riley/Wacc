@@ -7,17 +7,17 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Block(IAstNode[] BlockItems) : IAstNode
+public record Block(AstNode[] BlockItems) : AstNode
 {
     public VarMap? VariableMap;
 
-    public static bool CanParse(Queue<Token> tokenStream)
+    public new bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor(OpenBrace)
         || BlockItem.CanParse(tokenStream);
 
-    public static IAstNode Parse(Queue<Token> tokenStream, bool isDependent = false, bool forceBlock = false)
+    public static AstNode Parse(Queue<Token> tokenStream, bool isDependent = false, bool forceBlock = false)
     {
-        var children = new List<IAstNode>();
+        var children = new List<AstNode>();
 
         if (tokenStream.PeekFor(OpenBrace))
         {
@@ -42,19 +42,19 @@ public record Block(IAstNode[] BlockItems) : IAstNode
         }
     }
 
-    public IEnumerable<IAstNode> Children() => BlockItems;
+    public override IEnumerable<AstNode> Children() => BlockItems;
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine("Block(");
 
         foreach (var s in BlockItems)
         {
-            sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine(s.ToPrettyString(indent + 1));
+            sb.Append(AstNode.IndentStr(indent + 1)).AppendLine(s.ToPrettyString(indent + 1));
         }
 
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 }

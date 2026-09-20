@@ -5,19 +5,19 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Label(string Name) : IAstNode
+public record Label(string Name) : AstNode
 {
-    public static bool CanParse(Queue<Token> tokenStream)
+    public new static bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor(Identifier) && tokenStream.PeekFor(Colon, depth: 2);
 
-    public static Label Parse(Queue<Token> tokenStream)
+    public new static Label Parse(Queue<Token> tokenStream)
     {
         var label = tokenStream.Expect(Identifier);
         tokenStream.Expect(Colon);
         return new Label(label.Str ?? throw new ParseError($"No string for label token {label}"));
     }
 
-    public string ToPrettyString(int indent = 0) => $"Label({Name})";
+    public override string ToPrettyString(int indent = 0) => $"Label({Name})";
 
-    public IEnumerable<IAstNode> Children() => [];
+    public override IEnumerable<AstNode> Children() => [];
 }

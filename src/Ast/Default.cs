@@ -6,13 +6,13 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Default(IAstNode DefaultBlock) : IAstNode
+public record Default(AstNode DefaultBlock) : AstNode
 {
-    public bool IsBlockItem() => true;
+    public override bool IsBlockItem() => true;
 
-    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(DefaultKw);
+    public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(DefaultKw);
 
-    public static Default Parse(Queue<Token> tokenStream)
+    public new static Default Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(DefaultKw);
         tokenStream.Expect(Colon);
@@ -21,14 +21,14 @@ public record Default(IAstNode DefaultBlock) : IAstNode
         return new Default(defaultBlock);
     }
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine("Default(");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"block={DefaultBlock.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"block={DefaultBlock.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => [DefaultBlock];
+    public override IEnumerable<AstNode> Children() => [DefaultBlock];
 }

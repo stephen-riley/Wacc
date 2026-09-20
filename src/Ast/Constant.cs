@@ -3,17 +3,17 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record Constant(int Int) : IAstNode
+public record Constant(int Int) : AstNode
 {
-    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.Peek().TokenType == TokenType.Constant;
+    public new bool CanParse(Queue<Token> tokenStream) => tokenStream.Peek().TokenType == TokenType.Constant;
 
-    public static Constant Parse(Queue<Token> tokenStream)
+    public new static Constant Parse(Queue<Token> tokenStream)
     {
         var tok = tokenStream.Expect(TokenType.Constant);
         return new Constant(tok.Int);
     }
 
-    public IEnumerable<IAstNode> Children() => [];
+    public override IEnumerable<AstNode> Children() => [];
 
-    public string ToPrettyString(int indent = 0) => $"Constant({Int})";
+    public override string ToPrettyString(int indent = 0) => $"Constant({Int})";
 }

@@ -6,9 +6,9 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record CompUnit(Function[] Functions) : IAstNode
+public record CompUnit(Function[] Functions) : AstNode
 {
-    public static CompUnit Parse(Queue<Token> tokenStream)
+    public new static CompUnit Parse(Queue<Token> tokenStream)
     {
         var stats = new List<Function>();
 
@@ -20,18 +20,18 @@ public record CompUnit(Function[] Functions) : IAstNode
         return new CompUnit([.. stats]);
     }
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.Append("Program(\n");
         foreach (var stat in Functions)
         {
-            sb.Append(IAstNode.IndentStr(indent + 1));
+            sb.Append(AstNode.IndentStr(indent + 1));
             sb.Append(stat.ToPrettyString(indent + 1)).Append('\n');
         }
-        sb.Append(IAstNode.INDENT.X(indent)).Append(')');
+        sb.Append(AstNode.INDENT.X(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => [.. Functions];
+    public override IEnumerable<AstNode> Children() => [.. Functions];
 }

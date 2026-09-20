@@ -11,13 +11,13 @@ public class BaseAstRewriter
     public virtual CompUnit Validate(CompUnit program) => throw new ValidationError($"{GetType().Name} must override {nameof(Validate)}");
 
     #region StatementHandlers
-    public virtual IAstNode OnAssignmentStat(Assignment stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
+    public virtual AstNode OnAssignmentStat(Assignment stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
 
-    public virtual IAstNode OnBinaryOpStat(BinaryOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
+    public virtual AstNode OnBinaryOpStat(BinaryOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
 
-    public virtual IAstNode OnBlockStat(Block stat, VarMap variableMap)
+    public virtual AstNode OnBlockStat(Block stat, VarMap variableMap)
     {
-        var blockItems = new List<IAstNode>();
+        var blockItems = new List<AstNode>();
         foreach (var item in stat.BlockItems)
         {
             blockItems.Add(ResolveStatement(item, variableMap));
@@ -26,9 +26,9 @@ public class BaseAstRewriter
         return newBlock;
     }
 
-    public virtual IAstNode OnBreakStat(Break stat, VarMap variableMap) => stat;
+    public virtual AstNode OnBreakStat(Break stat, VarMap variableMap) => stat;
 
-    public virtual IAstNode OnCase(Case stat, VarMap variableMap) => stat;
+    public virtual AstNode OnCase(Case stat, VarMap variableMap) => stat;
 
     public virtual CompUnit OnCompUnit(CompUnit stat, VarMap variableMap)
     {
@@ -41,9 +41,9 @@ public class BaseAstRewriter
         return new CompUnit([.. newFuncs]);
     }
 
-    public virtual IAstNode OnContinueStat(Continue stat, VarMap variableMap) => stat;
+    public virtual AstNode OnContinueStat(Continue stat, VarMap variableMap) => stat;
 
-    public virtual IAstNode OnDeclarationStat(Declaration stat, VarMap variableMap)
+    public virtual AstNode OnDeclarationStat(Declaration stat, VarMap variableMap)
     {
         var (declType, ident, init) = stat;
         if (init is not null)
@@ -53,9 +53,9 @@ public class BaseAstRewriter
         return new Declaration(declType, ident, init);
     }
 
-    public virtual IAstNode OnDefault(Default stat, VarMap variableMap) => throw new NotImplementedException();
+    public virtual AstNode OnDefault(Default stat, VarMap variableMap) => throw new NotImplementedException();
 
-    public virtual IAstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
+    public virtual AstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
     {
         var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, variableMap);
         var body = ResolveStatement(stat.BodyBlock, variableMap);
@@ -63,9 +63,9 @@ public class BaseAstRewriter
         return newDo with { VariableMap = variableMap };
     }
 
-    public virtual IAstNode OnExpressionStat(Expression stat, VarMap variableMap) => new Expression(ResolveExpr(stat.SubExpr, variableMap));
+    public virtual AstNode OnExpressionStat(Expression stat, VarMap variableMap) => new Expression(ResolveExpr(stat.SubExpr, variableMap));
 
-    public virtual IAstNode OnForLoopStat(ForLoop stat, VarMap variableMap)
+    public virtual AstNode OnForLoopStat(ForLoop stat, VarMap variableMap)
     {
         var init = ResolveStatement(stat.InitStat, variableMap);
         var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, variableMap);
@@ -75,7 +75,7 @@ public class BaseAstRewriter
         return newFor;
     }
 
-    public virtual IAstNode OnFunction(Function stat, VarMap variableMap)
+    public virtual AstNode OnFunction(Function stat, VarMap variableMap)
     {
         var body = ResolveStatement(stat.Body, stat.Body.VariableMap!);
         if (body is Block b)
@@ -88,43 +88,43 @@ public class BaseAstRewriter
         }
     }
 
-    public virtual IAstNode OnIfElseStat(IfElse stat, VarMap variableMap)
+    public virtual AstNode OnIfElseStat(IfElse stat, VarMap variableMap)
         => new IfElse(
                 ResolveExpr(stat.CondExpr, variableMap),
                 ResolveStatement(stat.ThenBlock, variableMap),
                 stat.ElseBlock is not null ? ResolveStatement(stat.ElseBlock, variableMap) : null
             );
 
-    public virtual IAstNode OnGotoStat(Goto stat, VarMap variableMap) => stat;
+    public virtual AstNode OnGotoStat(Goto stat, VarMap variableMap) => stat;
 
-    public virtual IAstNode OnLabeledStatementStat(LabeledBlock stat, VarMap variableMap)
+    public virtual AstNode OnLabeledStatementStat(LabeledBlock stat, VarMap variableMap)
         => new LabeledBlock(
                 stat.Label,
                 ResolveStatement(stat.Stat, variableMap)
             );
 
-    public virtual IAstNode OnNullStatementStat(NullStatement stat, VarMap variableMap) => stat;
+    public virtual AstNode OnNullStatementStat(NullStatement stat, VarMap variableMap) => stat;
 
-    public virtual IAstNode OnPostfixOpStat(PostfixOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
+    public virtual AstNode OnPostfixOpStat(PostfixOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
 
-    public virtual IAstNode OnPrefixOpStat(PrefixOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
+    public virtual AstNode OnPrefixOpStat(PrefixOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
 
-    public virtual IAstNode OnReturnStat(Return stat, VarMap variableMap) => new Return(ResolveExpr(stat.Expr, variableMap));
+    public virtual AstNode OnReturnStat(Return stat, VarMap variableMap) => new Return(ResolveExpr(stat.Expr, variableMap));
 
-    public virtual IAstNode OnSwitch(Switch stat, VarMap variableMap)
+    public virtual AstNode OnSwitch(Switch stat, VarMap variableMap)
         => new Switch(
                 ResolveExpr(stat.CondExpr, variableMap),
                 ResolveStatement(stat.CaseBlock, variableMap)
             );
 
-    public virtual IAstNode OnTernaryStat(Ternary stat, VarMap variableMap)
+    public virtual AstNode OnTernaryStat(Ternary stat, VarMap variableMap)
         => new Ternary(
                 ResolveExpr(stat.CondExpr, variableMap),
                 ResolveExpr(stat.Middle, variableMap),
                 ResolveExpr(stat.Right, variableMap)
             );
 
-    public virtual IAstNode OnWhileLoopStat(WhileLoop stat, VarMap variableMap)
+    public virtual AstNode OnWhileLoopStat(WhileLoop stat, VarMap variableMap)
     {
         var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, variableMap);
         var body = ResolveStatement(stat.BodyBlock, variableMap);
@@ -132,13 +132,13 @@ public class BaseAstRewriter
         return newWhile with { VariableMap = variableMap };
     }
 
-    public virtual IAstNode OnStatDefault(IAstNode stat, VarMap variableMap)
+    public virtual AstNode OnStatDefault(AstNode stat, VarMap variableMap)
         => throw new ValidationError($"AST node {stat.GetType().Name} not handled yet");
 
     #endregion
 
     #region ExpressionHandlers
-    public virtual IAstNode OnAssignmentExpr(Assignment expr, VarMap variableMap)
+    public virtual AstNode OnAssignmentExpr(Assignment expr, VarMap variableMap)
     {
         if (expr.LExpr is not Var)
         {
@@ -147,13 +147,13 @@ public class BaseAstRewriter
         return new Assignment(ResolveExpr(expr.LExpr, variableMap), ResolveExpr(expr.RExpr, variableMap));
     }
 
-    public virtual IAstNode OnBinaryOpExpr(BinaryOp expr, VarMap variableMap) => new BinaryOp(expr.Op, ResolveExpr(expr.LExpr, variableMap), ResolveExpr(expr.RExpr, variableMap));
+    public virtual AstNode OnBinaryOpExpr(BinaryOp expr, VarMap variableMap) => new BinaryOp(expr.Op, ResolveExpr(expr.LExpr, variableMap), ResolveExpr(expr.RExpr, variableMap));
 
-    public virtual IAstNode OnConstantExpr(Constant expr, VarMap variableMap) => expr;
+    public virtual AstNode OnConstantExpr(Constant expr, VarMap variableMap) => expr;
 
-    public virtual IAstNode OnNullStatementExpr(NullStatement expr, VarMap variableMap) => expr;
+    public virtual AstNode OnNullStatementExpr(NullStatement expr, VarMap variableMap) => expr;
 
-    public virtual IAstNode OnPostfixOpExpr(PostfixOp expr, VarMap variableMap)
+    public virtual AstNode OnPostfixOpExpr(PostfixOp expr, VarMap variableMap)
     {
         if (expr.LValExpr is not Var)
         {
@@ -162,7 +162,7 @@ public class BaseAstRewriter
         return new PostfixOp(expr.Op, ResolveExpr(expr.LValExpr, variableMap));
     }
 
-    public virtual IAstNode OnPrefixOpExpr(PrefixOp expr, VarMap variableMap)
+    public virtual AstNode OnPrefixOpExpr(PrefixOp expr, VarMap variableMap)
     {
         if (expr.LValExpr is not Var)
         {
@@ -171,13 +171,13 @@ public class BaseAstRewriter
         return new PrefixOp(expr.Op, ResolveExpr(expr.LValExpr, variableMap));
     }
 
-    public virtual IAstNode OnTernaryExpr(Ternary expr, VarMap variableMap) => new Ternary(
+    public virtual AstNode OnTernaryExpr(Ternary expr, VarMap variableMap) => new Ternary(
                     ResolveExpr(expr.CondExpr, variableMap),
                     ResolveExpr(expr.Middle, variableMap),
                     ResolveExpr(expr.Right, variableMap)
                 );
 
-    public virtual IAstNode OnUnaryOpExpr(UnaryOp expr, VarMap variableMap)
+    public virtual AstNode OnUnaryOpExpr(UnaryOp expr, VarMap variableMap)
     {
         if (expr.Op.TokenType == TokenType.Minus && expr.Expr is Constant c)
         {
@@ -189,12 +189,12 @@ public class BaseAstRewriter
         }
     }
 
-    public virtual IAstNode OnVarExpr(Var expr, VarMap variableMap) => expr;
+    public virtual AstNode OnVarExpr(Var expr, VarMap variableMap) => expr;
 
-    public virtual IAstNode OnExprDefault(IAstNode expr, VarMap variableMap) => throw new ValidationError($"AST node {expr.GetType().Name} not handled yet");
+    public virtual AstNode OnExprDefault(AstNode expr, VarMap variableMap) => throw new ValidationError($"AST node {expr.GetType().Name} not handled yet");
     #endregion
 
-    protected IAstNode ResolveStatement(IAstNode stat, VarMap variableMap)
+    protected AstNode ResolveStatement(AstNode stat, VarMap variableMap)
     {
         return stat switch
         {
@@ -225,7 +225,7 @@ public class BaseAstRewriter
         };
     }
 
-    protected IAstNode ResolveExpr(IAstNode expr, VarMap variableMap)
+    protected AstNode ResolveExpr(AstNode expr, VarMap variableMap)
     {
         return expr switch
         {

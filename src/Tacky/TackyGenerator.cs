@@ -93,7 +93,7 @@ public class TackyGenerator(RuntimeState opts)
         return true;
     }
 
-    internal TacVal EmitTacky(IAstNode node)
+    internal TacVal EmitTacky(AstNode node)
     {
         switch (node)
         {
@@ -320,7 +320,7 @@ public class TackyGenerator(RuntimeState opts)
         }
     }
 
-    internal TacVal TacConstantOrExpression(IAstNode n)
+    internal TacVal TacConstantOrExpression(AstNode n)
     {
         if (n is Constant c)
         {

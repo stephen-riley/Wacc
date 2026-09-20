@@ -30,7 +30,7 @@ public record SemanticAnalyzer(RuntimeState Options)
         return true;
     }
 
-    public static CompUnit Validate(IAstNode ast)
+    public static CompUnit Validate(AstNode ast)
     {
         if (ast is CompUnit program)
         {

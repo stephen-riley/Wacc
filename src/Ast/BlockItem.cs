@@ -3,14 +3,14 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record BlockItem : IAstNode
+public record BlockItem : AstNode
 {
-    public static bool CanParse(Queue<Token> tokenStream)
+    public new static bool CanParse(Queue<Token> tokenStream)
         => Declaration.CanParse(tokenStream)
         || Statement.CanParse(tokenStream);
 
     // `isDependent` flags whether we're parsing a single statement inside an `if` or `while`
-    public static IAstNode Parse(Queue<Token> tokenStream, bool isDependent = false)
+    public static AstNode Parse(Queue<Token> tokenStream, bool isDependent = false)
     {
         if (!isDependent && Declaration.CanParse(tokenStream))
         {
@@ -22,10 +22,10 @@ public record BlockItem : IAstNode
         }
     }
 
-    public IEnumerable<IAstNode> Children()
+    public override IEnumerable<AstNode> Children()
     {
         throw new NotImplementedException();
     }
 
-    public virtual string ToPrettyString(int indent = 0) => throw new ParseError($"{GetType().Name}.{nameof(ToPrettyString)} should not be called");
+    public override string ToPrettyString(int indent = 0) => throw new ParseError($"{GetType().Name}.{nameof(ToPrettyString)} should not be called");
 }

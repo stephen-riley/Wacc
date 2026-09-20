@@ -39,7 +39,7 @@ public static class ParseExtentions
 
     public static bool Is(this Token tok, HashSet<TokenType> tokenTypes) => tokenTypes.Contains(tok.TokenType);
 
-    public static IAstNode? SearchFor<T>(this IAstNode @this, int depth = 10_000)
+    public static AstNode? SearchFor<T>(this AstNode @this, int depth = 10_000)
     {
         if (depth == 0) return null;
 

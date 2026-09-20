@@ -5,14 +5,14 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record UnaryOp(Token Op, IAstNode Expr) : IAstNode
+public record UnaryOp(Token Op, AstNode Expr) : AstNode
 {
     internal static readonly List<TokenType> UnaryOpTokens = [Complement, Minus, LogicalNot, Increment, Decrement];
 
-    public static bool CanParse(Queue<Token> tokenStream)
+    public new static bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor(UnaryOpTokens);
 
-    public static IAstNode Parse(Queue<Token> tokenStream)
+    public new static AstNode Parse(Queue<Token> tokenStream)
     {
         var op = tokenStream.Expect(UnaryOpTokens);
         var factor = Factor.Parse(tokenStream);
@@ -23,14 +23,14 @@ public record UnaryOp(Token Op, IAstNode Expr) : IAstNode
         };
     }
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.Append($"Unary('{Op.TokenType}'\n");
-        sb.Append(IAstNode.IndentStr(indent + 1)).Append(Expr.ToPrettyString(indent + 1)).Append('\n');
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent + 1)).Append(Expr.ToPrettyString(indent + 1)).Append('\n');
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => [Expr];
+    public override IEnumerable<AstNode> Children() => [Expr];
 }

@@ -6,13 +6,13 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record IfElse(IAstNode CondExpr, IAstNode ThenBlock, IAstNode? ElseBlock) : IAstNode
+public record IfElse(AstNode CondExpr, AstNode ThenBlock, AstNode? ElseBlock) : AstNode
 {
-    public bool IsBlockItem() => true;
+    public override bool IsBlockItem() => true;
 
-    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(IfKw);
+    public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(IfKw);
 
-    public static IfElse Parse(Queue<Token> tokenStream)
+    public new static IfElse Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(IfKw);
         tokenStream.Expect(OpenParen);
@@ -22,7 +22,7 @@ public record IfElse(IAstNode CondExpr, IAstNode ThenBlock, IAstNode? ElseBlock)
         var thenNode = Block.Parse(tokenStream, isDependent: true);
         var thenBlock = thenNode is Block || thenNode.IsBlockItem() ? thenNode : throw new ParseError($"{thenNode} is not a Block or BlockItem");
 
-        IAstNode? elseBlock = null;
+        AstNode? elseBlock = null;
 
         if (tokenStream.PeekFor(ElseKw))
         {
@@ -34,19 +34,19 @@ public record IfElse(IAstNode CondExpr, IAstNode ThenBlock, IAstNode? ElseBlock)
         return new IfElse(condExpr, thenBlock, elseBlock);
     }
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine("IfElse(");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"then={ThenBlock.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"then={ThenBlock.ToPrettyString(indent + 1)}");
         if (ElseBlock is not null)
         {
-            sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"else={CondExpr.ToPrettyString(indent + 1)}");
+            sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"else={CondExpr.ToPrettyString(indent + 1)}");
         }
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => ElseBlock is not null ? [CondExpr, ThenBlock, ElseBlock] : [CondExpr, ThenBlock];
+    public override IEnumerable<AstNode> Children() => ElseBlock is not null ? [CondExpr, ThenBlock, ElseBlock] : [CondExpr, ThenBlock];
 }

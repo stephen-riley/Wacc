@@ -6,13 +6,13 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Case(IAstNode CaseCondExpr, IAstNode CaseBlock) : IAstNode
+public record Case(AstNode CaseCondExpr, AstNode CaseBlock) : AstNode
 {
-    public bool IsBlockItem() => true;
+    public override bool IsBlockItem() => true;
 
-    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(CaseKw);
+    public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(CaseKw);
 
-    public static Case Parse(Queue<Token> tokenStream)
+    public new static Case Parse(Queue<Token> tokenStream)
     {
         tokenStream.Expect(CaseKw);
         var caseCond = Constant.Parse(tokenStream);
@@ -22,15 +22,15 @@ public record Case(IAstNode CaseCondExpr, IAstNode CaseBlock) : IAstNode
         return new Case(caseCond, caseBlock);
     }
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine("Case(");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"expr={CaseCondExpr.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"block={CaseBlock.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"expr={CaseCondExpr.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"block={CaseBlock.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => [CaseCondExpr, CaseBlock];
+    public override IEnumerable<AstNode> Children() => [CaseCondExpr, CaseBlock];
 }

@@ -5,11 +5,11 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Ternary(IAstNode CondExpr, IAstNode Middle, IAstNode Right) : IAstNode
+public record Ternary(AstNode CondExpr, AstNode Middle, AstNode Right) : AstNode
 {
-    public static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(Question);
+    public new bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(Question);
 
-    public static IAstNode Parse(Queue<Token> tokenStream, IAstNode left)
+    public static AstNode Parse(Queue<Token> tokenStream, AstNode left)
     {
         // At this point, `left` contains the condition expression.
         // .
@@ -24,16 +24,16 @@ public record Ternary(IAstNode CondExpr, IAstNode Middle, IAstNode Right) : IAst
         return new Ternary(left, middle, right);
     }
 
-    public string ToPrettyString(int indent = 0)
+    public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine("Ternary(");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"middle={Middle.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent + 1)).AppendLine($"right={Right.ToPrettyString(indent + 1)}");
-        sb.Append(IAstNode.IndentStr(indent)).Append(')');
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"middle={Middle.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"right={Right.ToPrettyString(indent + 1)}");
+        sb.Append(AstNode.IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public IEnumerable<IAstNode> Children() => [CondExpr, Middle, Right];
+    public override IEnumerable<AstNode> Children() => [CondExpr, Middle, Right];
 }

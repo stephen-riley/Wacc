@@ -6,13 +6,13 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Factor(IAstNode SubExpr) : IAstNode
+public record Factor(AstNode SubExpr) : AstNode
 {
-    public static bool CanParse(Queue<Token> tokenStream)
+    public new static bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor([TokenType.Constant, Identifier, OpenParen])
             || UnaryOp.CanParse(tokenStream);
 
-    public static IAstNode Parse(Queue<Token> tokenStream)
+    public new static AstNode Parse(Queue<Token> tokenStream)
     {
         var tok = tokenStream.Peek();
         var factor = tok.TokenType switch
@@ -43,7 +43,7 @@ public record Factor(IAstNode SubExpr) : IAstNode
         return factor;
     }
 
-    public string ToPrettyString(int indent = 0) => throw new ParseError($"{GetType().Name}.{nameof(ToPrettyString)} should not be called");
+    public override string ToPrettyString(int indent = 0) => throw new ParseError($"{GetType().Name}.{nameof(ToPrettyString)} should not be called");
 
-    public IEnumerable<IAstNode> Children() => [];
+    public override IEnumerable<AstNode> Children() => [];
 }
