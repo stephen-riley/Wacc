@@ -1,6 +1,5 @@
 using Wacc.Ast;
 using Wacc.Exceptions;
-using Wacc.Parse;
 using Wacc.Tacky.Instruction;
 using Wacc.Tokens;
 

@@ -1,5 +1,4 @@
 using System.Text;
-using Wacc.Exceptions;
 using Wacc.Parse;
 using Wacc.Tokens;
 using Wacc.Validation;
