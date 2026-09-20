@@ -21,6 +21,7 @@ public class TackyGenerator(RuntimeState opts)
 
     internal TacVar? LastTmpVar;
     internal int TmpVarCounter = 0;
+
     internal TacVar ReserveTmpVar()
     {
         if (functions.Count > 0)
@@ -50,7 +51,7 @@ public class TackyGenerator(RuntimeState opts)
     internal int TmpLabelCounter = 0;
     internal string ReserveTmpLabel(string prefix = "_l") => $"{prefix}{TmpLabelCounter++}";
 
-    private void Emit(ITackyInstr instr)
+    internal void Emit(ITackyInstr instr)
     {
         instructions.Add(instr);
         // Console.Error.WriteLine($"> {instr}");
