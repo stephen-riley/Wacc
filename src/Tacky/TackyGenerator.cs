@@ -8,6 +8,8 @@ namespace Wacc.Tacky;
 
 public class TackyGenerator(RuntimeState opts)
 {
+    internal static TacVar DUMMY = new("DUMMY");
+
     public RuntimeState Options = opts;
 
     internal List<TacFunction> functions = [];
@@ -299,12 +301,19 @@ public class TackyGenerator(RuntimeState opts)
                 Emit(new TacJump(contLabel));
                 return DUMMY;
 
+            case Default d:
+                EmitTacky(d.DefaultBlock);
+                return DUMMY;
+
             case LabeledBlock ls:
                 Emit(new TacLabel(GetCleanLabelName(ls.Label.Name)));
                 return EmitTacky(ls.Stat);
 
             case NullStatement:
                 return DUMMY;
+
+            case Switch sw:
+                return EmitSwitch(sw);
 
             default:
                 throw new NotImplementedException($"{GetType().Name}.{nameof(EmitTacky)} can't handle {node.GetType().Name} yet");
@@ -384,5 +393,35 @@ public class TackyGenerator(RuntimeState opts)
         return result;
     }
 
-    internal static TacVar DUMMY = new("DUMMY");
+    internal TacVar EmitSwitch(Switch sw)
+    {
+        var endLabel = ReserveTmpLabel("_sc");
+        BreakLabelStack.Push(endLabel);
+
+        var condVar = EmitTacky(sw.CondExpr);
+        var block = sw.CaseBlock as Block ?? throw new TackyGenError($"body of switch-case is not a Block");
+
+        var nextLabel = ReserveTmpLabel("_sc");
+        foreach (var stat in block.BlockItems)
+        {
+            if (stat is Case c)
+            {
+                var caseVal = EmitTacky(c.CaseCondExpr);
+                var dest = ReserveTmpVar();
+                Emit(new TacBinary(TokenType.EqualTo, condVar, caseVal, dest));
+                Emit(new TacJumpIfNotZero(dest, nextLabel));
+                EmitTacky(c.CaseBlock);
+                Emit(new TacLabel(nextLabel));
+                nextLabel = ReserveTmpLabel("_sc");
+            }
+            else if (stat is Default d)
+            {
+                EmitTacky(d.DefaultBlock);
+            }
+        }
+        Emit(new TacLabel(endLabel));
+
+        BreakLabelStack.Pop();
+        return DUMMY;
+    }
 }

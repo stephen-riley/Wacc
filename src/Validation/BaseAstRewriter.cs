@@ -53,6 +53,8 @@ public class BaseAstRewriter
         return new Declaration(declType, ident, init);
     }
 
+    public virtual IAstNode OnDefault(Default stat, VarMap variableMap) => throw new NotImplementedException();
+
     public virtual IAstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
     {
         var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, variableMap);
@@ -200,9 +202,11 @@ public class BaseAstRewriter
             BinaryOp => OnBinaryOpStat((BinaryOp)stat, variableMap),
             Block => OnBlockStat((Block)stat, variableMap),
             Break => OnBreakStat((Break)stat, variableMap),
+            Case => OnCase((Case)stat, variableMap),
             CompUnit => OnCompUnit((CompUnit)stat, variableMap),
             Continue => OnContinueStat((Continue)stat, variableMap),
             Declaration => OnDeclarationStat((Declaration)stat, variableMap),
+            Default => OnDefault((Default)stat, variableMap),
             DoLoop => OnDoLoopStat((DoLoop)stat, variableMap),
             Expression => OnExpressionStat((Expression)stat, variableMap),
             ForLoop => OnForLoopStat((ForLoop)stat, variableMap),
@@ -214,6 +218,7 @@ public class BaseAstRewriter
             PostfixOp => OnPostfixOpStat((PostfixOp)stat, variableMap),
             PrefixOp => OnPrefixOpStat((PrefixOp)stat, variableMap),
             Return => OnReturnStat((Return)stat, variableMap),
+            Switch => OnSwitch((Switch)stat, variableMap),
             Ternary => OnTernaryStat((Ternary)stat, variableMap),
             WhileLoop => OnWhileLoopStat((WhileLoop)stat, variableMap),
             _ => OnStatDefault(stat, variableMap)
