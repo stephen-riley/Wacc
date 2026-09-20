@@ -3,7 +3,7 @@ using Wacc.CodeGen.AbstractAsm.Operand;
 
 namespace Wacc.CodeGen.AbstractAsm.Instruction;
 
-public abstract record AsmInstruction : AsmObject
+public closed record AsmInstruction : AsmObject
 {
     public abstract int OperandCount { get; }
 

@@ -1,6 +1,6 @@
 namespace Wacc.Tacky.Instruction;
 
-public abstract record TacVal() : ITackyInstr
+public closed record TacVal() : ITackyInstr
 {
     public TacVar? Dst() => null;
 }

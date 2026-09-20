@@ -1,6 +1,6 @@
 namespace Wacc.CodeGen.AbstractAsm.Operand;
 
-public abstract record AsmDestOperand() : AsmOperand
+public closed record AsmDestOperand() : AsmOperand
 {
     public override void EmitIr(TextWriter stream)
         => throw new NotImplementedException($"{GetType().Name}.{nameof(EmitIr)}");
