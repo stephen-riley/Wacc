@@ -3,7 +3,7 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record Constant(int Int) : AstNode
+public partial record Constant(int Int) : AstNode
 {
     public new bool CanParse(Queue<Token> tokenStream) => tokenStream.Peek().TokenType == TokenType.Constant;
 

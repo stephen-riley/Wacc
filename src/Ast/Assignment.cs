@@ -4,7 +4,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Assignment(AstNode LExpr, AstNode RExpr) : AstNode
+public partial record Assignment(AstNode LExpr, AstNode RExpr) : AstNode
 {
     public static readonly Dictionary<TokenType, TokenType> AssignOpMap = new()
     {

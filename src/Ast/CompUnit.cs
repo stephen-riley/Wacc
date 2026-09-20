@@ -6,7 +6,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record CompUnit(Function[] Functions) : AstNode
+public partial record CompUnit(Function[] Functions) : AstNode
 {
     public new static CompUnit Parse(Queue<Token> tokenStream)
     {

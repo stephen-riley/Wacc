@@ -4,7 +4,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Statement() : AstNode
+public partial record Statement() : AstNode
 {
     // This will list the statement types that may not have semicolons after them.
     public static readonly HashSet<TokenType> BlockStatements = [DefaultKw, CaseKw, DoKw, ForKw, IfKw, SwitchKw, WhileKw];

@@ -5,7 +5,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record UnaryOp(Token Op, AstNode Expr) : AstNode
+public partial record UnaryOp(Token Op, AstNode Expr) : AstNode
 {
     internal static readonly List<TokenType> UnaryOpTokens = [Complement, Minus, LogicalNot, Increment, Decrement];
 

@@ -4,7 +4,7 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record Var(string Name) : AstNode
+public partial record Var(string Name) : AstNode
 {
     public new bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(TokenType.Identifier);
 

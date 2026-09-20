@@ -3,7 +3,7 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record OpAssignment(TokenType Operation, AstNode LExpr, AstNode RExpr) : AstNode
+public partial record OpAssignment(TokenType Operation, AstNode LExpr, AstNode RExpr) : AstNode
 {
     public override bool IsBlockItem() => true;
 

@@ -7,7 +7,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Block(AstNode[] BlockItems) : AstNode
+public partial record Block(AstNode[] BlockItems) : AstNode
 {
     public VarMap? VariableMap;
 

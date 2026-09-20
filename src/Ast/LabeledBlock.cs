@@ -3,7 +3,7 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record LabeledBlock(Label Label, AstNode Stat) : AstNode
+public partial record LabeledBlock(Label Label, AstNode Stat) : AstNode
 {
     public override bool IsBlockItem() => true;
 

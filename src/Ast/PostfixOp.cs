@@ -3,7 +3,7 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record PostfixOp(TokenType Op, AstNode LValExpr) : AstNode
+public partial record PostfixOp(TokenType Op, AstNode LValExpr) : AstNode
 {
     public new bool CanParse(Queue<Token> tokenStream) => throw new InvalidOperationException("should not be called");
 

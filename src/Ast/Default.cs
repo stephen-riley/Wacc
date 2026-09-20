@@ -6,7 +6,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Default(AstNode DefaultBlock) : AstNode
+public partial record Default(AstNode DefaultBlock) : AstNode
 {
     public override bool IsBlockItem() => true;
 

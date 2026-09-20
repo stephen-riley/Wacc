@@ -5,7 +5,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Label(string Name) : AstNode
+public partial record Label(string Name) : AstNode
 {
     public new static bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor(Identifier) && tokenStream.PeekFor(Colon, depth: 2);

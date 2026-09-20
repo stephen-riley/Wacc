@@ -4,7 +4,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Continue() : AstNode
+public partial record Continue() : AstNode
 {
     public override bool IsBlockItem() => true;
 

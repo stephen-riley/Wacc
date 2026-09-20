@@ -5,7 +5,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Ternary(AstNode CondExpr, AstNode Middle, AstNode Right) : AstNode
+public partial record Ternary(AstNode CondExpr, AstNode Middle, AstNode Right) : AstNode
 {
     public new bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(Question);
 

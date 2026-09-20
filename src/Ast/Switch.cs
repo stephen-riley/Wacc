@@ -6,7 +6,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Switch(AstNode CondExpr, AstNode CaseBlock) : AstNode
+public partial record Switch(AstNode CondExpr, AstNode CaseBlock) : AstNode
 {
     public override bool IsBlockItem() => true;
 

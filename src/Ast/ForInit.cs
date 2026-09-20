@@ -4,7 +4,7 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record ForInit(string DeclType, Var Identifier, AstNode? Expr = null) : AstNode
+public partial record ForInit(string DeclType, Var Identifier, AstNode? Expr = null) : AstNode
 {
     public override bool IsBlockItem() => true;
 

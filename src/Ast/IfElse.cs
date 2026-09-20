@@ -6,7 +6,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record IfElse(AstNode CondExpr, AstNode ThenBlock, AstNode? ElseBlock) : AstNode
+public partial record IfElse(AstNode CondExpr, AstNode ThenBlock, AstNode? ElseBlock) : AstNode
 {
     public override bool IsBlockItem() => true;
 

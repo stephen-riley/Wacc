@@ -4,7 +4,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record BinaryOp(TokenType Op, AstNode LExpr, AstNode RExpr) : AstNode
+public partial record BinaryOp(TokenType Op, AstNode LExpr, AstNode RExpr) : AstNode
 {
     // public TokenType Op => op;
     // public IAstNode LExpr => lExpr;

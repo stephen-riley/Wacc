@@ -7,7 +7,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record WhileLoop(AstNode CondExpr, AstNode BodyBlock, string? Label = null) : AstNode
+public partial record WhileLoop(AstNode CondExpr, AstNode BodyBlock, string? Label = null) : AstNode
 {
     public const string DefaultLabel = "$__TODO_WHILE_LABEL__";
 

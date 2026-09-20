@@ -6,7 +6,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Function(string Type, string Name, Block Body) : AstNode
+public partial record Function(string Type, string Name, Block Body) : AstNode
 {
     public VarMap? VariableMap;
 

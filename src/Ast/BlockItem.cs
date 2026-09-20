@@ -3,7 +3,7 @@ using Wacc.Tokens;
 
 namespace Wacc.Ast;
 
-public record BlockItem : AstNode
+public partial record BlockItem : AstNode
 {
     public new static bool CanParse(Queue<Token> tokenStream)
         => Declaration.CanParse(tokenStream)

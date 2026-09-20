@@ -6,7 +6,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Factor(AstNode SubExpr) : AstNode
+public partial record Factor(AstNode SubExpr) : AstNode
 {
     public new static bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor([TokenType.Constant, Identifier, OpenParen])

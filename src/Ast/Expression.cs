@@ -4,7 +4,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Expression(AstNode SubExpr) : AstNode
+public partial record Expression(AstNode SubExpr) : AstNode
 {
     public new static bool CanParse(Queue<Token> tokenStream)
         => Factor.CanParse(tokenStream);

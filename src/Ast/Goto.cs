@@ -5,7 +5,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public record Goto(Label Label) : AstNode
+public partial record Goto(Label Label) : AstNode
 {
     public override bool IsBlockItem() => true;
 
