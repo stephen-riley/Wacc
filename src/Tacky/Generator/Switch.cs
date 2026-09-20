@@ -13,6 +13,19 @@ public partial class TackyGenerator
         BreakLabelStack.Push(endLabel);
 
         var condVar = EmitTacky(sw.CondExpr);
+        if (sw.CaseBlock is NullStatement)
+        {
+            Emit(new TacLabel(endLabel));
+            BreakLabelStack.Pop();
+            return DUMMY;
+        }
+        else if (sw.CaseBlock is Block and { BlockItems.Length: 0 })
+        {
+            Emit(new TacLabel(endLabel));
+            BreakLabelStack.Pop();
+            return DUMMY;
+        }
+
         var block = sw.CaseBlock as Block ?? throw new TackyGenError($"body of switch-case is not a Block");
 
         var nextLabel = ReserveTmpLabel("_sc");
