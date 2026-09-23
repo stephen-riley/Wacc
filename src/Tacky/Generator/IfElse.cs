@@ -11,7 +11,7 @@ public partial class TackyGenerator
         {
             var endLabel = ReserveTmpLabel();
             var cond = EmitTacky(ie.CondExpr);
-            Emit(new TacJumpIfZero(cond, endLabel));
+            Emit(new TacJumpIfFalse(cond, endLabel));
             EmitTacky(ie.ThenBlock);
             Emit(new TacLabel(endLabel));
             return DUMMY;
@@ -21,7 +21,7 @@ public partial class TackyGenerator
             var elseLabel = ReserveTmpLabel();
             var endLabel = ReserveTmpLabel();
             var cond = EmitTacky(ie.CondExpr);
-            Emit(new TacJumpIfZero(cond, elseLabel));
+            Emit(new TacJumpIfFalse(cond, elseLabel));
             EmitTacky(ie.ThenBlock);
             Emit(new TacJump(endLabel));
             Emit(new TacLabel(elseLabel));

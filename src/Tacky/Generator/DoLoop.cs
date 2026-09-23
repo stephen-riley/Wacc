@@ -17,7 +17,7 @@ public partial class TackyGenerator
         EmitTacky(dl.BodyBlock);
         Emit(new TacLabel(condLabel));
         var condResult = EmitTacky(dl.CondExpr);
-        Emit(new TacJumpIfNotZero(condResult, startLabel));
+        Emit(new TacJumpIfTrue(condResult, startLabel));
         Emit(new TacLabel(endLabel));
 
         BreakLabelStack.Pop();

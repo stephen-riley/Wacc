@@ -16,8 +16,11 @@ public partial class TackyGenerator
         endLabel = ReserveTmpLabel("_for");
         EmitTacky(fl.InitStat);
         Emit(new TacLabel(startLabel));
-        var cond = EmitTacky(fl.CondExpr);
-        Emit(new TacJumpIfZero(cond, endLabel));
+        if (fl.CondExpr is not NullStatement)
+        {
+            var cond = EmitTacky(fl.CondExpr);
+            Emit(new TacJumpIfZero(cond, endLabel));
+        }
         EmitTacky(fl.BodyBlock);
         Emit(new TacLabel(contLabel));
         EmitTacky(fl.PostStat);

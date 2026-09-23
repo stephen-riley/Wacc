@@ -28,7 +28,11 @@ public class BaseAstRewriter
 
     public virtual AstNode OnBreakStat(Break stat, VarMap variableMap) => stat;
 
-    public virtual AstNode OnCase(Case stat, VarMap variableMap) => stat;
+    public virtual AstNode OnCase(Case stat, VarMap variableMap)
+        => new Case(
+            ResolveExpr(stat.CaseCondExpr, variableMap),
+            ResolveStatement(stat.CaseBlock, variableMap)
+        );
 
     public virtual CompUnit OnCompUnit(CompUnit stat, VarMap variableMap)
     {
@@ -69,7 +73,7 @@ public class BaseAstRewriter
     {
         var init = ResolveStatement(stat.InitStat, variableMap);
         var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, variableMap);
-        var post = stat.CondExpr is NullStatement ? stat.PostStat : ResolveExpr(stat.PostStat, variableMap);
+        var post = stat.PostStat is NullStatement ? stat.PostStat : ResolveExpr(stat.PostStat, variableMap);
         var body = ResolveStatement(stat.BodyBlock, variableMap);
         var newFor = new ForLoop(init, cond, post, body, variableMap.GetLoopLabel()) { VariableMap = variableMap };
         return newFor;

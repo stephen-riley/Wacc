@@ -13,13 +13,7 @@ public partial class TackyGenerator
         BreakLabelStack.Push(endLabel);
 
         var condVar = EmitTacky(sw.CondExpr);
-        if (sw.CaseBlock is NullStatement)
-        {
-            Emit(new TacLabel(endLabel));
-            BreakLabelStack.Pop();
-            return DUMMY;
-        }
-        else if (sw.CaseBlock is Block and { BlockItems.Length: 0 })
+        if ((sw.CaseBlock is NullStatement) || (sw.CaseBlock is Block and { BlockItems.Length: 0 }))
         {
             Emit(new TacLabel(endLabel));
             BreakLabelStack.Pop();
@@ -36,7 +30,7 @@ public partial class TackyGenerator
                 var caseVal = EmitTacky(c.CaseCondExpr);
                 var dest = ReserveTmpVar();
                 Emit(new TacBinary(TokenType.EqualTo, condVar, caseVal, dest));
-                Emit(new TacJumpIfNotZero(dest, nextLabel));
+                Emit(new TacJumpIfFalse(dest, nextLabel));
                 EmitTacky(c.CaseBlock);
                 Emit(new TacLabel(nextLabel));
                 nextLabel = ReserveTmpLabel("_sc");

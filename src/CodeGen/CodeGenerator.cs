@@ -110,6 +110,22 @@ public class CodeGenerator(RuntimeState opts)
                 ]);
                 break;
 
+            case TacJumpIfTrue jt:
+                Asm.AddRange([
+                    AF.Mov(TranslateVal(jt.Src), AF.SCRATCH1),
+                    AF.Cmp(AF.ZR, AF.SCRATCH1),
+                    AF.JmpCC(AsmCmp.CondCode.NE, jt.Identifier)
+                ]);
+                break;
+
+            case TacJumpIfFalse jf:
+                Asm.AddRange([
+                    AF.Mov(TranslateVal(jf.Src), AF.SCRATCH1),
+                    AF.Cmp(AF.ZR, AF.SCRATCH1),
+                    AF.JmpCC(AsmCmp.CondCode.EQ, jf.Identifier)
+                ]);
+                break;
+
             case TacUnary u when u.OpName == "Negate":
                 Asm.Add(AF.Mov(TranslateVal(u.Src), AF.PseudoOperand(u.Dst)));
                 Asm.Add(AF.Neg(AF.PseudoOperand(u.Dst)));

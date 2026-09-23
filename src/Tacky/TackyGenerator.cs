@@ -132,6 +132,5 @@ public partial class TackyGenerator(RuntimeState opts)
         UnaryOp uo => EmityTackyForUnaryOp(uo),
         Var v => EmityTackyForVar(v),
         WhileLoop wl => EmityTackyForWhileLoop(wl),
-        // _ => throw new TackyGenError($"{GetType().Name}.{nameof(EmitTacky)} can't handle {node.GetType().Name} yet"),
     };
 }

@@ -10,8 +10,8 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net11.0/Wacc.dll",
-            // "args": "fixtures/book_tests/chapter_8/valid/extra_credit/case_block.c -o /tmp/a.out --asmfile /tmp/a.S --verbose --tacky",
-            "args": "test -c 8 --stage emit --all --extra-credit",
+            "args": "fixtures/book_tests/chapter_8/valid/extra_credit/duffs_device.c -o tmp/bob/a --asmfile tmp/bob/a.S --verbose",
+            // "args": "test -c 8 --stage emit --all --extra-credit --fail-fast", // --fail-fast --verbose
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole",
@@ -23,8 +23,8 @@
             "name": "Debug /tmp/a.out",
             "type": "lldb",
             "request": "launch",
-            "cwd": "/tmp",
-            "program": "/tmp/a.out",
+            "cwd": "${workspaceFolder}/tmp/bob",
+            "program": "${workspaceFolder}/tmp/bob/a",
             "args": [],
             "stopOnEntry": true
         }

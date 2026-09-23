@@ -38,13 +38,13 @@ public partial record IfElse(AstNode CondExpr, AstNode ThenBlock, AstNode? ElseB
     {
         var sb = new StringBuilder();
         sb.AppendLine("IfElse(");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"then={ThenBlock.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent + 1)).AppendLine($"then={ThenBlock.ToPrettyString(indent + 1)}");
         if (ElseBlock is not null)
         {
-            sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"else={CondExpr.ToPrettyString(indent + 1)}");
+            sb.Append(IndentStr(indent + 1)).AppendLine($"else={ElseBlock.ToPrettyString(indent + 1)}");
         }
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
