@@ -40,6 +40,9 @@ public class TestOptions
     [Option('a', "all", HelpText = "Run all tests from the beginning")]
     public bool AllTests { get; set; } = false;
 
+    [Option('s', "silent", HelpText = "Silent output")]
+    public bool Silent { get; set; } = false;
+
     public bool AllStages => Stage == "";
 
     public string TestsPath => CliTestsPath ?? Environment.GetEnvironmentVariable(TestsPathEnvVar) ?? throw new InvalidOperationException("no tests path specified");

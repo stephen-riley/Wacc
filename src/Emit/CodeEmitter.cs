@@ -21,12 +21,12 @@ public class CodeEmitter(RuntimeState opts)
                 Console.Error.WriteLine("EMIT ASM:");
                 Console.Error.WriteLine("==========");
             }
-        }
 
-        if (Options.Verbose || Options.OnlyThroughCodeEmit || Options.Assemble)
-        {
-            var stream = Options.Verbose ? Console.Error : Console.Out;
-            stream.Write(Options.Assembly);
+            if (Options.Verbose || Options.OnlyThroughCodeEmit || Options.Assemble)
+            {
+                var stream = Options.Verbose ? Console.Error : Console.Out;
+                stream.Write(Options.Assembly);
+            }
         }
 
         return true;

@@ -32,20 +32,23 @@ public class CodeGenerator(RuntimeState opts)
 
     internal void Dump(string title, bool show = true)
     {
-        if (Options.Verbose)
+        if (!Options.Silent)
         {
-            Console.Error.WriteLine();
-            Console.Error.WriteLine($"{title.ToUpper()}:");
-            Console.Error.WriteLine(new string('=', title.Length + 1));
-        }
-
-        if (Options.Verbose || Options.OnlyThroughCodeGen)
-        {
-            var stream = Options.Verbose ? Console.Error : Console.Out;
-
-            foreach (var a in Asm)
+            if (Options.Verbose)
             {
-                a?.EmitIr(stream);
+                Console.Error.WriteLine();
+                Console.Error.WriteLine($"{title.ToUpper()}:");
+                Console.Error.WriteLine(new string('=', title.Length + 1));
+            }
+
+            if (Options.Verbose || Options.OnlyThroughCodeGen)
+            {
+                var stream = Options.Verbose ? Console.Error : Console.Out;
+
+                foreach (var a in Asm)
+                {
+                    a?.EmitIr(stream);
+                }
             }
         }
     }
