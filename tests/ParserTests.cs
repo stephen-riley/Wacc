@@ -8,7 +8,7 @@ namespace Wacc.Tests;
 [TestClass]
 public class ParserTests
 {
-    private static readonly RuntimeState DummyRts = new() { InputFile = "", Verbose = true };
+    private static readonly RuntimeState VoidRts = new() { InputFile = "", Verbose = true };
     private const string fixturesPath = "../../../../fixtures";
 
     [TestMethod]
@@ -26,9 +26,9 @@ public class ParserTests
     public void SimpleParse(string filename)
     {
         var text = File.ReadAllText($"{fixturesPath}/valid/{filename}");
-        var lexer = new Lexer(DummyRts);
+        var lexer = new Lexer(VoidRts);
         _ = lexer.Lex(text);
-        var parser = new Parser(DummyRts);
+        var parser = new Parser(VoidRts);
         parser.Parse();
     }
 

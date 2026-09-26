@@ -5,5 +5,5 @@ namespace Wacc.Tacky;
 
 public partial class TackyGenerator
 {
-    private TacVal EmityTackyForLabel(Label l) => EmitWithDummy(new TacLabel(GetCleanLabelName(l.Name)));
+    private TacVal EmityTackyForLabel(Label l) => EmitWithVoid(new TacLabel(GetCleanLabelName(l.Name)));
 }

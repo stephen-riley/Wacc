@@ -14,7 +14,7 @@ public partial class TackyGenerator
             Emit(new TacJumpIfFalse(cond, endLabel));
             EmitTacky(ie.ThenBlock);
             EmitLabel(endLabel);
-            return DUMMY;
+            return VOID;
         }
         else
         {
@@ -27,7 +27,7 @@ public partial class TackyGenerator
             EmitLabel(elseLabel);
             EmitTacky(ie.ElseBlock);
             EmitLabel(endLabel);
-            return DUMMY;
+            return VOID;
         }
     }
 }

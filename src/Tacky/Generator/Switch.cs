@@ -41,6 +41,6 @@ public partial class TackyGenerator
         BreakLabelStack.Pop();
         SwitchContextStack.Pop();
 
-        return DUMMY;
+        return VOID;
     }
 }

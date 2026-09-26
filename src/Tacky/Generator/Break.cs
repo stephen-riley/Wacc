@@ -15,6 +15,6 @@ public partial class TackyGenerator
 
         Emit(new TacJump(breakLabel));
 
-        return DUMMY;
+        return VOID;
     }
 }

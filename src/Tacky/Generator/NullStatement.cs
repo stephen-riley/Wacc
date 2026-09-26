@@ -5,5 +5,5 @@ namespace Wacc.Tacky;
 
 public partial class TackyGenerator
 {
-    private TacVal EmityTackyForNullStatement(NullStatement _) => DUMMY;
+    private TacVal EmityTackyForNullStatement(NullStatement _) => VOID;
 }

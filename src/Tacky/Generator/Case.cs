@@ -34,6 +34,6 @@ public partial class TackyGenerator
         EmitLabelAndGetNext(ref swc.NextCaseBlockLabel, "_scb");
         // EmitTacky(c.CaseBlock);
 
-        return DUMMY;
+        return VOID;
     }
 }

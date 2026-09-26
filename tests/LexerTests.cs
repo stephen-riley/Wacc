@@ -6,7 +6,7 @@ namespace Wacc.Tests;
 [TestClass]
 public class LexerTests
 {
-    private static readonly RuntimeState DummyRts = new() { InputFile = "" };
+    private static readonly RuntimeState VoidRts = new() { InputFile = "" };
     private const string fixturesPath = "../../../../fixtures";
 
     [TestMethod]
@@ -16,7 +16,7 @@ public class LexerTests
     [DataRow("+ - * / %", "[Plus:+ (0)], [Minus:- (2)], [Asterisk:* (4)], [Div:/ (6)], [Mod:% (8)]")]
     public void LexerHappyPath(string text, string expected)
     {
-        var lexer = new Lexer(DummyRts);
+        var lexer = new Lexer(VoidRts);
         var toks = lexer.Lex(text);
         var toksString = toks.ToTokenString();
         Assert.AreEqual(expected, toksString);
@@ -27,7 +27,7 @@ public class LexerTests
     [DataRow("// comment", "[COMMENT_SINGLE_LINE:// comment (0)]")]
     public void LexerHappyPathIncludeIgnored(string text, string expected)
     {
-        var lexer = new Lexer(DummyRts);
+        var lexer = new Lexer(VoidRts);
         var toks = lexer.Lex(text, includeIgnored: true);
         var toksString = toks.ToTokenString();
         Assert.AreEqual(expected, toksString);
@@ -38,7 +38,7 @@ public class LexerTests
     [DataRow("int main(void) { return 123abc; }", "Cannot tokenize '123abc; }'")]
     public void LexerExecptions(string text, string expectedMessage)
     {
-        var lexer = new Lexer(DummyRts);
+        var lexer = new Lexer(VoidRts);
         var ex = Assert.ThrowsException<LexerError>(() =>
         {
             var toks = lexer.Lex(text);
@@ -52,7 +52,7 @@ public class LexerTests
     public void LexComments(string filename)
     {
         var text = File.ReadAllText($"{fixturesPath}/valid/{filename}");
-        var lexer = new Lexer(DummyRts);
+        var lexer = new Lexer(VoidRts);
         lexer.Lex(text);
         // Test passes if no exception
     }
@@ -63,7 +63,7 @@ public class LexerTests
     public void LexExpectFailure(string filename)
     {
         var text = File.ReadAllText($"{fixturesPath}/invalid/{filename}");
-        var lexer = new Lexer(DummyRts);
+        var lexer = new Lexer(VoidRts);
         Assert.ThrowsException<LexerError>(() =>
         {
             lexer.Lex(text);

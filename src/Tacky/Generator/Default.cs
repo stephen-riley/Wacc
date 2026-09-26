@@ -16,6 +16,6 @@ public partial class TackyGenerator
         EmitLabel(swc.NextCaseEvalLabel);
         // EmitTacky(d.DefaultBlock);
 
-        return DUMMY;
+        return VOID;
     }
 }

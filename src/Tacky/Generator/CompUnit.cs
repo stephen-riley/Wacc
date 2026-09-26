@@ -11,6 +11,6 @@ public partial class TackyGenerator
         {
             EmitTacky(s);
         }
-        return DUMMY;
+        return VOID;
     }
 }

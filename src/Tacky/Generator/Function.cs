@@ -12,6 +12,6 @@ public partial class TackyGenerator
         TmpVarCounter = 0;     // TODO: awkward here, shouldn't have to do this manually
         EmitTacky(f.Body);
         Emit(new TacReturn(new TacConstant(0)));
-        return DUMMY;
+        return VOID;
     }
 }

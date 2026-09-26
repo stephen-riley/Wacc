@@ -22,6 +22,6 @@ public partial class TackyGenerator
 
         BreakLabelStack.Pop();
         ContinueLabelStack.Pop();
-        return DUMMY;
+        return VOID;
     }
 }

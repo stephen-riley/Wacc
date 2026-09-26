@@ -6,7 +6,7 @@ namespace Wacc.Tacky;
 
 public partial class TackyGenerator(RuntimeState opts)
 {
-    internal static TacVar DUMMY = new("DUMMY");
+    internal static TacVar VOID = new("VOID");
 
     public RuntimeState Options = opts;
 
@@ -70,10 +70,10 @@ public partial class TackyGenerator(RuntimeState opts)
         // Console.Error.WriteLine($"> {instr}");
     }
 
-    internal TacVal EmitWithDummy(ITackyInstr instr)
+    internal TacVal EmitWithVoid(ITackyInstr instr)
     {
         instructions.Add(instr);
-        return DUMMY;
+        return VOID;
     }
 
     internal void EmitLabel(string label) => Emit(new TacLabel(label));
