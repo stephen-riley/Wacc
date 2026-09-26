@@ -111,6 +111,8 @@ public enum TokenType
 
     [Description(";")] Semicolon,
 
+    [Description(",")] Comma,
+
     [Description("switch")] SwitchKw,
 
     [Description("void")] VoidKw,
