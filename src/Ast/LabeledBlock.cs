@@ -20,9 +20,9 @@ public partial record LabeledBlock(Label Label, AstNode Stat) : AstNode
     {
         var sb = new StringBuilder();
         sb.AppendLine("LabeledBlock(");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"label={Label.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"block={Stat.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent + 1)).AppendLine($"label={Label.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent + 1)).AppendLine($"block={Stat.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 

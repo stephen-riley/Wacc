@@ -51,10 +51,10 @@ public partial record Block(AstNode[] BlockItems) : AstNode
 
         foreach (var s in BlockItems)
         {
-            sb.Append(AstNode.IndentStr(indent + 1)).AppendLine(s.ToPrettyString(indent + 1));
+            sb.Append(IndentStr(indent + 1)).AppendLine(s.ToPrettyString(indent + 1));
         }
 
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 }

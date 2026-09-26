@@ -36,15 +36,15 @@ public partial record ForInit(string DeclType, Var Identifier, AstNode? Expr = n
     {
         var sb = new StringBuilder();
         sb.Append("Declaration(\n");
-        sb.Append(AstNode.IndentStr(indent + 1)).Append($"type={DeclType}").Append('\n');
-        sb.Append(AstNode.IndentStr(indent + 1)).Append(Identifier.ToPrettyString()).Append('\n');
+        sb.Append(IndentStr(indent + 1)).Append($"type={DeclType}").Append('\n');
+        sb.Append(IndentStr(indent + 1)).Append(Identifier.ToPrettyString()).Append('\n');
 
         if (Expr is not null)
         {
-            sb.Append(AstNode.IndentStr(indent + 1)).Append(Expr.ToPrettyString(indent + 1)).Append('\n');
+            sb.Append(IndentStr(indent + 1)).Append(Expr.ToPrettyString(indent + 1)).Append('\n');
         }
 
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 

@@ -13,10 +13,10 @@ public partial record OpAssignment(TokenType Operation, AstNode LExpr, AstNode R
     {
         var sb = new StringBuilder();
         sb.AppendLine($"OpAssignment(");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"op={Operation}");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine(LExpr.ToPrettyString(indent + 1));
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine(RExpr.ToPrettyString(indent + 1));
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent + 1)).AppendLine($"op={Operation}");
+        sb.Append(IndentStr(indent + 1)).AppendLine(LExpr.ToPrettyString(indent + 1));
+        sb.Append(IndentStr(indent + 1)).AppendLine(RExpr.ToPrettyString(indent + 1));
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 

@@ -5,44 +5,42 @@ using Wacc.Tokens;
 
 namespace Wacc.Tacky;
 
+public class SwitchContext
+{
+    public Switch SwitchNode = null!;
+    public TacVal CondEvalVar = null!;
+    public bool StartedCases = false;
+    public string NextCaseEvalLabel = null!;
+    public string NextCaseBlockLabel = null!;
+    public string EndLabel = null!;
+}
+
 public partial class TackyGenerator
 {
     private TacVal EmityTackyForSwitch(Switch sw)
     {
-        var endLabel = ReserveTmpLabel("_sc");
-        BreakLabelStack.Push(endLabel);
+        EmitLabel(ReserveTmpLabel("_sw"));
 
-        var condVar = EmitTacky(sw.CondExpr);
-        if ((sw.CaseBlock is NullStatement) || (sw.CaseBlock is Block and { BlockItems.Length: 0 }))
+        var swc = new SwitchContext()
         {
-            Emit(new TacLabel(endLabel));
-            BreakLabelStack.Pop();
-            return DUMMY;
-        }
+            SwitchNode = sw,
+            NextCaseEvalLabel = ReserveTmpLabel("_sce"),
+            NextCaseBlockLabel = ReserveTmpLabel("_scb"),
+            EndLabel = ReserveTmpLabel("_sw"),
+        };
 
-        var block = sw.CaseBlock as Block ?? throw new TackyGenError($"body of switch-case is not a Block");
+        SwitchContextStack.Push(swc);
+        BreakLabelStack.Push(swc.EndLabel);
 
-        var nextLabel = ReserveTmpLabel("_sc");
-        foreach (var stat in block.BlockItems)
-        {
-            if (stat is Case c)
-            {
-                var caseVal = EmitTacky(c.CaseCondExpr);
-                var dest = ReserveTmpVar();
-                Emit(new TacBinary(TokenType.EqualTo, condVar, caseVal, dest));
-                Emit(new TacJumpIfFalse(dest, nextLabel));
-                EmitTacky(c.CaseBlock);
-                Emit(new TacLabel(nextLabel));
-                nextLabel = ReserveTmpLabel("_sc");
-            }
-            else if (stat is Default d)
-            {
-                EmitTacky(d.DefaultBlock);
-            }
-        }
-        Emit(new TacLabel(endLabel));
+        swc.CondEvalVar = EmitTacky(sw.CondExpr);
+        EmitTacky(sw.SwitchBlock);
+
+        EmitLabel(swc.NextCaseEvalLabel);
+        EmitLabel(swc.EndLabel);
 
         BreakLabelStack.Pop();
+        SwitchContextStack.Pop();
+
         return DUMMY;
     }
 }

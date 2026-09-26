@@ -28,9 +28,9 @@ public partial record Assignment(AstNode LExpr, AstNode RExpr) : AstNode
     {
         var sb = new StringBuilder();
         sb.AppendLine($"Assignment(");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine(LExpr.ToPrettyString(indent + 1));
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine(RExpr.ToPrettyString(indent + 1));
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent + 1)).AppendLine(LExpr.ToPrettyString(indent + 1));
+        sb.Append(IndentStr(indent + 1)).AppendLine(RExpr.ToPrettyString(indent + 1));
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 

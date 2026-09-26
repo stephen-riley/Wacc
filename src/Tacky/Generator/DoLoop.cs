@@ -13,12 +13,12 @@ public partial class TackyGenerator
         BreakLabelStack.Push(endLabel);
         ContinueLabelStack.Push(condLabel);
 
-        Emit(new TacLabel(startLabel));
+        EmitLabel(startLabel);
         EmitTacky(dl.BodyBlock);
-        Emit(new TacLabel(condLabel));
+        EmitLabel(condLabel);
         var condResult = EmitTacky(dl.CondExpr);
         Emit(new TacJumpIfTrue(condResult, startLabel));
-        Emit(new TacLabel(endLabel));
+        EmitLabel(endLabel);
 
         BreakLabelStack.Pop();
         ContinueLabelStack.Pop();

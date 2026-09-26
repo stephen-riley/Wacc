@@ -23,8 +23,8 @@ public partial record Return(AstNode Expr) : AstNode
     {
         var sb = new StringBuilder();
         sb.AppendLine("Return(");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine(Expr.ToPrettyString(indent + 1));
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent + 1)).AppendLine(Expr.ToPrettyString(indent + 1));
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 

@@ -11,8 +11,8 @@ public partial record PrefixOp(TokenType Op, AstNode LValExpr) : AstNode
     {
         var sb = new StringBuilder();
         sb.AppendLine($"PrefixOp({Op.Description()}");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine(LValExpr.ToPrettyString(indent + 1));
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent + 1)).AppendLine(LValExpr.ToPrettyString(indent + 1));
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 

@@ -26,7 +26,7 @@ public partial record CompUnit(Function[] Functions) : AstNode
         sb.Append("Program(\n");
         foreach (var stat in Functions)
         {
-            sb.Append(AstNode.IndentStr(indent + 1));
+            sb.Append(IndentStr(indent + 1));
             sb.Append(stat.ToPrettyString(indent + 1)).Append('\n');
         }
         sb.Append(AstNode.INDENT.X(indent)).Append(')');

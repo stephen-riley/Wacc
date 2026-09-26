@@ -7,7 +7,7 @@ public partial class TackyGenerator
 {
     private TacVal EmityTackyForLabeledBlock(LabeledBlock lb)
     {
-        Emit(new TacLabel(GetCleanLabelName(lb.Label.Name)));
+        EmitLabel(GetCleanLabelName(lb.Label.Name));
         return DUMMY;
     }
 }

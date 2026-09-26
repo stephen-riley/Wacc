@@ -31,9 +31,9 @@ public partial record WhileLoop(AstNode CondExpr, AstNode BodyBlock, string? Lab
     {
         var sb = new StringBuilder();
         sb.AppendLine($"WhileLoop({Label ?? DefaultLabel}");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"body={BodyBlock.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent + 1)).AppendLine($"body={BodyBlock.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 

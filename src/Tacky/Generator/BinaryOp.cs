@@ -48,9 +48,9 @@ public partial class TackyGenerator
         Emit(new TacJump(endLabel));
 
         // set result to 0 and fall through to end
-        Emit(new TacLabel(falseLabel));
+        EmitLabel(falseLabel);
         Emit(new TacCopy(new TacConstant(0), result));
-        Emit(new TacLabel(endLabel));
+        EmitLabel(endLabel);
 
         return result;
     }
@@ -77,9 +77,9 @@ public partial class TackyGenerator
         Emit(new TacJump(endLabel));
 
         // set result to 1 and fall through to end
-        Emit(new TacLabel(trueLabel));
+        EmitLabel(trueLabel);
         Emit(new TacCopy(new TacConstant(1), result));
-        Emit(new TacLabel(endLabel));
+        EmitLabel(endLabel);
 
         return result;
     }

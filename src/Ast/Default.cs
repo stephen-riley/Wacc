@@ -5,7 +5,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public partial record Default(AstNode DefaultBlock) : AstNode
+public partial record Default() : AstNode
 {
     public override bool IsBlockItem() => true;
 
@@ -15,19 +15,17 @@ public partial record Default(AstNode DefaultBlock) : AstNode
     {
         tokenStream.Expect(DefaultKw);
         tokenStream.Expect(Colon);
-        var defaultBlock = Block.Parse(tokenStream);
 
-        return new Default(defaultBlock);
+        return new Default();
     }
 
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine("Default(");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"block={DefaultBlock.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public override IEnumerable<AstNode> Children() => [DefaultBlock];
+    public override IEnumerable<AstNode> Children() => [];
 }

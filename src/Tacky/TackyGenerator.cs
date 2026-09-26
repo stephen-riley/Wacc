@@ -17,6 +17,7 @@ public partial class TackyGenerator(RuntimeState opts)
 
     internal Stack<string> BreakLabelStack = [];
     internal Stack<string> ContinueLabelStack = [];
+    internal Stack<SwitchContext> SwitchContextStack = [];
 
     internal TacVar? LastTmpVar;
     internal int TmpVarCounter = 0;
@@ -36,6 +37,22 @@ public partial class TackyGenerator(RuntimeState opts)
         }
     }
 
+    internal Dictionary<string, int> TmpLabelCounters = [];
+    internal string ReserveTmpLabel(string prefix = "_l")
+    {
+        if (TmpLabelCounters.TryGetValue(prefix, out var counter))
+        {
+            var label = $"{prefix}{counter}";
+            TmpLabelCounters[prefix] = counter + 1;
+            return label;
+        }
+        else
+        {
+            TmpLabelCounters[prefix] = 1;
+            return $"{prefix}0";
+        }
+    }
+
     internal TacVar RegisterVar(TacVar tv)
     {
         functions[^1].Locals.Add(tv);
@@ -47,9 +64,6 @@ public partial class TackyGenerator(RuntimeState opts)
     internal TacVar? GetLastTmpVar() => LastTmpVar;
     internal TacVar GetLastTmpVarOrFail() => GetLastTmpVar() ?? throw new TackyGenError("need to know last temp var in UnaryOp, but none available");
 
-    internal int TmpLabelCounter = 0;
-    internal string ReserveTmpLabel(string prefix = "_l") => $"{prefix}{TmpLabelCounter++}";
-
     internal void Emit(ITackyInstr instr)
     {
         instructions.Add(instr);
@@ -60,6 +74,14 @@ public partial class TackyGenerator(RuntimeState opts)
     {
         instructions.Add(instr);
         return DUMMY;
+    }
+
+    internal void EmitLabel(string label) => Emit(new TacLabel(label));
+
+    internal void EmitLabelAndGetNext(ref string current, string prefix)
+    {
+        EmitLabel(current);
+        current = ReserveTmpLabel(prefix);
     }
 
     public bool Execute()

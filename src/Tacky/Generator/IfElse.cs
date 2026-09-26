@@ -13,7 +13,7 @@ public partial class TackyGenerator
             var cond = EmitTacky(ie.CondExpr);
             Emit(new TacJumpIfFalse(cond, endLabel));
             EmitTacky(ie.ThenBlock);
-            Emit(new TacLabel(endLabel));
+            EmitLabel(endLabel);
             return DUMMY;
         }
         else
@@ -24,9 +24,9 @@ public partial class TackyGenerator
             Emit(new TacJumpIfFalse(cond, elseLabel));
             EmitTacky(ie.ThenBlock);
             Emit(new TacJump(endLabel));
-            Emit(new TacLabel(elseLabel));
+            EmitLabel(elseLabel);
             EmitTacky(ie.ElseBlock);
-            Emit(new TacLabel(endLabel));
+            EmitLabel(endLabel);
             return DUMMY;
         }
     }

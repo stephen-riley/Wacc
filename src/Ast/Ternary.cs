@@ -28,10 +28,10 @@ public partial record Ternary(AstNode CondExpr, AstNode Middle, AstNode Right) :
     {
         var sb = new StringBuilder();
         sb.AppendLine("Ternary(");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"middle={Middle.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"right={Right.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent + 1)).AppendLine($"middle={Middle.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent + 1)).AppendLine($"right={Right.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 

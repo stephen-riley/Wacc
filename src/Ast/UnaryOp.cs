@@ -27,8 +27,8 @@ public partial record UnaryOp(Token Op, AstNode Expr) : AstNode
     {
         var sb = new StringBuilder();
         sb.Append($"Unary('{Op.TokenType}'\n");
-        sb.Append(AstNode.IndentStr(indent + 1)).Append(Expr.ToPrettyString(indent + 1)).Append('\n');
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent + 1)).Append(Expr.ToPrettyString(indent + 1)).Append('\n');
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 

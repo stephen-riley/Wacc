@@ -30,8 +30,8 @@ public class BaseAstRewriter
 
     public virtual AstNode OnCase(Case stat, VarMap variableMap)
         => new Case(
-            ResolveExpr(stat.CaseCondExpr, variableMap),
-            ResolveStatement(stat.CaseBlock, variableMap)
+            ResolveExpr(stat.CaseCondExpr, variableMap)
+        // ResolveStatement(stat.CaseBlock, variableMap)
         );
 
     public virtual CompUnit OnCompUnit(CompUnit stat, VarMap variableMap)
@@ -57,7 +57,10 @@ public class BaseAstRewriter
         return new Declaration(declType, ident, init);
     }
 
-    public virtual AstNode OnDefault(Default stat, VarMap variableMap) => throw new NotImplementedException();
+    public virtual AstNode OnDefault(Default stat, VarMap variableMap)
+        => new Default(
+        // ResolveStatement(stat.DefaultBlock, variableMap)
+        );
 
     public virtual AstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
     {
@@ -118,7 +121,7 @@ public class BaseAstRewriter
     public virtual AstNode OnSwitch(Switch stat, VarMap variableMap)
         => new Switch(
                 ResolveExpr(stat.CondExpr, variableMap),
-                ResolveStatement(stat.CaseBlock, variableMap)
+                ResolveStatement(stat.SwitchBlock, variableMap)
             );
 
     public virtual AstNode OnTernaryStat(Ternary stat, VarMap variableMap)

@@ -15,10 +15,10 @@ public partial class TackyGenerator
         var middle = EmitTacky(t.Middle);
         Emit(new TacCopy(middle, result));
         Emit(new TacJump(endLabel));
-        Emit(new TacLabel(altLabel));
+        EmitLabel(altLabel);
         var right = EmitTacky(t.Right);
         Emit(new TacCopy(right, result));
-        Emit(new TacLabel(endLabel));
+        EmitLabel(endLabel);
         return result;
     }
 }

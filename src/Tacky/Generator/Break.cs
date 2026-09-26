@@ -12,7 +12,9 @@ public partial class TackyGenerator
         {
             throw new TackyGenError("no break label in this scope");
         }
+
         Emit(new TacJump(breakLabel));
+
         return DUMMY;
     }
 }

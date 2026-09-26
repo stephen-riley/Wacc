@@ -27,9 +27,9 @@ public partial record Function(string Type, string Name, Block Body) : AstNode
     {
         var sb = new StringBuilder();
         sb.AppendLine("Function(");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"name={Name}");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"body={Body.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent + 1)).AppendLine($"name={Name}");
+        sb.Append(IndentStr(indent + 1)).AppendLine($"body={Body.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 

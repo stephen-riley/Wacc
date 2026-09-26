@@ -5,7 +5,7 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public partial record Switch(AstNode CondExpr, AstNode CaseBlock) : AstNode
+public partial record Switch(AstNode CondExpr, AstNode SwitchBlock) : AstNode
 {
     public override bool IsBlockItem() => true;
 
@@ -18,20 +18,20 @@ public partial record Switch(AstNode CondExpr, AstNode CaseBlock) : AstNode
         var condExpr = Expression.Parse(tokenStream);
         tokenStream.Expect(CloseParen);
 
-        var caseBlock = Block.Parse(tokenStream);
+        var switchBlock = Block.Parse(tokenStream);
 
-        return new Switch(condExpr, caseBlock);
+        return new Switch(condExpr, switchBlock);
     }
 
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.AppendLine("Switch(");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent + 1)).AppendLine($"block={CaseBlock.ToPrettyString(indent + 1)}");
-        sb.Append(AstNode.IndentStr(indent)).Append(')');
+        sb.Append(IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent + 1)).AppendLine($"block={SwitchBlock.ToPrettyString(indent + 1)}");
+        sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }
 
-    public override IEnumerable<AstNode> Children() => [CondExpr, CaseBlock];
+    public override IEnumerable<AstNode> Children() => [CondExpr, SwitchBlock];
 }
