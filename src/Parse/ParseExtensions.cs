@@ -13,10 +13,29 @@ public static class ParseExtentions
         return token is not null && token.TokenType == tokenType;
     }
 
-    public static bool PeekFor(this Queue<Token> tokenStream, IEnumerable<TokenType> tokenTypes, int depth = 1)
+    public static bool PeekForOneOf(this Queue<Token> tokenStream, IEnumerable<TokenType> tokenTypes, int depth = 1)
     {
         Token? token = depth == 1 ? tokenStream.Peek() : tokenStream.ElementAtOrDefault(depth - 1);
         return token is not null && new HashSet<TokenType>(tokenTypes).Contains(token.TokenType);
+    }
+
+    public static bool PeekForSequence(this Queue<Token> tokenStream, IEnumerable<TokenType> tokenTypes)
+    {
+        if (tokenStream.Count < tokenTypes.Count())
+        {
+            return false;
+        }
+
+        foreach (var (tok, index) in tokenTypes.Select((t, i) => (t, i)))
+        {
+            var token = tokenStream.ElementAtOrDefault(index);
+            if (token is null || token.TokenType != tok)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static bool TryExpect(this Queue<Token> tokenStream, IEnumerable<TokenType> tokenTypes, [NotNullWhen(true)] out Token topToken)

@@ -122,6 +122,7 @@ public partial class TackyGenerator(RuntimeState opts)
 
     internal TacVal EmitTacky(AstNode node) => node switch
     {
+        ArgumentList al => EmitTackyForArgumentList(al),
         Assignment a => EmityTackyForAssignment(a),
         BinaryOp bo => EmityTackyForBinaryOp(bo),
         Block b => EmityTackyForBlock(b),
@@ -131,20 +132,22 @@ public partial class TackyGenerator(RuntimeState opts)
         CompUnit cu => EmityTackyForCompUnit(cu),
         Constant c => EmityTackyForConstant(c),
         Continue c => EmityTackyForContinue(c),
-        Declaration d => EmityTackyForDeclaration(d),
-        Default d => EmityTackyForDefault(d),
+        Declaration d => EmitTackyForDeclaration(d),
+        Default df => EmityTackyForDefault(df),
         DoLoop dl => EmityTackyForDoLoop(dl),
         Expression e => EmityTackyForExpression(e),
         Factor f => EmityTackyForFactor(f),
         ForInit fi => EmityTackyForForInit(fi),
         ForLoop fl => EmityTackyForForLoop(fl),
-        Function f => EmityTackyForFunction(f),
+        FunctionCall fc => EmitTackyForFunctionCall(fc),
+        FunctionDecl f => EmitTackyForFunctionDecl(f),
         Goto g => EmityTackyForGoto(g),
         IfElse ie => EmityTackyForIfElse(ie),
         Label l => EmityTackyForLabel(l),
         LabeledBlock lb => EmityTackyForLabeledBlock(lb),
         NullStatement ns => EmityTackyForNullStatement(ns),
         OpAssignment oa => EmityTackyForOpAssignment(oa),
+        ParamList pl => EmitTackyForParamList(pl),
         PostfixOp po => EmityTackyForPostfixOp(po),
         PrefixOp po => EmityTackyForPrefixOp(po),
         Return r => EmityTackyForReturn(r),
@@ -153,6 +156,7 @@ public partial class TackyGenerator(RuntimeState opts)
         Ternary t => EmityTackyForTernary(t),
         UnaryOp uo => EmityTackyForUnaryOp(uo),
         Var v => EmityTackyForVar(v),
+        VarDecl d => EmityTackyForVarDecl(d),
         WhileLoop wl => EmityTackyForWhileLoop(wl),
     };
 }

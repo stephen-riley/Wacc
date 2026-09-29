@@ -10,7 +10,7 @@ public partial record UnaryOp(Token Op, AstNode Expr) : AstNode
     internal static readonly List<TokenType> UnaryOpTokens = [Complement, Minus, LogicalNot, Increment, Decrement];
 
     public new static bool CanParse(Queue<Token> tokenStream)
-        => tokenStream.PeekFor(UnaryOpTokens);
+        => tokenStream.PeekForOneOf(UnaryOpTokens);
 
     public new static AstNode Parse(Queue<Token> tokenStream)
     {

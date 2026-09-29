@@ -36,26 +36,16 @@ public class BaseAstRewriter
 
     public virtual CompUnit OnCompUnit(CompUnit stat, VarMap variableMap)
     {
-        var newFuncs = new List<Function>();
+        var newFuncs = new List<FunctionDecl>();
         foreach (var func in stat.Functions)
         {
-            var nf = (Function)ResolveStatement(func, variableMap);
+            var nf = (FunctionDecl)ResolveStatement(func, variableMap);
             newFuncs.Add(nf);
         }
         return new CompUnit([.. newFuncs]);
     }
 
     public virtual AstNode OnContinueStat(Continue stat, VarMap variableMap) => stat;
-
-    public virtual AstNode OnDeclarationStat(Declaration stat, VarMap variableMap)
-    {
-        var (declType, ident, init) = stat;
-        if (init is not null)
-        {
-            init = ResolveExpr(init, variableMap);
-        }
-        return new Declaration(declType, ident, init);
-    }
 
     public virtual AstNode OnDefault(Default stat, VarMap variableMap)
         => new Default(
@@ -82,16 +72,18 @@ public class BaseAstRewriter
         return newFor;
     }
 
-    public virtual AstNode OnFunction(Function stat, VarMap variableMap)
+    public virtual AstNode OnFunctionDecl(FunctionDecl stat, VarMap variableMap)
     {
-        var body = ResolveStatement(stat.Body, stat.Body.VariableMap!);
-        if (body is Block b)
+        var body = default(Block);
+
+        if (stat.Body is not null)
         {
-            return new Function(stat.Type, stat.Name, b) with { VariableMap = stat.VariableMap };
+            body = (Block?)ResolveStatement(stat.Body, stat.Body.VariableMap!);
+            return new FunctionDecl(stat.FuncType, stat.Identifier, stat.Params, body) with { VariableMap = stat.VariableMap };
         }
         else
         {
-            throw new ValidationError($"Function {stat.Name} body must be a block");
+            return new FunctionDecl(stat.FuncType, stat.Identifier, stat.Params) with { VariableMap = stat.VariableMap };
         }
     }
 
@@ -112,6 +104,8 @@ public class BaseAstRewriter
 
     public virtual AstNode OnNullStatementStat(NullStatement stat, VarMap variableMap) => stat;
 
+    public virtual AstNode OnParamListStat(ParamList stat, VarMap variableMap) => stat;
+
     public virtual AstNode OnPostfixOpStat(PostfixOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
 
     public virtual AstNode OnPrefixOpStat(PrefixOp stat, VarMap variableMap) => ResolveExpr(stat, variableMap);
@@ -130,6 +124,16 @@ public class BaseAstRewriter
                 ResolveExpr(stat.Middle, variableMap),
                 ResolveExpr(stat.Right, variableMap)
             );
+
+    public virtual AstNode OnVarDeclStat(VarDecl stat, VarMap variableMap)
+    {
+        var (declType, ident, init) = stat;
+        if (init is not null)
+        {
+            init = ResolveExpr(init, variableMap);
+        }
+        return new VarDecl(declType, ident, init);
+    }
 
     public virtual AstNode OnWhileLoopStat(WhileLoop stat, VarMap variableMap)
     {
@@ -212,21 +216,22 @@ public class BaseAstRewriter
             Case => OnCase((Case)stat, variableMap),
             CompUnit => OnCompUnit((CompUnit)stat, variableMap),
             Continue => OnContinueStat((Continue)stat, variableMap),
-            Declaration => OnDeclarationStat((Declaration)stat, variableMap),
             Default => OnDefault((Default)stat, variableMap),
             DoLoop => OnDoLoopStat((DoLoop)stat, variableMap),
             Expression => OnExpressionStat((Expression)stat, variableMap),
             ForLoop => OnForLoopStat((ForLoop)stat, variableMap),
-            Function => OnFunction((Function)stat, variableMap),
+            FunctionDecl => OnFunctionDecl((FunctionDecl)stat, variableMap),
             Goto => OnGotoStat((Goto)stat, variableMap),
             IfElse => OnIfElseStat((IfElse)stat, variableMap),
             LabeledBlock => OnLabeledStatementStat((LabeledBlock)stat, variableMap),
             NullStatement => OnNullStatementExpr((NullStatement)stat, variableMap),
+            ParamList => OnParamListStat((ParamList)stat, variableMap),
             PostfixOp => OnPostfixOpStat((PostfixOp)stat, variableMap),
             PrefixOp => OnPrefixOpStat((PrefixOp)stat, variableMap),
             Return => OnReturnStat((Return)stat, variableMap),
             Switch => OnSwitch((Switch)stat, variableMap),
             Ternary => OnTernaryStat((Ternary)stat, variableMap),
+            VarDecl => OnVarDeclStat((VarDecl)stat, variableMap),
             WhileLoop => OnWhileLoopStat((WhileLoop)stat, variableMap),
             _ => OnStatDefault(stat, variableMap)
         };

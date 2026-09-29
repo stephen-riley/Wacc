@@ -1,21 +1,13 @@
 using Wacc.Ast;
+using Wacc.Exceptions;
 using Wacc.Tacky.Instruction;
 
 namespace Wacc.Tacky;
 
 public partial class TackyGenerator
 {
-    private TacVal EmityTackyForDeclaration(Declaration d)
+    private TacVal EmitTackyForDeclaration(Declaration d)
     {
-        if (d.Expr is null)
-        {
-            return RegisterVar(new TacVar(d.Identifier.Name));
-        }
-        else
-        {
-            var declResult = EmitTacky(d.Expr);
-            Emit(new TacCopy(declResult, RegisterVar(new TacVar(d.Identifier.Name))));
-            return declResult;
-        }
+        throw new NotImplementedException("Tacky generation for Declaration is not implemented yet.");
     }
 }

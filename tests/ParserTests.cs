@@ -33,29 +33,29 @@ public class ParserTests
     }
 
     [TestMethod]
-    public void ParseDeclarationNoExpression()
+    public void ParseVarDeclNoExpression()
     {
         var lexer = new Lexer(new RuntimeState() { InputFile = "" });
         var code = "int a;";
         var tokens = lexer.Lex(code);
         var tokenStream = new Queue<Token>(tokens);
 
-        Assert.IsTrue(Declaration.CanParse(tokenStream));
-        var decl = Declaration.Parse(tokenStream);
+        Assert.IsTrue(VarDecl.CanParse(tokenStream));
+        var decl = VarDecl.Parse(tokenStream);
         Assert.AreEqual("a", decl.Identifier.Name);
         Assert.IsNull(decl.Expr);
     }
 
     [TestMethod]
-    public void ParseDeclarationWithExpression()
+    public void ParseVarDeclWithExpression()
     {
         var lexer = new Lexer(new RuntimeState() { InputFile = "" });
         var code = "int a = 2 * 3;";
         var tokens = lexer.Lex(code);
         var tokenStream = new Queue<Token>(tokens);
 
-        Assert.IsTrue(Declaration.CanParse(tokenStream));
-        var decl = Declaration.Parse(tokenStream);
+        Assert.IsTrue(VarDecl.CanParse(tokenStream));
+        var decl = VarDecl.Parse(tokenStream);
         Assert.AreEqual("a", decl.Identifier.Name);
         Assert.IsInstanceOfType<BinaryOp>(decl.Expr);
     }
