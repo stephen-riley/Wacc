@@ -13,7 +13,7 @@ public class Parser(RuntimeState opts)
     public bool Parse()
     {
         var toks = new Queue<Token>(Options.TokenStream);
-        toks.Enqueue(new Token(TokenType.EOF, Options.Text.Length + 1, "", 0));
+        toks.Enqueue(new Token(TokenType.EOF, Options.Text.Length + 1, 1, "", 0));
         var program = CompUnit.Parse(toks);
         Options.Ast = program ?? throw new ParseError("Parsing did not return a Program AST node");
 

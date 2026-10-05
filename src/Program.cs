@@ -7,7 +7,7 @@ Parser.Default.ParseArguments<RuntimeState, TestOptions>(args)
     {
         try
         {
-            rts.Text = File.ReadAllText(rts.InputFile);
+            rts.Text = File.ReadAllLines(rts.InputFile);
             new Driver(rts).Entrypoint();
         }
         catch (Exception e)

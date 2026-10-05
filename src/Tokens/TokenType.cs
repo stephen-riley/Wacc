@@ -121,7 +121,11 @@ public enum TokenType
 
     [Description("<// COMMENT>")] COMMENT_SINGLE_LINE,
 
-    [Description("</* COMMENT */>")] COMMENT_MULTI_LINE,
+    [Description("</* COMMENT */>")] COMMENT_MULTILINE,
+
+    [Description("<*/>")] COMMENT_MULTILINE_CLOSE,
+
+    [Description("</*>")] COMMENT_MULTILINE_OPEN,
 
     [Description("<#DIRECTIVE>")] PREPROCESSOR_DIRECTIVE,
 

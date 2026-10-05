@@ -24,7 +24,7 @@ public class CodeGenTests
     [DataRow("tmp.23")]
     [DataRow("tmp.-3")]
     public void InvalidTmpToRegister(string tmp)
-        => Assert.ThrowsException<CodeGenError>(() => CodeGenerator.AssignRegisterForTmp(tmp));
+        => Assert.Throws<CodeGenError>(() => CodeGenerator.AssignRegisterForTmp(tmp));
 
     [TestMethod]
     [DataRow(0, 0)]

@@ -51,9 +51,7 @@ public class RuntimeStateTests
     [DataRow("/tmp/fun.in.c", "/tmp/fun.out.S", "/tmp/fun.out")]
     public void BaseFilename(string? inputFile, string? outputFile, string expected)
     {
-#nullable disable
-        var rts = new RuntimeState() { InputFile = inputFile, OutputFile = outputFile };
-#nullable restore
+        var rts = new RuntimeState() { InputFile = inputFile!, OutputFile = outputFile };
         Assert.AreEqual(expected, rts.BaseFilename);
     }
 }

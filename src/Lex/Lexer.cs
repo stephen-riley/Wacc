@@ -7,16 +7,23 @@ namespace Wacc.Lex;
 
 public class Lexer(RuntimeState opts)
 {
+    public record MultilineComment(int Index, int LineIndex, string Content);
+
     public RuntimeState Options = opts;
 
-    private readonly HashSet<TokenType> IgnoredTokens = [WHITESPACE, COMMENT_SINGLE_LINE, COMMENT_MULTI_LINE, PREPROCESSOR_DIRECTIVE];
+    private readonly HashSet<TokenType> IgnoredTokens = [WHITESPACE, COMMENT_SINGLE_LINE, COMMENT_MULTILINE, PREPROCESSOR_DIRECTIVE];
 
     public OrderedDictionary<TokenType, Regex> Patterns { get; set; } = new()
     {
         // DO NOT CHANGE ORDER
         { PREPROCESSOR_DIRECTIVE, new Regex(@"\G#.*$", RegexOptions.Multiline) },
         { COMMENT_SINGLE_LINE, new Regex(@"\G//.*$", RegexOptions.Multiline) },
-        { COMMENT_MULTI_LINE, new Regex(@"\G/\*.*?\*/", RegexOptions.Singleline) },
+        { COMMENT_MULTILINE, new Regex(@"\G/\*.*?\*/", RegexOptions.Singleline) },
+        // This next is multiline because COMMENT_MULTILINE will have picked
+        //  up a single line /* ... */.  If it didn't, then we want to grab
+        //  the rest of line.
+        { COMMENT_MULTILINE_OPEN, new Regex(@"\G/\*.*?$", RegexOptions.Multiline) },
+        { COMMENT_MULTILINE_CLOSE, new Regex(@"\G.*?\*/", RegexOptions.Singleline) },
         { WHITESPACE, new Regex(@"\G\s+") },
         { IntKw, new Regex(@"\Gint\b") },
         { VoidKw, new Regex(@"\Gvoid\b") },
@@ -107,35 +114,135 @@ public class Lexer(RuntimeState opts)
 
     public List<Token> Lex(string text, bool includeIgnored = false)
     {
+        if (text.Contains('\n'))
+        {
+            throw new InvalidOperationException($"Do not pass multiline strings to {nameof(Lexer)}:{nameof(Lex)}(string Text)");
+        }
+        else
+        {
+            return Lex([text], includeIgnored);
+        }
+    }
+
+    public List<Token> Lex(string[] text, bool includeIgnored = false)
+    {
+        if (!text.Any())
+        {
+            Options.TokenStream = [];
+            return [];
+        }
+
         var tokens = new List<Token>();
 
         var index = 0;
+        var lineIndex = 0;
+        var line = text[lineIndex];
+
+        MultilineComment? mlc = null;
+
 
     OUTER_LOOP:
-        while (index < text.Length)
+        while (lineIndex < text.Length)
         {
+            if (index >= line.Length)
+            {
+                lineIndex++;
+                if (lineIndex == text.Length)
+                {
+                    break;
+                }
+                line = text[lineIndex];
+                index = 0;
+            }
+
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                index = 0;
+                line = text[++lineIndex];
+                goto OUTER_LOOP;
+            }
+
+            if (mlc is not null)
+            {
+                var closeCommentMatch = Patterns[TokenType.COMMENT_MULTILINE_CLOSE].Match(line, startat: index);
+                if (!closeCommentMatch.Success)
+                {
+                    mlc = mlc with { Content = mlc.Content + line + '\n' };
+                    index = 0;
+                    line = text[++lineIndex];
+                    goto OUTER_LOOP;
+                }
+            }
+
             foreach (var (tok, re) in Patterns)
             {
-                var match = re.Match(text, startat: index);
+                var match = re.Match(line, startat: index);
                 if (match.Success)
                 {
                     if (includeIgnored || !IgnoredTokens.Contains(tok))
                     {
                         var s = match.Value;
+                        Token t = null!;
+
                         if (string.IsNullOrWhiteSpace(s))
                         {
                             s = $"'{s.Replace('\n', '␤')}'";
                         }
-                        _ = int.TryParse(s, out var i);
-                        var t = new Token(tok, index, s, i);
-                        tokens.Add(t);
+
+                        if (tok == COMMENT_MULTILINE_OPEN)
+                        {
+                            mlc = new MultilineComment(index, lineIndex, line[index..] + "\n");
+                            index = 0;
+                            line = text[++lineIndex];
+                            goto OUTER_LOOP;
+                        }
+                        else if (tok == COMMENT_MULTILINE_CLOSE)
+                        {
+                            if (mlc is null)
+                            {
+                                throw new LexerError($"Unexpected {tok} at line {lineIndex + 1}, column {index + 1}");
+                            }
+
+                            t = new Token(COMMENT_MULTILINE, mlc.Index + 1, mlc.LineIndex + 1, mlc.Content + s, 0);
+                            mlc = null;
+                        }
+                        else if (mlc is not null)
+                        {
+                            mlc = mlc with { Content = mlc.Content + line + '\n' };
+                            index += 0;
+                            line = text[++lineIndex];
+                            goto OUTER_LOOP;
+                        }
+                        else
+                        {
+                            _ = int.TryParse(s, out var i);
+                            t = new Token(tok, lineIndex + 1, index + 1, s, i);
+                        }
+
+                        if (includeIgnored || !IgnoredTokens.Contains(t.TokenType))
+                        {
+                            tokens.Add(t);
+                        }
                     }
                     index += match.Value.Length;
                     goto OUTER_LOOP;
                 }
             }
 
-            throw new LexerError($"Cannot tokenize '{text[index..].Replace('\n', '␤')}'");
+            if (mlc is null)
+            {
+                throw new LexerError($"Cannot tokenize '{line[index..].Replace('\n', '␤')}'");
+            }
+            else
+            {
+                mlc = mlc with { Content = mlc.Content + line[index..] };
+                index = line.Length;
+            }
+        }
+
+        if (mlc is not null)
+        {
+            throw new LexerError($"Multiline comment starting at {mlc.LineIndex + 1}:{mlc.Index + 1} is unterminated.");
         }
 
         Options.TokenStream = tokens;

@@ -151,7 +151,7 @@ public class TestDriver(TestOptions rts)
         var rts = new RuntimeState()
         {
             InputFile = test.Path,
-            Text = File.ReadAllText(test.Path),
+            Text = File.ReadAllLines(test.Path),
             OutputFile = "/tmp/a.out",
             AsmFilename = "/tmp/a.S",
             Silent = true,
