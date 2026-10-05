@@ -14,6 +14,8 @@ public partial record Goto(Label Label) : AstNode
 
     public new static AstNode Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(GotoKw);
         var label = tokenStream.Expect(Identifier);
         if (label.Str is null)
@@ -21,7 +23,7 @@ public partial record Goto(Label Label) : AstNode
             throw new ParseError($"Invalid label token {label}");
         }
 
-        return new Goto(new Label(label.Str));
+        return new Goto(new Label(label.Str)) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0) => $"Goto({Label.ToPrettyString()})";

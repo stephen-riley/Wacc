@@ -13,10 +13,12 @@ public partial record Default() : AstNode
 
     public new static Default Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(DefaultKw);
         tokenStream.Expect(Colon);
 
-        return new Default();
+        return new Default() with { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

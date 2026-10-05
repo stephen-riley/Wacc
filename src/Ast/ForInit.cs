@@ -15,20 +15,22 @@ public partial record ForInit(string DeclType, Var Identifier, AstNode? Expr = n
         // `Declaration` eats its terminal semicolon, so `ForInit` makes sure
         // to eat `Expressions`'s as well for consistency.
 
+        var leadToken = tokenStream.Peek();
+
         if (tokenStream.PeekFor(TokenType.Semicolon))
         {
             tokenStream.Expect(TokenType.Semicolon);
-            return new NullStatement();
+            return new NullStatement() { LeadToken = leadToken };
         }
         else if (VarDecl.CanParse(tokenStream))
         {
-            return VarDecl.Parse(tokenStream);
+            return VarDecl.Parse(tokenStream) with { LeadToken = leadToken };
         }
         else
         {
             var expr = Expression.Parse(tokenStream);
             tokenStream.Expect(TokenType.Semicolon);
-            return expr;
+            return expr with { LeadToken = leadToken };
         }
     }
 

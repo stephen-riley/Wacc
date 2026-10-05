@@ -58,4 +58,18 @@ public class ParserTests
         Assert.AreEqual("a", decl.Identifier.Name);
         Assert.IsInstanceOfType<BinaryOp>(decl.Expr);
     }
+
+    [TestMethod]
+    public void ParserAstNodesHaveTokenInfo()
+    {
+        var lexer = new Lexer(new RuntimeState() { InputFile = "" });
+        var code = "int a = 2 * 3;";
+        var tokens = lexer.Lex(code);
+        var tokenStream = new Queue<Token>(tokens);
+
+        var decl = VarDecl.Parse(tokenStream);
+        var ident = decl.Identifier;
+        Assert.AreEqual(1, ident.LeadToken.Line);
+        Assert.AreEqual(5, ident.LeadToken.Column);
+    }
 }

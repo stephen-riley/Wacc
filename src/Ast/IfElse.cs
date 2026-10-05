@@ -14,6 +14,8 @@ public partial record IfElse(AstNode CondExpr, AstNode ThenBlock, AstNode? ElseB
 
     public new static IfElse Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(IfKw);
         tokenStream.Expect(OpenParen);
         var condExpr = Expression.Parse(tokenStream);
@@ -31,7 +33,7 @@ public partial record IfElse(AstNode CondExpr, AstNode ThenBlock, AstNode? ElseB
             elseBlock = elseNode is Block || elseNode.IsBlockItem() ? elseNode : throw new ParseError($"{elseNode} is not a Block or BlockItem");
         }
 
-        return new IfElse(condExpr, thenBlock, elseBlock);
+        return new IfElse(condExpr, thenBlock, elseBlock) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

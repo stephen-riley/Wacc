@@ -16,6 +16,8 @@ public partial record FunctionDecl(string FuncType, Var Identifier, ParamList Pa
 
     public new static FunctionDecl Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(IntKw);
         var ident = Var.Parse(tokenStream);
         tokenStream.Expect(OpenParen);
@@ -25,12 +27,12 @@ public partial record FunctionDecl(string FuncType, Var Identifier, ParamList Pa
         if (tokenStream.PeekFor(Semicolon))
         {
             tokenStream.Expect(Semicolon);
-            return new FunctionDecl("int", ident, paramList);
+            return new FunctionDecl("int", ident, paramList) { LeadToken = leadToken };
         }
         else
         {
             var body = Block.Parse(tokenStream);
-            return new FunctionDecl("int", ident, paramList, (Block)body);
+            return new FunctionDecl("int", ident, paramList, (Block)body) { LeadToken = leadToken };
         }
     }
 

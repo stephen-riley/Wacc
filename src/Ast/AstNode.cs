@@ -8,6 +8,8 @@ public closed partial record AstNode
 {
     protected static readonly string INDENT = "  ";
 
+    public Token LeadToken { get; set; } = Token.EmptyToken;
+
     public virtual bool IsBlockItem() => false;
 
     public static string IndentStr(int indent = 0) => INDENT.X(indent);

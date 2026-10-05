@@ -9,8 +9,10 @@ public partial record Constant(int Int) : AstNode
 
     public new static Constant Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         var tok = tokenStream.Expect(TokenType.Constant);
-        return new Constant(tok.Int);
+        return new Constant(tok.Int) { LeadToken = leadToken };
     }
 
     public override IEnumerable<AstNode> Children() => [];

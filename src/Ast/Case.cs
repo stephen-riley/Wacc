@@ -13,11 +13,13 @@ public partial record Case(AstNode CaseCondExpr) : AstNode
 
     public new static Case Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(CaseKw);
         var caseCond = Constant.Parse(tokenStream);
         tokenStream.Expect(Colon);
 
-        return new Case(caseCond);
+        return new Case(caseCond) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

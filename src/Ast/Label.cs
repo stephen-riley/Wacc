@@ -12,9 +12,11 @@ public partial record Label(string Name) : AstNode
 
     public new static Label Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         var label = tokenStream.Expect(Identifier);
         tokenStream.Expect(Colon);
-        return new Label(label.Str ?? throw new ParseError($"No string for label token {label}"));
+        return new Label(label.Str ?? throw new ParseError($"No string for label token {label}")) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0) => $"Label({Name})";

@@ -10,8 +10,10 @@ public partial record Var(string Name) : AstNode
 
     public new static Var Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         var tok = tokenStream.Expect(TokenType.Identifier);
-        return new Var(tok.Str ?? throw new ParseError($"no Str for token {tok}"));
+        return new Var(tok.Str ?? throw new ParseError($"no Str for token {tok}")) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0) => $"Var({Name})";

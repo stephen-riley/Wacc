@@ -11,9 +11,11 @@ public partial record LabeledBlock(Label Label, AstNode Stat) : AstNode
 
     public new static AstNode Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         var label = Label.Parse(tokenStream);
         var stat = Block.Parse(tokenStream);
-        return new LabeledBlock(label, stat);
+        return new LabeledBlock(label, stat) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

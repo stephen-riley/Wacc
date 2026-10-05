@@ -13,10 +13,11 @@ public partial record Return(AstNode Expr) : AstNode
 
     public new static Return Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(ReturnKw);
         var retExpr = Expression.Parse(tokenStream);
-        var expr = new Return(retExpr);
-        return expr;
+        return new Return(retExpr) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

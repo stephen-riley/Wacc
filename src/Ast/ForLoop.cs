@@ -19,6 +19,8 @@ public partial record ForLoop(AstNode InitStat, AstNode CondExpr, AstNode PostSt
 
     public new static ForLoop Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(ForKw);
         tokenStream.Expect(OpenParen);
 
@@ -34,7 +36,7 @@ public partial record ForLoop(AstNode InitStat, AstNode CondExpr, AstNode PostSt
         var bodyNode = Block.Parse(tokenStream, isDependent: true);
         var bodyBlock = bodyNode is Block || bodyNode.IsBlockItem() ? bodyNode : throw new ParseError($"{bodyNode} is not a Block or BlockItem");
 
-        return new ForLoop(initNode, condNode, updateNode, bodyBlock);
+        return new ForLoop(initNode, condNode, updateNode, bodyBlock) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

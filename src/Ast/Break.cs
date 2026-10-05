@@ -12,8 +12,10 @@ public partial record Break() : AstNode
 
     public new static AstNode Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(BreakKw);
-        return new Break();
+        return new Break() { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0) => $"Break()";

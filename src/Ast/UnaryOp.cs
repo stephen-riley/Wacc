@@ -14,12 +14,14 @@ public partial record UnaryOp(Token Op, AstNode Expr) : AstNode
 
     public new static AstNode Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         var op = tokenStream.Expect(UnaryOpTokens);
         var factor = Factor.Parse(tokenStream);
         return op.TokenType switch
         {
-            Increment or Decrement => new PrefixOp(op.TokenType, factor),
-            _ => new UnaryOp(op, factor)
+            Increment or Decrement => new PrefixOp(op.TokenType, factor) { LeadToken = leadToken },
+            _ => new UnaryOp(op, factor) { LeadToken = leadToken }
         };
     }
 

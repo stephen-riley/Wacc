@@ -13,13 +13,15 @@ public partial record Declaration : AstNode
 
     public new static AstNode Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         if (FunctionDecl.CanParse(tokenStream))
         {
-            return FunctionDecl.Parse(tokenStream);
+            return FunctionDecl.Parse(tokenStream) with { LeadToken = leadToken };
         }
         else
         {
-            return VarDecl.Parse(tokenStream);
+            return VarDecl.Parse(tokenStream) with { LeadToken = leadToken };
         }
     }
 

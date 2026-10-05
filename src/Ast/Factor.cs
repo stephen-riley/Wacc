@@ -14,27 +14,29 @@ public partial record Factor(AstNode SubExpr) : AstNode
 
     public new static AstNode Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         var tok = tokenStream.Peek();
         var factor = tok.TokenType switch
         {
             TokenType.Constant => Constant.Parse(tokenStream),
             Identifier when !tokenStream.PeekFor(OpenParen, 2) => Ext.Do(() =>
             {
-                return Var.Parse(tokenStream);
+                return Var.Parse(tokenStream) with { LeadToken = leadToken };
             }),
             OpenParen => Ext.Do(() =>
             {
                 tokenStream.Expect(OpenParen);
                 var expr = Expression.Parse(tokenStream);
                 tokenStream.Expect(CloseParen);
-                return expr;
+                return expr with { LeadToken = leadToken };
             }),
             Identifier => Ext.Do(() =>
             {
-                var f = FunctionCall.Parse(tokenStream);
+                var f = FunctionCall.Parse(tokenStream) with { LeadToken = leadToken };
                 return f;
             }),
-            _ => UnaryOp.Parse(tokenStream)
+            _ => UnaryOp.Parse(tokenStream) with { LeadToken = leadToken }
         };
 
         if (tokenStream.PeekForOneOf([Increment, Decrement]))
@@ -42,8 +44,8 @@ public partial record Factor(AstNode SubExpr) : AstNode
             var op = tokenStream.Expect(tokenStream.Peek().TokenType);
             factor = op.TokenType switch
             {
-                Increment => new PostfixOp(Increment, factor),
-                Decrement => new PostfixOp(Decrement, factor),
+                Increment => new PostfixOp(Increment, factor) { LeadToken = leadToken },
+                Decrement => new PostfixOp(Decrement, factor) { LeadToken = leadToken },
                 _ => factor
             };
         }

@@ -10,6 +10,8 @@ public partial record CompUnit(FunctionDecl[] Functions) : AstNode
 {
     public new static CompUnit Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         var stats = new List<FunctionDecl>();
 
         while (!tokenStream.PeekFor(EOF))

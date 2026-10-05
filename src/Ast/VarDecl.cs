@@ -13,6 +13,8 @@ public partial record VarDecl(string DeclType, Var Identifier, AstNode? Expr = n
 
     public new static VarDecl Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(IntKw);
         var ident = Var.Parse(tokenStream);
         var assignExpr = default(AstNode);
@@ -24,7 +26,7 @@ public partial record VarDecl(string DeclType, Var Identifier, AstNode? Expr = n
         }
         tokenStream.Expect(Semicolon);
 
-        return new VarDecl("int", ident, assignExpr);
+        return new VarDecl("int", ident, assignExpr) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

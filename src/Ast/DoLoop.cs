@@ -19,6 +19,8 @@ public partial record DoLoop(AstNode BodyBlock, AstNode CondExpr, string? Label 
 
     public new static DoLoop Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(DoKw);
 
         var bodyNode = Block.Parse(tokenStream);
@@ -29,7 +31,7 @@ public partial record DoLoop(AstNode BodyBlock, AstNode CondExpr, string? Label 
         var condExpr = Expression.Parse(tokenStream);
         tokenStream.Expect(CloseParen);
 
-        return new DoLoop(bodyBlock, condExpr);
+        return new DoLoop(bodyBlock, condExpr) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

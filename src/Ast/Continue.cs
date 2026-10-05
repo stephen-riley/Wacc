@@ -12,8 +12,10 @@ public partial record Continue() : AstNode
 
     public new static AstNode Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(ContinueKw);
-        return new Continue();
+        return new Continue() { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0) => $"Continue()";

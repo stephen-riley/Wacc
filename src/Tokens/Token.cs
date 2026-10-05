@@ -1,8 +1,10 @@
 namespace Wacc.Tokens;
 
-public record Token(TokenType TokenType, int Line, int Index, string? Str, int Int)
+public record Token(TokenType TokenType, int Line, int Column, string? Str, int Int)
 {
-    public bool MostlyEquals(Token t) => TokenType == t.TokenType && Line == t.Line && Index == t.Index && Str == t.Str;
+    public static Token EmptyToken = new(TokenType.EMPTY, 0, 0, "", -1);
 
-    public override string ToString() => $"{TokenType}:{Str} ({Line}:{Index})";
+    public bool MostlyEquals(Token t) => TokenType == t.TokenType && Line == t.Line && Column == t.Column && Str == t.Str;
+
+    public override string ToString() => $"{TokenType}:{Str} ({Line}:{Column})";
 }

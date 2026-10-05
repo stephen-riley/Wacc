@@ -16,11 +16,13 @@ public partial record FunctionCall(Var Identifier, ArgumentList Args) : AstNode
 
     public new static FunctionCall Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         var ident = Var.Parse(tokenStream);
         tokenStream.Expect(OpenParen);
         var args = ArgumentList.Parse(tokenStream);
         tokenStream.Expect(CloseParen);
-        return new FunctionCall(ident, args);
+        return new FunctionCall(ident, args) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

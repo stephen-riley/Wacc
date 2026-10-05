@@ -18,13 +18,15 @@ public partial record WhileLoop(AstNode CondExpr, AstNode BodyBlock, string? Lab
 
     public new static WhileLoop Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(WhileKw);
         tokenStream.Expect(OpenParen);
         var condExpr = Expression.Parse(tokenStream);
         tokenStream.Expect(CloseParen);
         var bodyNode = Block.Parse(tokenStream);
 
-        return new WhileLoop(condExpr, bodyNode);
+        return new WhileLoop(condExpr, bodyNode) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

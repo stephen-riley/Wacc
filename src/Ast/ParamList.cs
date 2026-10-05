@@ -17,6 +17,8 @@ public partial record ParamList(IEnumerable<Var> Params) : AstNode
 
     public new static ParamList Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         var paramList = new List<Var>();
         if (!tokenStream.PeekFor(VoidKw))
         {
@@ -35,7 +37,7 @@ public partial record ParamList(IEnumerable<Var> Params) : AstNode
             tokenStream.Expect(VoidKw);
         }
 
-        return new ParamList(paramList);
+        return new ParamList(paramList) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

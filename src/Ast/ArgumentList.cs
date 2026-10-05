@@ -16,6 +16,8 @@ public partial record ArgumentList(IEnumerable<AstNode> Params) : AstNode
 
     public new static ArgumentList Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         var arguments = new List<AstNode>();
 
         if (!tokenStream.PeekFor(CloseParen))
@@ -29,7 +31,7 @@ public partial record ArgumentList(IEnumerable<AstNode> Params) : AstNode
             arguments.Add(Expression.Parse(tokenStream));
         }
 
-        return new ArgumentList(arguments);
+        return new ArgumentList(arguments) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

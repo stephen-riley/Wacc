@@ -13,6 +13,8 @@ public partial record Switch(AstNode CondExpr, AstNode SwitchBlock) : AstNode
 
     public new static Switch Parse(Queue<Token> tokenStream)
     {
+        var leadToken = tokenStream.Peek();
+
         tokenStream.Expect(SwitchKw);
         tokenStream.Expect(OpenParen);
         var condExpr = Expression.Parse(tokenStream);
@@ -20,7 +22,7 @@ public partial record Switch(AstNode CondExpr, AstNode SwitchBlock) : AstNode
 
         var switchBlock = Block.Parse(tokenStream);
 
-        return new Switch(condExpr, switchBlock);
+        return new Switch(condExpr, switchBlock) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)

@@ -129,5 +129,7 @@ public enum TokenType
 
     [Description("<#DIRECTIVE>")] PREPROCESSOR_DIRECTIVE,
 
-    [Description("<EOF>")] EOF
+    [Description("<EOF>")] EOF,
+
+    [Description("<EMPTY>")] EMPTY
 }
