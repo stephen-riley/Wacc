@@ -10,7 +10,7 @@ public partial record WhileLoop(AstNode CondExpr, AstNode BodyBlock, string? Lab
 {
     public const string DefaultLabel = "$__TODO_WHILE_LABEL__";
 
-    public VarMap? VariableMap;
+    public IdentifierMap? VariableMap;
 
     public override bool IsBlockItem() => true;
 

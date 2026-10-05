@@ -11,7 +11,7 @@ public partial record DoLoop(AstNode BodyBlock, AstNode CondExpr, string? Label 
 {
     public const string DefaultLabel = "$__TODO_DO_LABEL__";
 
-    public VarMap? VariableMap;
+    public IdentifierMap? VariableMap;
 
     public override bool IsBlockItem() => true;
 

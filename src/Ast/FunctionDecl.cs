@@ -8,7 +8,7 @@ namespace Wacc.Ast;
 
 public partial record FunctionDecl(string FuncType, Var Identifier, ParamList Params, Block? Body = null) : AstNode
 {
-    public VarMap? VariableMap;
+    public IdentifierMap? VariableMap;
 
     public override bool IsBlockItem() => true;
 

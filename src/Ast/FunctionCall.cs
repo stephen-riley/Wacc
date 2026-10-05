@@ -8,7 +8,7 @@ namespace Wacc.Ast;
 
 public partial record FunctionCall(Var Identifier, ArgumentList Args) : AstNode
 {
-    public VarMap? VariableMap;
+    public IdentifierMap? VariableMap;
 
     public override bool IsBlockItem() => true;
 

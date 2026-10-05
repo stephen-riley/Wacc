@@ -3,18 +3,18 @@ using Wacc.Exceptions;
 
 namespace Wacc.Validation;
 
-public class VarMap
+public class IdentifierMap
 {
     private static int ScopeCount = 0;
 
-    public VarMap? Parent = null;
+    public IdentifierMap? Parent = null;
     public string Name { get; init; }
-    public VarMap()
+    public IdentifierMap()
     {
         Name = $"Scope{++ScopeCount}";
     }
 
-    public VarMap(VarMap m) : this()
+    public IdentifierMap(IdentifierMap m) : this()
     {
         Map = [];
         Parent = m;

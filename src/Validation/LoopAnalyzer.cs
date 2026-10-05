@@ -7,36 +7,36 @@ public class LoopAnalyzer : BaseAstRewriter
 {
     public override CompUnit Validate(CompUnit program)
     {
-        var variableMap = new VarMap();
+        var variableMap = new IdentifierMap();
         var newAst = ResolveStatement(program, variableMap);
         return newAst is CompUnit unit ? unit : throw new ValidationError($"{newAst} is not a CompUnit");
     }
 
-    public override AstNode OnBlockStat(Block node, VarMap variableMap)
+    public override AstNode OnBlockStat(Block node, IdentifierMap variableMap)
     {
         return (Block)base.OnBlockStat(node, node.VariableMap!);
     }
 
-    public override AstNode OnDoLoopStat(DoLoop stat, VarMap variableMap)
+    public override AstNode OnDoLoopStat(DoLoop stat, IdentifierMap variableMap)
     {
         var newLoopLabel = stat.VariableMap!.NewLoopLabel();
         return (DoLoop)base.OnDoLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
     }
-    public override AstNode OnForLoopStat(ForLoop stat, VarMap variableMap)
+    public override AstNode OnForLoopStat(ForLoop stat, IdentifierMap variableMap)
     {
         var newLoopLabel = stat.VariableMap!.NewLoopLabel();
         return (ForLoop)base.OnForLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
     }
 
-    public override AstNode OnWhileLoopStat(WhileLoop stat, VarMap variableMap)
+    public override AstNode OnWhileLoopStat(WhileLoop stat, IdentifierMap variableMap)
     {
         var newLoopLabel = stat.VariableMap!.NewLoopLabel();
         return (WhileLoop)base.OnWhileLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
     }
 
-    public override AstNode OnStatDefault(AstNode stat, VarMap variableMap) => stat;
+    public override AstNode OnStatDefault(AstNode stat, IdentifierMap variableMap) => stat;
 
-    public override AstNode OnVarExpr(Var expr, VarMap variableMap)
+    public override AstNode OnVarExpr(Var expr, IdentifierMap variableMap)
     {
         if (variableMap.TryGetFromValues(expr.Name, out var globalName, out _))
         {
@@ -48,7 +48,7 @@ public class LoopAnalyzer : BaseAstRewriter
         }
     }
 
-    internal static string? ResolveLoopLabel(string? curLabel, VarMap variableMap, bool makeNew = false)
+    internal static string? ResolveLoopLabel(string? curLabel, IdentifierMap variableMap, bool makeNew = false)
     {
         if (curLabel is not null) return curLabel;
 

@@ -9,7 +9,7 @@ namespace Wacc.Ast;
 
 public partial record Block(AstNode[] BlockItems) : AstNode
 {
-    public VarMap? VariableMap;
+    public IdentifierMap? VariableMap;
 
     public new static bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor(OpenBrace)
