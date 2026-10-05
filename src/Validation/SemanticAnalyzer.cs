@@ -34,7 +34,7 @@ public record SemanticAnalyzer(RuntimeState Options)
     {
         if (ast is CompUnit program)
         {
-            program = new VarAnalyzer().Validate(program);
+            program = new IdentifierAnalyzer().Validate(program);
             program = new LoopAnalyzer().Validate(program);
             program = LabelAnalyzer.Validate(program);
             return program;
