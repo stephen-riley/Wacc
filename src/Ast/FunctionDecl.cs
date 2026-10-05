@@ -22,15 +22,15 @@ public partial record FunctionDecl(string FuncType, Var Identifier, ParamList Pa
         var paramList = ParamList.Parse(tokenStream);
         tokenStream.Expect(CloseParen);
 
-        if (Block.CanParse(tokenStream))
-        {
-            var body = Block.Parse(tokenStream);
-            return new FunctionDecl("int", ident, paramList, (Block)body);
-        }
-        else
+        if (tokenStream.PeekFor(Semicolon))
         {
             tokenStream.Expect(Semicolon);
             return new FunctionDecl("int", ident, paramList);
+        }
+        else
+        {
+            var body = Block.Parse(tokenStream);
+            return new FunctionDecl("int", ident, paramList, (Block)body);
         }
     }
 

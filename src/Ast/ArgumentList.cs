@@ -10,28 +10,23 @@ public partial record ArgumentList(IEnumerable<AstNode> Params) : AstNode
 {
     public override bool IsBlockItem() => false;
 
-    public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekForOneOf([Identifier]);
+    public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekFor(CloseParen) || Expression.CanParse(tokenStream);
 
     public bool IsVoid() => !Params.Any();
 
     public new static ArgumentList Parse(Queue<Token> tokenStream)
     {
         var arguments = new List<AstNode>();
-        if (!tokenStream.PeekFor(VoidKw))
-        {
-            tokenStream.Expect(IntKw);
-            arguments.Add(Expression.Parse(tokenStream));
 
-            while (tokenStream.PeekFor(Comma))
-            {
-                tokenStream.Expect(Comma);
-                tokenStream.Expect(IntKw);
-                arguments.Add(Var.Parse(tokenStream));
-            }
-        }
-        else
+        if (!tokenStream.PeekFor(CloseParen))
         {
-            tokenStream.Expect(VoidKw);
+            arguments.Add(Expression.Parse(tokenStream));
+        }
+
+        while (tokenStream.PeekFor(Comma))
+        {
+            tokenStream.Expect(Comma);
+            arguments.Add(Expression.Parse(tokenStream));
         }
 
         return new ArgumentList(arguments);

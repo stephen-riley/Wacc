@@ -115,6 +115,10 @@ public class LexerTests
         """,
         true)]
     [DataRow("""
+            /* hello there */
+        """,
+        true)]
+    [DataRow("""
         /* 
             hello there 
         """,

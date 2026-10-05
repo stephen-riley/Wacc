@@ -23,7 +23,8 @@ public class Lexer(RuntimeState opts)
         //  up a single line /* ... */.  If it didn't, then we want to grab
         //  the rest of line.
         { COMMENT_MULTILINE_OPEN, new Regex(@"\G/\*.*?$", RegexOptions.Multiline) },
-        { COMMENT_MULTILINE_CLOSE, new Regex(@"\G.*?\*/", RegexOptions.Singleline) },
+        // { COMMENT_MULTILINE_CLOSE, new Regex(@"\G.*?\*/", RegexOptions.Singleline) },
+        { COMMENT_MULTILINE_CLOSE, new Regex(@"\G(?:(?!/\*).)*?\*/") },
         { WHITESPACE, new Regex(@"\G\s+") },
         { IntKw, new Regex(@"\Gint\b") },
         { VoidKw, new Regex(@"\Gvoid\b") },
@@ -164,8 +165,7 @@ public class Lexer(RuntimeState opts)
 
             if (mlc is not null)
             {
-                var closeCommentMatch = Patterns[TokenType.COMMENT_MULTILINE_CLOSE].Match(line, startat: index);
-                if (!closeCommentMatch.Success)
+                if (!Patterns[COMMENT_MULTILINE].IsMatch(line, startat: index) && !Patterns[COMMENT_MULTILINE_CLOSE].IsMatch(line, startat: index))
                 {
                     mlc = mlc with { Content = mlc.Content + line + '\n' };
                     index = 0;

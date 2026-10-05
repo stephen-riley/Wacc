@@ -18,7 +18,7 @@ public partial record Factor(AstNode SubExpr) : AstNode
         var factor = tok.TokenType switch
         {
             TokenType.Constant => Constant.Parse(tokenStream),
-            Identifier when !tokenStream.PeekFor(OpenParen, 1) => Ext.Do(() =>
+            Identifier when !tokenStream.PeekFor(OpenParen, 2) => Ext.Do(() =>
             {
                 return Var.Parse(tokenStream);
             }),
