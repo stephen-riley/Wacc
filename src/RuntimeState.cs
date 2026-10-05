@@ -62,7 +62,7 @@ public class RuntimeState
 
     public string BaseFilename => Regex.Replace(OutputFile ?? InputFile, @"\.\w+$", "");
 
-    public string Text { get; set; } = "";
+    public string[] Text { get; set; } = [];
 
     public List<Token> TokenStream { get; set; } = [];
 

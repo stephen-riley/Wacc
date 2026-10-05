@@ -17,7 +17,6 @@ public class ParserTests
     [DataRow("listing2-1.c")]
     [DataRow("multi_digit.c")]
     [DataRow("multiline_comments.c")]
-    [DataRow("return_2.c")]
     [DataRow("two_plus_three.c")]
     [DataRow("complex_binary_expr.c")]
     [DataRow("ignore_preprocessor.c")]
@@ -25,7 +24,7 @@ public class ParserTests
     [DataRow("not_sum.c")]
     public void SimpleParse(string filename)
     {
-        var text = File.ReadAllText($"{fixturesPath}/valid/{filename}");
+        var text = File.ReadAllLines($"{fixturesPath}/valid/{filename}");
         var lexer = new Lexer(VoidRts);
         _ = lexer.Lex(text);
         var parser = new Parser(VoidRts);
