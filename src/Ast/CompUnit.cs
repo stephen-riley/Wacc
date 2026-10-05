@@ -6,15 +6,15 @@ using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public partial record CompUnit(Function[] Functions) : AstNode
+public partial record CompUnit(FunctionDecl[] Functions) : AstNode
 {
     public new static CompUnit Parse(Queue<Token> tokenStream)
     {
-        var stats = new List<Function>();
+        var stats = new List<FunctionDecl>();
 
         while (!tokenStream.PeekFor(EOF))
         {
-            stats.Add(Function.Parse(tokenStream));
+            stats.Add(FunctionDecl.Parse(tokenStream));
         }
 
         return new CompUnit([.. stats]);
@@ -29,7 +29,7 @@ public partial record CompUnit(Function[] Functions) : AstNode
             sb.Append(IndentStr(indent + 1));
             sb.Append(stat.ToPrettyString(indent + 1)).Append('\n');
         }
-        sb.Append(AstNode.INDENT.X(indent)).Append(')');
+        sb.Append(INDENT.X(indent)).Append(')');
         return sb.ToString();
     }
 

@@ -9,7 +9,7 @@ namespace Wacc.Ast;
 public partial record Factor(AstNode SubExpr) : AstNode
 {
     public new static bool CanParse(Queue<Token> tokenStream)
-        => tokenStream.PeekFor([TokenType.Constant, Identifier, OpenParen])
+        => tokenStream.PeekForOneOf([TokenType.Constant, Identifier, OpenParen])
             || UnaryOp.CanParse(tokenStream);
 
     public new static AstNode Parse(Queue<Token> tokenStream)
@@ -18,7 +18,10 @@ public partial record Factor(AstNode SubExpr) : AstNode
         var factor = tok.TokenType switch
         {
             TokenType.Constant => Constant.Parse(tokenStream),
-            Identifier => Var.Parse(tokenStream),
+            Identifier when !tokenStream.PeekFor(OpenParen, 1) => Ext.Do(() =>
+            {
+                return Var.Parse(tokenStream);
+            }),
             OpenParen => Ext.Do(() =>
             {
                 tokenStream.Expect(OpenParen);
@@ -26,10 +29,15 @@ public partial record Factor(AstNode SubExpr) : AstNode
                 tokenStream.Expect(CloseParen);
                 return expr;
             }),
+            Identifier => Ext.Do(() =>
+            {
+                var f = FunctionCall.Parse(tokenStream);
+                return f;
+            }),
             _ => UnaryOp.Parse(tokenStream)
         };
 
-        if (tokenStream.PeekFor([Increment, Decrement]))
+        if (tokenStream.PeekForOneOf([Increment, Decrement]))
         {
             var op = tokenStream.Expect(tokenStream.Peek().TokenType);
             factor = op.TokenType switch

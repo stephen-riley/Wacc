@@ -11,7 +11,7 @@ public partial record Block(AstNode[] BlockItems) : AstNode
 {
     public VarMap? VariableMap;
 
-    public new bool CanParse(Queue<Token> tokenStream)
+    public new static bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor(OpenBrace)
         || BlockItem.CanParse(tokenStream);
 

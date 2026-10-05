@@ -8,7 +8,7 @@ public partial record ForInit(string DeclType, Var Identifier, AstNode? Expr = n
 {
     public override bool IsBlockItem() => true;
 
-    public new bool CanParse(Queue<Token> tokenStream) => Declaration.CanParse(tokenStream) | Expression.CanParse(tokenStream);
+    public new bool CanParse(Queue<Token> tokenStream) => VarDecl.CanParse(tokenStream) | Expression.CanParse(tokenStream);
 
     public new static AstNode Parse(Queue<Token> tokenStream)
     {
@@ -20,9 +20,9 @@ public partial record ForInit(string DeclType, Var Identifier, AstNode? Expr = n
             tokenStream.Expect(TokenType.Semicolon);
             return new NullStatement();
         }
-        else if (Declaration.CanParse(tokenStream))
+        else if (VarDecl.CanParse(tokenStream))
         {
-            return Declaration.Parse(tokenStream);
+            return VarDecl.Parse(tokenStream);
         }
         else
         {
