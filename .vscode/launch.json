@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}/src/bin/Debug/net11.0/Wacc.dll",
             // "args": "fixtures/valid/switch_case.c -o tmp/bob/a --asmfile tmp/bob/a.S --verbose",
             // "args": "fixtures/book_tests/chapter_9/valid/arguments_in_registers/parameter_shadows_function.c --parse -o tmp/bob/a --asmfile tmp/bob/a.S --verbose",
-            "args": "test -c 9 --stage parse --all --silent --fail-fast", // --extra-credit --fail-fast
+            "args": "test -c 9 --stage validate --all --silent --fail-fast", // --extra-credit --fail-fast
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole",
