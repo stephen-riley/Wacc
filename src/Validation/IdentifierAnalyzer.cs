@@ -38,8 +38,7 @@ public class IdentifierAnalyzer : BaseAstRewriter
     public override AstNode OnVarDeclStat(VarDecl stat, IdentifierMap variableMap)
     {
         var (declType, ident, init) = stat;
-
-        if (variableMap.TryGetValue(ident.Name, out var value, out var inCurScope) && inCurScope)
+        if (variableMap.TryGetValue(ident.Name, out _, out var inCurScope) && inCurScope)
         {
             throw new ValidationError($"duplicate variable declaration for {ident}");
         }
