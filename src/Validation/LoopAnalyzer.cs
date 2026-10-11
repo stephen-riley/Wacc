@@ -3,7 +3,7 @@ using Wacc.Exceptions;
 
 namespace Wacc.Validation;
 
-public class LoopAnalyzer : BaseAstRewriter
+public class LoopAnalyzer : BaseValidationAstRewriter
 {
     public override CompUnit Validate(CompUnit program)
     {

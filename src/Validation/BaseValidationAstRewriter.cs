@@ -4,7 +4,7 @@ using Wacc.Tokens;
 
 namespace Wacc.Validation;
 
-public class BaseAstRewriter
+public class BaseValidationAstRewriter
 {
     public RuntimeState? Options { get; set; }
 

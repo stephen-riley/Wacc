@@ -3,7 +3,7 @@ using Wacc.Exceptions;
 
 namespace Wacc.Validation;
 
-public class IdentifierAnalyzer : BaseAstRewriter
+public class IdentifierAnalyzer : BaseValidationAstRewriter
 {
     internal Dictionary<string, int> UniqueVarCounters = [];
 
