@@ -22,7 +22,7 @@ public class BaseAstRewriter
         {
             blockItems.Add(ResolveStatement(item, identMap));
         }
-        var newBlock = new Block([.. blockItems]) { VariableMap = identMap };
+        var newBlock = new Block([.. blockItems]) { IdentifierMap = identMap };
         return newBlock;
     }
 
@@ -57,7 +57,7 @@ public class BaseAstRewriter
         var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, identMap);
         var body = ResolveStatement(stat.BodyBlock, identMap);
         var newDo = new DoLoop(body, cond, identMap.GetLoopLabel());
-        return newDo with { VariableMap = identMap };
+        return newDo with { IdentifierMap = identMap };
     }
 
     public virtual AstNode OnExpressionStat(Expression stat, IdentifierMap identMap) => new Expression(ResolveExpr(stat.SubExpr, identMap));
@@ -68,22 +68,22 @@ public class BaseAstRewriter
         var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, identMap);
         var post = stat.PostStat is NullStatement ? stat.PostStat : ResolveExpr(stat.PostStat, identMap);
         var body = ResolveStatement(stat.BodyBlock, identMap);
-        var newFor = new ForLoop(init, cond, post, body, identMap.GetLoopLabel()) { VariableMap = identMap };
+        var newFor = new ForLoop(init, cond, post, body, identMap.GetLoopLabel()) { IdentifierMap = identMap };
         return newFor;
     }
 
     public virtual AstNode OnFunctionDecl(FunctionDecl stat, IdentifierMap identMap)
     {
-        var body = default(Block);
+        var body = default(Block?);
 
         if (stat.Body is not null)
         {
-            body = (Block?)ResolveStatement(stat.Body, stat.Body.VariableMap!);
-            return new FunctionDecl(stat.FuncType, stat.Identifier, stat.Params, body) with { VariableMap = stat.VariableMap };
+            body = (Block?)ResolveStatement(stat.Body, stat.Body.IdentifierMap!);
+            return new FunctionDecl(stat.FuncType, stat.Identifier, stat.Params, body) with { IdentifierMap = stat.IdentifierMap };
         }
         else
         {
-            return new FunctionDecl(stat.FuncType, stat.Identifier, stat.Params) with { VariableMap = stat.VariableMap };
+            return new FunctionDecl(stat.FuncType, stat.Identifier, stat.Params) with { IdentifierMap = stat.IdentifierMap };
         }
     }
 
@@ -140,7 +140,7 @@ public class BaseAstRewriter
         var cond = stat.CondExpr is NullStatement ? stat.CondExpr : ResolveExpr(stat.CondExpr, identMap);
         var body = ResolveStatement(stat.BodyBlock, identMap);
         var newWhile = new WhileLoop(cond, body, stat.Label);
-        return newWhile with { VariableMap = identMap };
+        return newWhile with { IdentifierMap = identMap };
     }
 
     public virtual AstNode OnStatDefault(AstNode stat, IdentifierMap identMap)
@@ -164,16 +164,11 @@ public class BaseAstRewriter
 
     public virtual AstNode OnFunctionCallExpr(FunctionCall fc, IdentifierMap identMap)
     {
-        if (identMap.ContainsKey(fc.Identifier.Name))
-        {
-            var newName = fc.Identifier.Name;   // TODO: listing 9-18 has `new_name` in it--need to see what that's about
-            var newArgs = new ArgumentList([.. fc.Args.Params.Select(arg => ResolveExpr(arg, identMap))]);
-            return new FunctionCall(new Var(newName), newArgs);
-        }
-        else
-        {
-            throw new ValidationError($"Function call {fc.Identifier.Name} not found in identifier map");
-        }
+        Console.WriteLine(identMap.ToPrettyString());
+
+        var newName = (Var)OnVarExpr(fc.Identifier, identMap);
+        var newArgs = new ArgumentList([.. fc.Args.Params.Select(arg => ResolveExpr(arg, identMap))]);
+        return new FunctionCall(newName, newArgs);
     }
 
     public virtual AstNode OnNullStatementExpr(NullStatement expr, IdentifierMap identMap) => expr;
@@ -259,6 +254,7 @@ public class BaseAstRewriter
             BinaryOp => OnBinaryOpExpr((BinaryOp)expr, identMap),
             Constant => OnConstantExpr((Constant)expr, identMap),
             FunctionCall => OnFunctionCallExpr((FunctionCall)expr, identMap),
+            FunctionDecl => OnFunctionDecl((FunctionDecl)expr, identMap),
             NullStatement => OnNullStatementExpr((NullStatement)expr, identMap),
             PostfixOp => OnPostfixOpExpr((PostfixOp)expr, identMap),
             PrefixOp => OnPrefixOpExpr((PrefixOp)expr, identMap),

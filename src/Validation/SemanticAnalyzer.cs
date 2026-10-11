@@ -35,13 +35,16 @@ public record SemanticAnalyzer(RuntimeState Options)
         if (ast is CompUnit program)
         {
             program = new IdentifierAnalyzer().Validate(program);
+            Console.Error.WriteLine(program.Functions[0].IdentifierMap?.ToPrettyString());
+
+
             program = new LoopAnalyzer().Validate(program);
             program = LabelAnalyzer.Validate(program);
             return program;
         }
         else
         {
-            throw new ValidationError($"Top AST node must be Program, not {ast.GetType().Name}");
+            throw new ValidationError($"Top AST node must be {nameof(CompUnit)}, not {ast.GetType().Name}");
         }
     }
 }

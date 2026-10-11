@@ -11,7 +11,7 @@ public partial record ForLoop(AstNode InitStat, AstNode CondExpr, AstNode PostSt
 {
     public const string DefaultLabel = "$__TODO_FOR_LABEL__";
 
-    public IdentifierMap? VariableMap;
+    public IdentifierMap? IdentifierMap;
 
     public override bool IsBlockItem() => true;
 

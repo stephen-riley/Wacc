@@ -9,67 +9,87 @@ public class IdentifierAnalyzer : BaseAstRewriter
 
     public override CompUnit Validate(CompUnit program)
     {
-        var variableMap = new IdentifierMap();
-        var newAst = ResolveStatement(program, variableMap);
+        program.IdentifierMap = new IdentifierMap();
+        var newAst = ResolveStatement(program, program.IdentifierMap);
         return newAst is CompUnit unit ? unit : throw new ValidationError($"{newAst} is not a CompUnit");
     }
 
-    public override AstNode OnBlockStat(Block stat, IdentifierMap variableMap)
-        => base.OnBlockStat(stat, new IdentifierMap(variableMap));
+    public override AstNode OnBlockStat(Block stat, IdentifierMap identMap)
+        => base.OnBlockStat(stat, new IdentifierMap(identMap));
 
-    public override AstNode OnDoLoopStat(DoLoop stat, IdentifierMap variableMap)
+    public override AstNode OnDoLoopStat(DoLoop stat, IdentifierMap identMap)
     {
-        var newMap = new IdentifierMap(variableMap);
-        return (DoLoop)base.OnDoLoopStat(stat, newMap) with { VariableMap = newMap };
+        var newMap = new IdentifierMap(identMap);
+        return (DoLoop)base.OnDoLoopStat(stat, newMap) with { IdentifierMap = newMap };
     }
 
-    public override AstNode OnForLoopStat(ForLoop stat, IdentifierMap variableMap)
+    public override AstNode OnForLoopStat(ForLoop stat, IdentifierMap identMap)
     {
-        var newMap = new IdentifierMap(variableMap);
-        return (ForLoop)base.OnForLoopStat(stat, newMap) with { VariableMap = newMap };
+        var newMap = new IdentifierMap(identMap);
+        return (ForLoop)base.OnForLoopStat(stat, newMap) with { IdentifierMap = newMap };
     }
 
-    public override AstNode OnFunctionDecl(FunctionDecl stat, IdentifierMap variableMap)
+    public override AstNode OnFunctionDecl(FunctionDecl stat, IdentifierMap identMap)
     {
-        var newMap = new IdentifierMap(variableMap);
-        return (FunctionDecl)base.OnFunctionDecl(stat, newMap) with { VariableMap = newMap };
+        if (identMap.TryGetValue(stat.Identifier.Name, out var entry, out var inCurScope))
+        {
+            if (inCurScope && !entry.HasLinkage)
+            {
+                throw new ValidationError($"Duplicate function declaration {stat.Identifier} at {stat.LeadToken.Line}:{stat.LeadToken.Column}");
+            }
+        }
+
+        var uniqueName = GenUniqueVarName(stat.Identifier.Name);
+        identMap[stat.Identifier.Name] = new MapEntry(NewName: uniqueName, FromCurrentScope: true);
+
+        var innerMap = new IdentifierMap(identMap);
+
+        var newParams = new List<Var>();
+        foreach (var param in stat.Params.Params)
+        {
+            innerMap[param.Name] = new MapEntry(NewName: GenUniqueVarName(param.Name), FromCurrentScope: true);
+        }
+
+        var newBody = stat.Body is not null ? (Block)ResolveStatement(stat.Body, innerMap) : null;
+
+        return new FunctionDecl("int", stat.Identifier, new ParamList(newParams), newBody);
     }
 
-    public override AstNode OnVarDeclStat(VarDecl stat, IdentifierMap variableMap)
+    public override AstNode OnVarDeclStat(VarDecl stat, IdentifierMap identMap)
     {
         var (declType, ident, init) = stat;
-        if (variableMap.TryGetValue(ident.Name, out _, out var inCurScope) && inCurScope)
+        if (identMap.TryGetValue(ident.Name, out _, out var inCurScope) && inCurScope)
         {
             throw new ValidationError($"duplicate variable declaration for {ident}");
         }
 
         var uniqueName = GenUniqueVarName(ident.Name);
-        variableMap[ident.Name] = uniqueName;
+        identMap[ident.Name] = new MapEntry(NewName: uniqueName, FromCurrentScope: true);
 
         if (init is not null)
         {
-            init = ResolveExpr(init, variableMap);
+            init = ResolveExpr(init, identMap);
         }
 
         return new VarDecl(declType, new Var(uniqueName), init);
     }
 
-    public override AstNode OnWhileLoopStat(WhileLoop stat, IdentifierMap variableMap)
+    public override AstNode OnVarExpr(Var expr, IdentifierMap identMap)
     {
-        var newMap = new IdentifierMap(variableMap);
-        return (WhileLoop)base.OnWhileLoopStat(stat, newMap) with { VariableMap = newMap };
-    }
-
-    public override AstNode OnVarExpr(Var expr, IdentifierMap variableMap)
-    {
-        if (variableMap.TryGetValue(expr.Name, out var globalName, out _))
+        if (identMap.TryGetValue(expr.Name, out var globalName, out _))
         {
-            return new Var(globalName);
+            return new Var(globalName.NewName);
         }
         else
         {
-            throw new ValidationError($"Undeclared variable {expr.Name}");
+            throw new ValidationError($"Undeclared variable {expr.Name} at {expr.LeadToken.Line}:{expr.LeadToken.Column}");
         }
+    }
+
+    public override AstNode OnWhileLoopStat(WhileLoop stat, IdentifierMap identMap)
+    {
+        var newMap = new IdentifierMap(identMap);
+        return (WhileLoop)base.OnWhileLoopStat(stat, newMap) with { IdentifierMap = newMap };
     }
 
     internal string GenUniqueVarName(string name)

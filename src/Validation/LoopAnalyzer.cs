@@ -14,24 +14,24 @@ public class LoopAnalyzer : BaseAstRewriter
 
     public override AstNode OnBlockStat(Block node, IdentifierMap variableMap)
     {
-        return (Block)base.OnBlockStat(node, node.VariableMap!);
+        return (Block)base.OnBlockStat(node, node.IdentifierMap!);
     }
 
     public override AstNode OnDoLoopStat(DoLoop stat, IdentifierMap variableMap)
     {
-        var newLoopLabel = stat.VariableMap!.NewLoopLabel();
-        return (DoLoop)base.OnDoLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
+        var newLoopLabel = stat.IdentifierMap!.NewLoopLabel();
+        return (DoLoop)base.OnDoLoopStat(stat, stat.IdentifierMap!) with { Label = newLoopLabel };
     }
     public override AstNode OnForLoopStat(ForLoop stat, IdentifierMap variableMap)
     {
-        var newLoopLabel = stat.VariableMap!.NewLoopLabel();
-        return (ForLoop)base.OnForLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
+        var newLoopLabel = stat.IdentifierMap!.NewLoopLabel();
+        return (ForLoop)base.OnForLoopStat(stat, stat.IdentifierMap!) with { Label = newLoopLabel };
     }
 
     public override AstNode OnWhileLoopStat(WhileLoop stat, IdentifierMap variableMap)
     {
-        var newLoopLabel = stat.VariableMap!.NewLoopLabel();
-        return (WhileLoop)base.OnWhileLoopStat(stat, stat.VariableMap!) with { Label = newLoopLabel };
+        var newLoopLabel = stat.IdentifierMap!.NewLoopLabel();
+        return (WhileLoop)base.OnWhileLoopStat(stat, stat.IdentifierMap!) with { Label = newLoopLabel };
     }
 
     public override AstNode OnStatDefault(AstNode stat, IdentifierMap variableMap) => stat;
@@ -40,7 +40,7 @@ public class LoopAnalyzer : BaseAstRewriter
     {
         if (variableMap.TryGetFromValues(expr.Name, out var globalName, out _))
         {
-            return new Var(globalName);
+            return new Var(globalName.NewName);
         }
         else
         {

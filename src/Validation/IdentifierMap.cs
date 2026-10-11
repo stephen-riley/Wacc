@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Wacc.Exceptions;
 
 namespace Wacc.Validation;
@@ -9,6 +10,7 @@ public class IdentifierMap
 
     public IdentifierMap? Parent = null;
     public string Name { get; init; }
+
     public IdentifierMap()
     {
         Name = $"Scope{++ScopeCount}";
@@ -22,18 +24,18 @@ public class IdentifierMap
 
     private static int LoopCounter = 0;
 
-    private readonly Dictionary<string, string> Map = [];
+    private readonly Dictionary<string, MapEntry> Map = [];
     private string? CurLoopLabel;
 
     public bool ContainsKey(string key) => Map.ContainsKey(key);
 
-    public string this[string key]
+    public MapEntry this[string key]
     {
         get => Map[key];
         set => Map[key] = value;
     }
 
-    public bool TryGetValue(string key, [NotNullWhen(true)] out string value, out bool inCurScope)
+    public bool TryGetValue(string key, [NotNullWhen(true)] out MapEntry value, out bool inCurScope)
     {
         inCurScope = false;
         var scope = this;
@@ -53,14 +55,14 @@ public class IdentifierMap
         return false;
     }
 
-    public bool TryGetFromValues(string targetValue, [NotNullWhen(true)] out string value, out bool inCurScope)
+    public bool TryGetFromValues(string targetValue, [NotNullWhen(true)] out MapEntry value, out bool inCurScope)
     {
         inCurScope = false;
         var scope = this;
 
         do
         {
-            var v = scope.Map.FirstOrDefault(pair => pair.Value == targetValue).Value;
+            var v = scope.Map.FirstOrDefault(pair => pair.Value.NewName == targetValue).Value;
             if (v is not null)
             {
                 value = v;
@@ -95,4 +97,21 @@ public class IdentifierMap
     }
 
     public override string ToString() => $"{Name} ({Map.Count})";
+
+    public string ToPrettyString(int indent = 0)
+    {
+        var sb = new StringBuilder();
+        var cur = this;
+        while (cur is not null)
+        {
+            foreach (var entry in cur.Map.OrderBy(kvp => kvp.Key))
+            {
+                sb.AppendLine(new string(' ', indent) + $"{entry.Key}: {entry.Value.NewName}");
+            }
+            cur = cur.Parent;
+            indent++;
+        }
+
+        return sb.ToString();
+    }
 }
