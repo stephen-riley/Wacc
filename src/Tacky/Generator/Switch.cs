@@ -1,7 +1,5 @@
 using Wacc.Ast;
-using Wacc.Exceptions;
 using Wacc.Tacky.Instruction;
-using Wacc.Tokens;
 
 namespace Wacc.Tacky;
 

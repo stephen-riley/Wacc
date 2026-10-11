@@ -1,4 +1,3 @@
-using Wacc.Exceptions;
 using Wacc.Tokens;
 
 namespace Wacc.Ast;
