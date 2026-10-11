@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Wacc.Exceptions;
+using Wacc.Validation.Tools;
 
 namespace Wacc.Validation;
 

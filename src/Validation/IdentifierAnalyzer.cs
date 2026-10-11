@@ -1,5 +1,6 @@
 using Wacc.Ast;
 using Wacc.Exceptions;
+using Wacc.Validation.Tools;
 
 namespace Wacc.Validation;
 

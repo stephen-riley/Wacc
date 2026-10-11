@@ -1,6 +1,6 @@
 using Wacc.Ast;
 
-namespace Wacc.Validation;
+namespace Wacc.Validation.Tools;
 
 public static class AnalyzerExtensions
 {
