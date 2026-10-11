@@ -29,8 +29,8 @@ public partial record FunctionCall(Var Identifier, ArgumentList Args) : AstNode
     {
         var sb = new StringBuilder();
         sb.Append("FunctionDecl(\n");
-        sb.Append(IndentStr(indent + 1)).Append(Identifier.ToPrettyString()).Append('\n');
-        sb.Append(IndentStr(indent + 1)).Append(Args.ToPrettyString()).Append('\n');
+        sb.Append(IndentStr(indent + 1)).Append(Identifier.ToPrettyString(indent + 1)).Append('\n');
+        sb.Append(IndentStr(indent + 1)).Append(Args.ToPrettyString(indent + 1)).Append('\n');
         sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }

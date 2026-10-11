@@ -42,11 +42,11 @@ public partial record FunctionDecl(string FuncType, Var Identifier, ParamList Pa
         sb.Append("FunctionDecl(\n");
         sb.Append(IndentStr(indent + 1)).Append($"type={FuncType}").Append('\n');
         sb.Append(IndentStr(indent + 1)).Append(Identifier.ToPrettyString()).Append('\n');
-        sb.Append(IndentStr(indent + 1)).Append(Params.ToPrettyString()).Append('\n');
+        sb.Append(IndentStr(indent + 1)).Append(Params.ToPrettyString(indent + 1)).Append('\n');
 
         if (Body is not null)
         {
-            sb.Append(IndentStr(indent + 1)).Append(Body.ToPrettyString()).Append('\n');
+            sb.Append(IndentStr(indent + 1)).Append(Body.ToPrettyString(indent + 1)).Append('\n');
         }
         sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
