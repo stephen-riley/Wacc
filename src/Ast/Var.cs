@@ -16,7 +16,7 @@ public partial record Var(string Name) : AstNode
         return new Var(tok.Str ?? throw new ParseError($"no Str for token {tok}")) { LeadToken = leadToken };
     }
 
-    public override string ToPrettyString(int indent = 0) => $"Var({Name})";
+    public override string ToPrettyString(int indent = 0) => $"{nameof(Var)}({Name})";
 
     public override IEnumerable<AstNode> Children() => [];
 }

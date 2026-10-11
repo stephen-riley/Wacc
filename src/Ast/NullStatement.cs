@@ -13,7 +13,7 @@ public partial record NullStatement() : AstNode
 
     public new static NullStatement Parse(Queue<Token> tokenStream) => new();
 
-    public override string ToPrettyString(int indent = 0) => "NullStatement()";
+    public override string ToPrettyString(int indent = 0) => $"{nameof(NullStatement)}()";
 
     public override IEnumerable<AstNode> Children() => [];
 }

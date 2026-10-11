@@ -32,7 +32,7 @@ public partial record VarDecl(string DeclType, Var Identifier, AstNode? Expr = n
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.Append("VarDecl(\n");
+        sb.Append($"{nameof(VarDecl)}(\n");
         sb.Append(IndentStr(indent + 1)).Append($"type={DeclType}").Append('\n');
         sb.Append(IndentStr(indent + 1)).Append(Identifier.ToPrettyString()).Append('\n');
 

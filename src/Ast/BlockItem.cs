@@ -26,6 +26,4 @@ public partial record BlockItem : AstNode
     {
         throw new NotImplementedException();
     }
-
-    public override string ToPrettyString(int indent = 0) => throw new ParseError($"{GetType().Name}.{nameof(ToPrettyString)} should not be called");
 }

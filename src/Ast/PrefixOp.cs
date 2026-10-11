@@ -10,7 +10,7 @@ public partial record PrefixOp(TokenType Op, AstNode LValExpr) : AstNode
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"PrefixOp({Op.Description()}");
+        sb.AppendLine($"{nameof(PrefixOp)}({Op.Description()}");
         sb.Append(IndentStr(indent + 1)).AppendLine(LValExpr.ToPrettyString(indent + 1));
         sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();

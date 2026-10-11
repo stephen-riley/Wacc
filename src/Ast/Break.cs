@@ -18,7 +18,7 @@ public partial record Break() : AstNode
         return new Break() { LeadToken = leadToken };
     }
 
-    public override string ToPrettyString(int indent = 0) => $"Break()";
+    public override string ToPrettyString(int indent = 0) => $"{nameof(Break)}()";
 
     public override IEnumerable<AstNode> Children() => [];
 }

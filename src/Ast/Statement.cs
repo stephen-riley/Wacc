@@ -61,8 +61,5 @@ public partial record Statement() : AstNode
         return stat;
     }
 
-    public override string ToPrettyString(int indent = 0)
-        => throw new NotImplementedException($"{GetType().Name}.{nameof(ToPrettyString)}");
-
     public override IEnumerable<AstNode> Children() => [];
 }

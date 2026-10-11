@@ -44,11 +44,11 @@ public partial record ParamList(IEnumerable<Var> Params) : AstNode
     {
         if (IsVoid())
         {
-            return "ParamList(void)";
+            return $"{nameof(ParamList)}(void)";
         }
 
         var sb = new StringBuilder();
-        sb.Append("ParamList(\n");
+        sb.Append($"{nameof(ParamList)}(\n");
         foreach (var v in Params)
         {
             sb.Append(IndentStr(indent + 1));

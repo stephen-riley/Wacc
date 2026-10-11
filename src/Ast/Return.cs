@@ -23,7 +23,7 @@ public partial record Return(AstNode Expr) : AstNode
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("Return(");
+        sb.AppendLine($"{nameof(Return)}(");
         sb.Append(IndentStr(indent + 1)).AppendLine(Expr.ToPrettyString(indent + 1));
         sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();

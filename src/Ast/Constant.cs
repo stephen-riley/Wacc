@@ -17,5 +17,5 @@ public partial record Constant(int Int) : AstNode
 
     public override IEnumerable<AstNode> Children() => [];
 
-    public override string ToPrettyString(int indent = 0) => $"Constant({Int})";
+    public override string ToPrettyString(int indent = 0) => $"{nameof(Constant)}({Int})";
 }

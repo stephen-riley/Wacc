@@ -39,7 +39,7 @@ public partial record FunctionDecl(string FuncType, Var Identifier, ParamList Pa
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.Append("FunctionDecl(\n");
+        sb.Append($"{nameof(FunctionDecl)}(\n");
         sb.Append(IndentStr(indent + 1)).Append($"type={FuncType}").Append('\n');
         sb.Append(IndentStr(indent + 1)).Append(Identifier.ToPrettyString()).Append('\n');
         sb.Append(IndentStr(indent + 1)).Append(Params.ToPrettyString(indent + 1)).Append('\n');

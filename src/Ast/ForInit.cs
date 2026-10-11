@@ -37,7 +37,7 @@ public partial record ForInit(string DeclType, Var Identifier, AstNode? Expr = n
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.Append("Declaration(\n");
+        sb.Append($"{nameof(Declaration)}(\n");
         sb.Append(IndentStr(indent + 1)).Append($"type={DeclType}").Append('\n');
         sb.Append(IndentStr(indent + 1)).Append(Identifier.ToPrettyString()).Append('\n');
 

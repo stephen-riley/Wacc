@@ -18,7 +18,7 @@ public partial record Continue() : AstNode
         return new Continue() { LeadToken = leadToken };
     }
 
-    public override string ToPrettyString(int indent = 0) => $"Continue()";
+    public override string ToPrettyString(int indent = 0) => $"{nameof(Continue)}()";
 
     public override IEnumerable<AstNode> Children() => [];
 }

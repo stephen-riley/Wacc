@@ -32,7 +32,7 @@ public partial record WhileLoop(AstNode CondExpr, AstNode BodyBlock, string? Lab
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"WhileLoop({Label ?? DefaultLabel}");
+        sb.AppendLine($"{nameof(WhileLoop)}({Label ?? DefaultLabel}");
         sb.Append(IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent + 1)).AppendLine($"body={BodyBlock.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent)).Append(')');

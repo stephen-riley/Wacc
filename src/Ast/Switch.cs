@@ -28,7 +28,7 @@ public partial record Switch(AstNode CondExpr, AstNode SwitchBlock) : AstNode
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("Switch(");
+        sb.AppendLine($"{nameof(Switch)}(");
         sb.Append(IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent + 1)).AppendLine($"block={SwitchBlock.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent)).Append(')');

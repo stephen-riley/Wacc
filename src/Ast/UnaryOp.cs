@@ -28,7 +28,7 @@ public partial record UnaryOp(Token Op, AstNode Expr) : AstNode
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.Append($"Unary('{Op.TokenType}'\n");
+        sb.Append($"{nameof(UnaryOp)}('{Op.TokenType}'\n");
         sb.Append(IndentStr(indent + 1)).Append(Expr.ToPrettyString(indent + 1)).Append('\n');
         sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();

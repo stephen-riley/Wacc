@@ -24,7 +24,7 @@ public partial record Default() : AstNode
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("Default(");
+        sb.AppendLine($"{nameof(Default)}(");
         sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();
     }

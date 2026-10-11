@@ -28,7 +28,7 @@ public partial record CompUnit(FunctionDecl[] Functions) : AstNode
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.Append("Program(\n");
+        sb.Append($"{nameof(Program)}(\n");
         foreach (var stat in Functions)
         {
             sb.Append(IndentStr(indent + 1));

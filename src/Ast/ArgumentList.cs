@@ -42,7 +42,7 @@ public partial record ArgumentList(IEnumerable<AstNode> Params) : AstNode
         }
 
         var sb = new StringBuilder();
-        sb.Append("ArgumentList(\n");
+        sb.Append($"{nameof(ArgumentList)}(\n");
         foreach (var v in Params)
         {
             sb.Append(IndentStr(indent + 1));

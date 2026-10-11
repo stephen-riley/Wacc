@@ -53,7 +53,5 @@ public partial record Factor(AstNode SubExpr) : AstNode
         return factor;
     }
 
-    public override string ToPrettyString(int indent = 0) => throw new ParseError($"{GetType().Name}.{nameof(ToPrettyString)} should not be called");
-
     public override IEnumerable<AstNode> Children() => [];
 }

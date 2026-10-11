@@ -27,7 +27,7 @@ public partial record Ternary(AstNode CondExpr, AstNode Middle, AstNode Right) :
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("Ternary(");
+        sb.AppendLine($"{nameof(Ternary)}(");
         sb.Append(IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent + 1)).AppendLine($"middle={Middle.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent + 1)).AppendLine($"right={Right.ToPrettyString(indent + 1)}");

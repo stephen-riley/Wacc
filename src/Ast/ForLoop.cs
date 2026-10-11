@@ -42,7 +42,7 @@ public partial record ForLoop(AstNode InitStat, AstNode CondExpr, AstNode PostSt
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"ForLoop({Label ?? DefaultLabel}");
+        sb.AppendLine($"{nameof(ForLoop)}({Label ?? DefaultLabel}");
         sb.Append(IndentStr(indent + 1)).AppendLine($"init={InitStat.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent + 1)).AppendLine($"post={PostStat.ToPrettyString(indent + 1)}");

@@ -47,7 +47,7 @@ public partial record Block(AstNode[] BlockItems) : AstNode
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("Block(");
+        sb.AppendLine("{nameof(Block)}(");
 
         foreach (var s in BlockItems)
         {

@@ -25,7 +25,7 @@ public partial record Case(AstNode CaseCondExpr) : AstNode
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("Case(");
+        sb.AppendLine($"{nameof(Case)}(");
         sb.Append(IndentStr(indent + 1)).AppendLine($"expr={CaseCondExpr.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();

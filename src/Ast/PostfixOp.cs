@@ -10,7 +10,7 @@ public partial record PostfixOp(TokenType Op, AstNode LValExpr) : AstNode
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"PostfixOp({Op.Description()}");
+        sb.AppendLine($"{nameof(PostfixOp)}({Op.Description()}");
         sb.Append(IndentStr(indent + 1)).AppendLine(LValExpr.ToPrettyString(indent + 1));
         sb.Append(IndentStr(indent)).Append(')');
         return sb.ToString();

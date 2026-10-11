@@ -26,7 +26,7 @@ public partial record Goto(Label Label) : AstNode
         return new Goto(new Label(label.Str)) { LeadToken = leadToken };
     }
 
-    public override string ToPrettyString(int indent = 0) => $"Goto({Label.ToPrettyString()})";
+    public override string ToPrettyString(int indent = 0) => $"{nameof(Goto)}({Label.ToPrettyString()})";
 
     public override IEnumerable<AstNode> Children() => [];
 }

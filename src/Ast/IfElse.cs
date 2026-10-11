@@ -39,7 +39,7 @@ public partial record IfElse(AstNode CondExpr, AstNode ThenBlock, AstNode? ElseB
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("IfElse(");
+        sb.AppendLine($"{nameof(IfElse)}(");
         sb.Append(IndentStr(indent + 1)).AppendLine($"condition={CondExpr.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent + 1)).AppendLine($"then={ThenBlock.ToPrettyString(indent + 1)}");
         if (ElseBlock is not null)

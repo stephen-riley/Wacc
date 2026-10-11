@@ -19,7 +19,7 @@ public partial record Label(string Name) : AstNode
         return new Label(label.Str ?? throw new ParseError($"No string for label token {label}")) { LeadToken = leadToken };
     }
 
-    public override string ToPrettyString(int indent = 0) => $"Label({Name})";
+    public override string ToPrettyString(int indent = 0) => $"{nameof(Label)}({Name})";
 
     public override IEnumerable<AstNode> Children() => [];
 }

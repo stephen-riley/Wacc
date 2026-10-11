@@ -37,7 +37,7 @@ public partial record DoLoop(AstNode BodyBlock, AstNode CondExpr, string? Label 
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"DoLoop({Label ?? DefaultLabel}");
+        sb.AppendLine($"{nameof(DoLoop)}({Label ?? DefaultLabel}");
         sb.Append(IndentStr(indent + 1)).AppendLine($"body={BodyBlock.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent + 1)).AppendLine($"cond={CondExpr.ToPrettyString(indent + 1)}");
         sb.Append(IndentStr(indent)).Append(')');

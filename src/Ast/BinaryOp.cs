@@ -86,7 +86,7 @@ public partial record BinaryOp(TokenType Op, AstNode LExpr, AstNode RExpr) : Ast
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.Append($"Binary('{Op.Description()}'\n");
+        sb.Append($"{nameof(BinaryOp)}('{Op.Description()}'\n");
         sb.Append(IndentStr(indent + 1)).Append(LExpr.ToPrettyString(indent + 1)).Append('\n');
         sb.Append(IndentStr(indent + 1)).Append(RExpr.ToPrettyString(indent + 1)).Append('\n');
         sb.Append(IndentStr(indent)).Append(')');
