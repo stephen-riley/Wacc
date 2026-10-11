@@ -39,8 +39,7 @@ public class IdentifierAnalyzer : BaseAstRewriter
             }
         }
 
-        var uniqueName = GenUniqueVarName(stat.Identifier.Name);
-        identMap[stat.Identifier.Name] = new MapEntry(NewName: uniqueName, FromCurrentScope: true);
+        identMap[stat.Identifier.Name] = new MapEntry(NewName: stat.Identifier.Name, FromCurrentScope: true, HasLinkage: true);
 
         var innerMap = new IdentifierMap(identMap);
 
