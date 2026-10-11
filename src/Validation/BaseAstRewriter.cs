@@ -164,8 +164,6 @@ public class BaseAstRewriter
 
     public virtual AstNode OnFunctionCallExpr(FunctionCall fc, IdentifierMap identMap)
     {
-        Console.WriteLine(identMap.ToPrettyString());
-
         var newName = (Var)OnVarExpr(fc.Identifier, identMap);
         var newArgs = new ArgumentList([.. fc.Args.Params.Select(arg => ResolveExpr(arg, identMap))]);
         return new FunctionCall(newName, newArgs);
@@ -229,6 +227,7 @@ public class BaseAstRewriter
             DoLoop => OnDoLoopStat((DoLoop)stat, identMap),
             Expression => OnExpressionStat((Expression)stat, identMap),
             ForLoop => OnForLoopStat((ForLoop)stat, identMap),
+            FunctionCall => OnFunctionCallExpr((FunctionCall)stat, identMap),
             FunctionDecl => OnFunctionDecl((FunctionDecl)stat, identMap),
             Goto => OnGotoStat((Goto)stat, identMap),
             IfElse => OnIfElseStat((IfElse)stat, identMap),
