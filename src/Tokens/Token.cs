@@ -6,5 +6,7 @@ public record Token(TokenType TokenType, int Line, int Column, string? Str, int 
 
     public bool MostlyEquals(Token t) => TokenType == t.TokenType && Line == t.Line && Column == t.Column && Str == t.Str;
 
-    public override string ToString() => $"{TokenType}:{Str} ({Line}:{Column})";
+    public override string ToString() => $"{TokenType}:{Str} ({Location})";
+
+    public string Location => $"{Line}:{Column}";
 }

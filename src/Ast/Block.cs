@@ -2,15 +2,13 @@ using System.Text;
 using Wacc.Exceptions;
 using Wacc.Parse;
 using Wacc.Tokens;
-using Wacc.Validation;
+using Wacc.Validation.Tools;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
 public partial record Block(AstNode[] BlockItems) : AstNode
 {
-    public IdentifierMap? IdentifierMap;
-
     public new static bool CanParse(Queue<Token> tokenStream)
         => tokenStream.PeekFor(OpenBrace)
         || BlockItem.CanParse(tokenStream);
@@ -47,7 +45,7 @@ public partial record Block(AstNode[] BlockItems) : AstNode
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("{nameof(Block)}(");
+        sb.AppendLine($"{nameof(Block)}(");
 
         foreach (var s in BlockItems)
         {

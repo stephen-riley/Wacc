@@ -1,6 +1,7 @@
 using Wacc.Exceptions;
 using Wacc.Extensions;
 using Wacc.Tokens;
+using Wacc.Validation.Tools;
 
 namespace Wacc.Ast;
 
@@ -9,6 +10,8 @@ public closed partial record AstNode
     protected static readonly string INDENT = "  ";
 
     public Token LeadToken { get; set; } = Token.EmptyToken;
+
+    public IdentifierMap? IdentifierMap { get; set; }
 
     public virtual bool IsBlockItem() => false;
 

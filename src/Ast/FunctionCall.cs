@@ -1,15 +1,12 @@
 using System.Text;
 using Wacc.Parse;
 using Wacc.Tokens;
-using Wacc.Validation;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
 public partial record FunctionCall(Var Identifier, ArgumentList Args) : AstNode
 {
-    public IdentifierMap? IdentifierMap;
-
     public override bool IsBlockItem() => true;
 
     public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekForSequence([TokenType.Identifier, OpenParen]);

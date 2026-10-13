@@ -1,11 +1,12 @@
 using System.Text;
 using Wacc.Parse;
 using Wacc.Tokens;
+using Wacc.Validation.Types;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public partial record VarDecl(string DeclType, Var Identifier, AstNode? Expr = null) : AstNode
+public partial record VarDecl(WaccType Type, Var Identifier, AstNode? Expr = null) : AstNode
 {
     public override bool IsBlockItem() => true;
 
@@ -26,14 +27,14 @@ public partial record VarDecl(string DeclType, Var Identifier, AstNode? Expr = n
         }
         tokenStream.Expect(Semicolon);
 
-        return new VarDecl("int", ident, assignExpr) { LeadToken = leadToken };
+        return new VarDecl(new IntType(), ident, assignExpr) { LeadToken = leadToken };
     }
 
     public override string ToPrettyString(int indent = 0)
     {
         var sb = new StringBuilder();
         sb.Append($"{nameof(VarDecl)}(\n");
-        sb.Append(IndentStr(indent + 1)).Append($"type={DeclType}").Append('\n');
+        sb.Append(IndentStr(indent + 1)).Append($"type={Type}").Append('\n');
         sb.Append(IndentStr(indent + 1)).Append(Identifier.ToPrettyString()).Append('\n');
 
         if (Expr is not null)

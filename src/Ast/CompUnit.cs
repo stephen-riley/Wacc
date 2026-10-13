@@ -2,15 +2,13 @@ using System.Text;
 using Wacc.Extensions;
 using Wacc.Parse;
 using Wacc.Tokens;
-using Wacc.Validation;
+using Wacc.Validation.Tools;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
 public partial record CompUnit(FunctionDecl[] Functions) : AstNode
 {
-    public IdentifierMap? IdentifierMap;
-
     public new static CompUnit Parse(Queue<Token> tokenStream)
     {
         var leadToken = tokenStream.Peek();

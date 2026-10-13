@@ -185,7 +185,9 @@ public class TestDriver(TestOptions rts)
         {
             if (test.IsValid)
             {
-                errorMessage = $"{e.GetType().Name}: {e.Message}";
+                var className = e.TargetSite?.DeclaringType?.Name ?? "{UNKNOWN THROWER}";
+                var methodName = e.TargetSite?.Name ?? "{UNKNOWN METHOD}";
+                errorMessage = $"[{className}.{methodName}] {e.GetType().Name}: {e.Message}";
                 return false;
             }
             else

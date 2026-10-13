@@ -1,6 +1,7 @@
 using Wacc.Ast;
 using Wacc.Exceptions;
 using Wacc.Validation.Tools;
+using Wacc.Validation.Types;
 
 namespace Wacc.Validation;
 
@@ -36,23 +37,23 @@ public class IdentifierAnalyzer : BaseValidationAstRewriter
         {
             if (inCurScope && !entry.HasLinkage)
             {
-                throw new ValidationError($"Duplicate function declaration {stat.Identifier} at {stat.LeadToken.Line}:{stat.LeadToken.Column}");
+                throw new ValidationError($"Duplicate function declaration {stat.Identifier} at {stat.LeadToken.Location}");
             }
         }
 
-        identMap[stat.Identifier.Name] = new MapEntry(NewName: stat.Identifier.Name, FromCurrentScope: true, HasLinkage: true);
+        identMap[stat.Identifier.Name] = new MapEntry(NewName: stat.Identifier.Name, Type: new FuncType(stat.Params.Params.Count()), FromCurrentScope: true, HasLinkage: true);
 
         var innerMap = new IdentifierMap(identMap);
 
         var newParams = new List<Var>();
         foreach (var param in stat.Params.Params)
         {
-            innerMap[param.Name] = new MapEntry(NewName: GenUniqueVarName(param.Name), FromCurrentScope: true);
+            innerMap[param.Name] = new MapEntry(NewName: GenUniqueVarName(param.Name), Type: new IntType(), FromCurrentScope: true);
         }
 
         var newBody = stat.Body is not null ? (Block)ResolveStatement(stat.Body, innerMap) : null;
 
-        return new FunctionDecl("int", stat.Identifier, new ParamList(newParams), newBody);
+        return new FunctionDecl(new IntType(), stat.Identifier, new ParamList(newParams), newBody) { IdentifierMap = identMap };
     }
 
     public override AstNode OnVarDeclStat(VarDecl stat, IdentifierMap identMap)
@@ -60,11 +61,11 @@ public class IdentifierAnalyzer : BaseValidationAstRewriter
         var (declType, ident, init) = stat;
         if (identMap.TryGetValue(ident.Name, out _, out var inCurScope) && inCurScope)
         {
-            throw new ValidationError($"duplicate variable declaration for {ident}");
+            throw new ValidationError($"Duplicate variable declaration for {ident}");
         }
 
         var uniqueName = GenUniqueVarName(ident.Name);
-        identMap[ident.Name] = new MapEntry(NewName: uniqueName, FromCurrentScope: true);
+        identMap[ident.Name] = new MapEntry(NewName: uniqueName, Type: new IntType(), FromCurrentScope: true);
 
         if (init is not null)
         {
@@ -82,7 +83,7 @@ public class IdentifierAnalyzer : BaseValidationAstRewriter
         }
         else
         {
-            throw new ValidationError($"Undeclared variable {expr.Name} at {expr.LeadToken.Line}:{expr.LeadToken.Column}");
+            throw new ValidationError($"Undeclared variable {expr.Name} at {expr.LeadToken.Location}");
         }
     }
 

@@ -2,7 +2,7 @@ using System.Text;
 using Wacc.Exceptions;
 using Wacc.Parse;
 using Wacc.Tokens;
-using Wacc.Validation;
+using Wacc.Validation.Tools;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
@@ -10,8 +10,6 @@ namespace Wacc.Ast;
 public partial record ForLoop(AstNode InitStat, AstNode CondExpr, AstNode PostStat, AstNode BodyBlock, string? Label = null) : AstNode
 {
     public const string DefaultLabel = "$__TODO_FOR_LABEL__";
-
-    public IdentifierMap? IdentifierMap;
 
     public override bool IsBlockItem() => true;
 

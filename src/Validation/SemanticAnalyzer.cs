@@ -37,6 +37,8 @@ public record SemanticAnalyzer(RuntimeState Options)
             program = new IdentifierAnalyzer().Validate(program);
             program = new LoopAnalyzer().Validate(program);
             program = LabelAnalyzer.Validate(program);
+            program = TypeChecker.Validate(program);
+
             return program;
         }
         else

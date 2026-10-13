@@ -1,15 +1,13 @@
 using System.Text;
 using Wacc.Parse;
 using Wacc.Tokens;
-using Wacc.Validation;
+using Wacc.Validation.Types;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
 
-public partial record FunctionDecl(string FuncType, Var Identifier, ParamList Params, Block? Body = null) : AstNode
+public partial record FunctionDecl(WaccType FuncType, Var Identifier, ParamList Params, Block? Body = null) : AstNode
 {
-    public IdentifierMap? IdentifierMap;
-
     public override bool IsBlockItem() => true;
 
     public new static bool CanParse(Queue<Token> tokenStream) => tokenStream.PeekForSequence([IntKw, TokenType.Identifier, OpenParen]);
@@ -27,12 +25,12 @@ public partial record FunctionDecl(string FuncType, Var Identifier, ParamList Pa
         if (tokenStream.PeekFor(Semicolon))
         {
             tokenStream.Expect(Semicolon);
-            return new FunctionDecl("int", ident, paramList) { LeadToken = leadToken };
+            return new FunctionDecl(new IntType(), ident, paramList) { LeadToken = leadToken };
         }
         else
         {
             var body = Block.Parse(tokenStream);
-            return new FunctionDecl("int", ident, paramList, (Block)body) { LeadToken = leadToken };
+            return new FunctionDecl(new IntType(), ident, paramList, (Block)body) { LeadToken = leadToken };
         }
     }
 

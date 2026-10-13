@@ -1,7 +1,7 @@
 using System.Text;
 using Wacc.Parse;
 using Wacc.Tokens;
-using Wacc.Validation;
+using Wacc.Validation.Tools;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
@@ -9,8 +9,6 @@ namespace Wacc.Ast;
 public partial record WhileLoop(AstNode CondExpr, AstNode BodyBlock, string? Label = null) : AstNode
 {
     public const string DefaultLabel = "$__TODO_WHILE_LABEL__";
-
-    public IdentifierMap? IdentifierMap;
 
     public override bool IsBlockItem() => true;
 

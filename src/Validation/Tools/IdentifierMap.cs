@@ -1,15 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Wacc.Exceptions;
-using Wacc.Validation.Tools;
 
-namespace Wacc.Validation;
+namespace Wacc.Validation.Tools;
 
 public class IdentifierMap
 {
     private static int ScopeCount = 0;
 
     public IdentifierMap? Parent = null;
+
     public string Name { get; init; }
 
     public IdentifierMap()
