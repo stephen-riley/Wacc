@@ -67,7 +67,6 @@ public partial class TackyGenerator(RuntimeState opts)
     internal void Emit(ITackyInstr instr)
     {
         instructions.Add(instr);
-        // Console.Error.WriteLine($"> {instr}");
     }
 
     internal TacVal EmitWithVoid(ITackyInstr instr)
