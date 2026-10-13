@@ -7,8 +7,9 @@ public partial class TackyGenerator
 {
     private TacVal EmitTackyForFunctionCall(FunctionCall fc)
     {
+        var dst = ReserveTmpVar();
         EmitTacky(fc.Args);
-        Emit(new TacFunctionCall(fc.Identifier.Name));
+        Emit(new TacFuncCall(fc.Identifier.Name, dst));
         return VOID;
     }
 }

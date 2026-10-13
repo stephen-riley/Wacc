@@ -1,6 +1,6 @@
 namespace Wacc.Tacky.Instruction;
 
-public record TacFunctionCall(string Name) : ITackyInstr
+public record TacFuncCall(string Name, TacVar Dst) : ITackyInstr
 {
     public List<TacVar> Locals { get; } = [];
 
