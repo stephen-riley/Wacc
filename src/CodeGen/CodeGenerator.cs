@@ -67,24 +67,30 @@ public class CodeGenerator(RuntimeState opts)
 
     internal void TranslateFunction(TacFunction f)
     {
-        var af = AF.Function(f.Name);
-
-        int curOffset = -8;  // TODO: this isn't right--check on the calling convention in the AArch64 book
-        foreach (var l in f.Locals)
+        if (f.Instructions.Any())
         {
-            af.StackOffsets[l.Name] = curOffset;
-            curOffset -= 4;
-        }
+            var af = AF.Function(f.Name);
 
-        Asm.Add(af);
-        Asm.Add(AF.AllocateStack(af.LocalsSize));
-        Asm.Add(AF.Newline());
+            int curOffset = -8;  // TODO: this isn't right--check on the calling convention in the AArch64 book
+            foreach (var l in f.Locals)
+            {
+                af.StackOffsets[l.Name] = curOffset;
+                curOffset -= 4;
+            }
 
-        foreach (var i in f.Instructions)
-        {
-            TranslateTacInstruction(i, af);
+            Asm.Add(af);
+            Asm.Add(AF.AllocateStack(af.LocalsSize));
+            Asm.Add(AF.Newline());
+
+            foreach (var i in f.Instructions)
+            {
+                TranslateTacInstruction(i, af);
+            }
+
+            Asm.Add(AF.DeallocateStack(af.LocalsSize));
+            Asm.Add(AF.FunctionEpilogue(f.Name, af));
+            Asm.Add(AF.Newline());
         }
-        Asm.Add(AF.FunctionEpilogue(f.Name, af));
     }
 
     internal void TranslateTacInstruction(ITackyInstr instr, AsmFunction curFunc)
@@ -93,60 +99,6 @@ public class CodeGenerator(RuntimeState opts)
 
         switch (instr)
         {
-            case TacJump j:
-                Asm.Add(AF.Jmp(j.Identifier));
-                break;
-
-            case TacJumpIfZero jz:
-                Asm.AddRange([
-                    AF.Mov(TranslateVal(jz.Src), AF.SCRATCH1),
-                    AF.Cmp(AF.ZR, AF.SCRATCH1),
-                    AF.JmpCC(AsmCmp.CondCode.EQ, jz.Identifier)
-                ]);
-                break;
-
-            case TacJumpIfNotZero jnz:
-                Asm.AddRange([
-                    AF.Mov(TranslateVal(jnz.Src), AF.SCRATCH1),
-                    AF.Cmp(AF.ZR, AF.SCRATCH1),
-                    AF.JmpCC(AsmCmp.CondCode.NE, jnz.Identifier)
-                ]);
-                break;
-
-            case TacJumpIfTrue jt:
-                Asm.AddRange([
-                    AF.Mov(TranslateVal(jt.Src), AF.SCRATCH1),
-                    AF.Cmp(AF.ZR, AF.SCRATCH1),
-                    AF.JmpCC(AsmCmp.CondCode.NE, jt.Identifier)
-                ]);
-                break;
-
-            case TacJumpIfFalse jf:
-                Asm.AddRange([
-                    AF.Mov(TranslateVal(jf.Src), AF.SCRATCH1),
-                    AF.Cmp(AF.ZR, AF.SCRATCH1),
-                    AF.JmpCC(AsmCmp.CondCode.EQ, jf.Identifier)
-                ]);
-                break;
-
-            case TacUnary u when u.OpName == "Negate":
-                Asm.Add(AF.Mov(TranslateVal(u.Src), AF.PseudoOperand(u.Dst)));
-                Asm.Add(AF.Neg(AF.PseudoOperand(u.Dst)));
-                break;
-
-            case TacUnary u when u.OpName == "Complement":
-                Asm.Add(AF.Mov(TranslateVal(u.Src), AF.PseudoOperand(u.Dst)));
-                Asm.Add(AF.BitNot(AF.PseudoOperand(u.Dst)));
-                break;
-
-            case TacUnary u when u.OpName == "Not":
-                Asm.AddRange([
-                    AF.Mov(TranslateVal(u.Src), AF.SCRATCH1),
-                    AF.Cmp(AF.ZR, AF.SCRATCH1),
-                    AF.SetCC(AsmCmp.CondCode.EQ, AF.PseudoOperand(u.Dst))
-                ]);
-                break;
-
             case TacBinary b when BinaryOp.RelationalOps.Contains(b.Op):
                 Asm.AddRange([
                     AF.Cmp(TranslateVal(b.Src1), TranslateVal(b.Src2)),
@@ -175,17 +127,80 @@ public class CodeGenerator(RuntimeState opts)
                 ]);
                 break;
 
+            case TacCopy c:
+                Asm.Add(AF.Mov(TranslateVal(c.Src), AF.PseudoOperand(c.Dst)));
+                break;
+
+            case TacFunction f:
+                Asm.Add(AF.Function(f.Name));
+                break;
+
+            case TacFuncCall fc:
+                Asm.Add(AF.Call(fc.Name, AF.PseudoOperand(fc.Dst)));
+                Asm.Add(AF.Mov(AF.RETVAL, AF.PseudoOperand(fc.Dst)));
+                break;
+
+            case TacJump j:
+                Asm.Add(AF.Jmp(j.Identifier));
+                break;
+
+            case TacJumpIfFalse jf:
+                Asm.AddRange([
+                    AF.Mov(TranslateVal(jf.Src), AF.SCRATCH1),
+                    AF.Cmp(AF.ZR, AF.SCRATCH1),
+                    AF.JmpCC(AsmCmp.CondCode.EQ, jf.Identifier)
+                ]);
+                break;
+
+            case TacJumpIfNotZero jnz:
+                Asm.AddRange([
+                    AF.Mov(TranslateVal(jnz.Src), AF.SCRATCH1),
+                    AF.Cmp(AF.ZR, AF.SCRATCH1),
+                    AF.JmpCC(AsmCmp.CondCode.NE, jnz.Identifier)
+                ]);
+                break;
+
+            case TacJumpIfTrue jt:
+                Asm.AddRange([
+                    AF.Mov(TranslateVal(jt.Src), AF.SCRATCH1),
+                    AF.Cmp(AF.ZR, AF.SCRATCH1),
+                    AF.JmpCC(AsmCmp.CondCode.NE, jt.Identifier)
+                ]);
+                break;
+
+            case TacJumpIfZero jz:
+                Asm.AddRange([
+                    AF.Mov(TranslateVal(jz.Src), AF.SCRATCH1),
+                    AF.Cmp(AF.ZR, AF.SCRATCH1),
+                    AF.JmpCC(AsmCmp.CondCode.EQ, jz.Identifier)
+                ]);
+                break;
+
+            case TacLabel l:
+                Asm.Add(AF.Label(l.Identifier));
+                break;
+
             case TacReturn r:
                 Asm.Add(AF.Mov(TranslateVal(r.Val), AF.RegOperand(ArmReg.RETVAL)));
                 Asm.Add(AF.Ret(curFunc.Name));
                 break;
 
-            case TacCopy c:
-                Asm.Add(AF.Mov(TranslateVal(c.Src), AF.PseudoOperand(c.Dst)));
+            case TacUnary u when u.OpName == "Negate":
+                Asm.Add(AF.Mov(TranslateVal(u.Src), AF.PseudoOperand(u.Dst)));
+                Asm.Add(AF.Neg(AF.PseudoOperand(u.Dst)));
                 break;
 
-            case TacLabel l:
-                Asm.Add(AF.Label(l.Identifier));
+            case TacUnary u when u.OpName == "Complement":
+                Asm.Add(AF.Mov(TranslateVal(u.Src), AF.PseudoOperand(u.Dst)));
+                Asm.Add(AF.BitNot(AF.PseudoOperand(u.Dst)));
+                break;
+
+            case TacUnary u when u.OpName == "Not":
+                Asm.AddRange([
+                    AF.Mov(TranslateVal(u.Src), AF.SCRATCH1),
+                    AF.Cmp(AF.ZR, AF.SCRATCH1),
+                    AF.SetCC(AsmCmp.CondCode.EQ, AF.PseudoOperand(u.Dst))
+                ]);
                 break;
 
             default:

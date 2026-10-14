@@ -15,8 +15,10 @@ public static class AF
     public static AsmBitwiseOr BitwiseOr(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmBitwiseRight BitwiseRight(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmBitwiseXor BitwiseXor(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
+    public static AsmCall Call(string Name, AsmDestOperand Dst) => new(Name, Dst);
     public static AsmCmp Cmp(AsmOperand Src1, AsmOperand Src2) => new(Src1, Src2);
     public static AsmComment Comment(string Comment = "") => new(Comment);
+    public static AsmDeallocateStack DeallocateStack(int Size) => new(Size);
     public static AsmDiv Div(AsmOperand Src1, AsmOperand Src2, AsmDestOperand Dst) => new(Src1, Src2, Dst);
     public static AsmFunction Function(string Name) => new(Name);
     public static AsmFunctionEpilogue FunctionEpilogue(string Name, AsmFunction Func) => new(Name, Func);

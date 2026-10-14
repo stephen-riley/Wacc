@@ -19,6 +19,7 @@ public record AsmProgram(string Filename) : AsmInstruction
         "",
         "        ; register aliases",
         "        retval    .req w0",
+        "        indir_res .req w8",
         "        scratch1  .req w9",
         "        scratch2  .req w10",
         "        scratch3  .req w11",

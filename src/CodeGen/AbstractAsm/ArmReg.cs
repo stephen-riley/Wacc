@@ -17,6 +17,8 @@ public enum ArmReg
     W5,
     W6,
     W7,
+
+    // indirect result location pointer
     W8,
 
     // scratch registers 9-15
@@ -35,5 +37,7 @@ public enum ArmReg
     SCRATCH3,       // W11,
     ZR,
 
+    FIRST_ARG_REGISTER = W0,
+    LAST_ARG_REGISTER = W7,
     LAST_REGISTER = W15,
 }

@@ -11,8 +11,8 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/bin/Debug/net11.0/Wacc.dll",
             // "args": "fixtures/valid/switch_case.c -o tmp/bob/a --asmfile tmp/bob/a.S --verbose",
-            // "args": "fixtures/book_tests/chapter_9/valid/no_arguments/function_shadows_variable.c --validate -o tmp/bob/a --asmfile tmp/bob/a.S --verbose",
-            "args": "test -c 9 --stage tacky --all --silent", // --extra-credit --fail-fast
+            // "args": "fixtures/book_tests/chapter_9/valid/no_arguments/function_shadows_variable.c --codegen -o tmp/bob/a --asmfile tmp/bob/a.S --verbose",
+            "args": "test -c 9 --stage codegen --all --silent", // --extra-credit --fail-fast
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole",

@@ -1,7 +1,6 @@
 using System.Text;
 using Wacc.Parse;
 using Wacc.Tokens;
-using Wacc.Validation.Tools;
 using static Wacc.Tokens.TokenType;
 
 namespace Wacc.Ast;
